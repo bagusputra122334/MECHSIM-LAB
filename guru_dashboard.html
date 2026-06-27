@@ -127,7 +127,7 @@
             </div>
         </div>
         <div class="flex items-center gap-4 flex-wrap">
-            <span class="font-bold" style="font-size: 1.1rem;">Selamat datang, Bapak/Ibu Guru 👋</span>
+            <span class="font-bold" style="font-size: 1.1rem;" id="guru-sapaan">Selamat datang, Bapak/Ibu Guru 👋</span>
             <!-- TOMBOL BEKU LAYAR -->
             <button id="freeze-btn" class="btn flex items-center gap-2" style="background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); color:#fff; box-shadow:0 8px 0 0 #7F1D1D, 0 14px 30px rgba(220, 38, 38, 0.35);">
                 <span>🚨 Bekukan Layar Siswa</span>
@@ -656,6 +656,12 @@
             
             // Inisialisasi saat halaman dimuat
             initFreezeState();
+
+            // Tampilkan nama guru
+            const guruName = localStorage.getItem('guruName');
+            if (guruName) {
+                document.getElementById('guru-sapaan').innerHTML = `Selamat datang, Bapak/Ibu ${guruName} 👋`;
+            }
         });
     </script>
 </body>
