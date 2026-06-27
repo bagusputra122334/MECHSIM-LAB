@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Simulasi Transmisi — MeshSim</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <!-- Three.js untuk latar belakang 3D -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -308,7 +309,7 @@
 <div id="login-screen">
     <div class="login-card">
         <div class="logo">
-            <img src="public/assets/img/logo-meshsim.png" alt="Logo MeshSim">
+            <img src="img/logo-meshsim.png" alt="Logo MeshSim">
         </div>
         <p class="subtitle">Power Flow Simulator — Manual Transmission</p>
         <div class="form-group">
@@ -327,7 +328,7 @@
 <div id="app">
     <div class="top-bar">
         <div class="top-bar-logo">
-            <img src="public/assets/img/logo-meshsim.png" alt="Logo MeshSim">
+            <img src="img/logo-meshsim.png" alt="Logo MeshSim">
             <a href="index.html" class="btn-back-home">← Beranda</a>
         </div>
         <div class="top-bar-right">
@@ -417,37 +418,37 @@ const GEARS = {
         label:'Gigi 1', color:'#2196F3', reverse:false,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','1st Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 1</b> — start/tanjakan. Rasio tertinggi → torsi maks, kecepatan rendah. Jalur: Input → Counter shaft → 1st Gear besar → Output.',
-        image: 'public/assets/img/1.png'
+        image: 'img/1.png'
     },
     '2': {
         label:'Gigi 2', color:'#00ACC1', reverse:false,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','2nd Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 2</b> — akselerasi lanjutan. Rasio lebih rendah dari gigi 1 → lebih cepat, torsi lebih kecil. Jalur sama tapi via 2nd Gear.',
-        image: 'public/assets/img/2.png'
+        image: 'img/2.png'
     },
     '3': {
         label:'Gigi 3', color:'#7B1FA2', reverse:false,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','3rd Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 3</b> — kecepatan menengah kota. Torsi sedang, efisiensi mulai baik.',
-        image: 'public/assets/img/3.png'
+        image: 'img/3.png'
     },
     '4': {
         label:'Gigi 4', color:'#388E3C', reverse:false,
         components:['Input Shaft','Main Drive Gear (4th)','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 4</b> — direct drive. Input langsung terhubung Output via Main Drive Gear (4th). Tanpa counter shaft → efisiensi max.',
-        image: 'public/assets/img/4.png'
+        image: 'img/4.png'
     },
     '5': {
         label:'Gigi 5', color:'#F57C00', reverse:false,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','5th Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 5</b> — overdrive tol. Rasio < 1 → output lebih cepat dari input. Konsumsi BBM irit.',
-        image: 'public/assets/img/5.png'
+        image: 'img/5.png'
     },
     'R': {
         label:'Reverse', color:'#E53935', reverse:true,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','Reverse Idler Gear','Reverse Gear','Output Shaft'],
         info:'<b>Reverse</b> — Reverse Idler Gear membalik arah putaran output → kendaraan mundur.',
-        image: 'public/assets/img/6.png'
+        image: 'img/6.png'
     }
 };
 

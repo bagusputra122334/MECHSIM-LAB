@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mechsim Lab</title>
+    <link rel="icon" href="img/logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Three.js for 3D background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -273,12 +274,55 @@
             border-top: 1px solid rgba(224,224,224,0.3);
         }
 
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+            }
+            .materials-section h2 { font-size: 36px; }
+        }
+
         @media (max-width: 768px) {
-            nav { padding: 15px 20px; }
-            .nav-links { gap: 15px; }
-            .nav-links a { font-size: 14px; }
+            nav { 
+                padding: 12px 20px; 
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            .logo img { height: 35px; }
+            .nav-links { gap: 10px; }
+            .nav-links a { 
+                font-size: 14px; 
+                padding: 6px 12px;
+            }
+            .hero { padding: 100px 15px 60px; }
             .hero-logo img { height: 80px; }
-            .btn-primary { padding: 14px 35px; font-size: 16px; }
+            .hero p { font-size: 16px; }
+            .btn-primary { 
+                padding: 14px 35px; 
+                font-size: 16px; 
+            }
+            .materials-section { padding: 50px 15px; }
+            .materials-section h2 { font-size: 32px; }
+            .materials-section > p { font-size: 16px; }
+            .materials-grid { grid-template-columns: 1fr; gap: 20px; }
+            .material-card { padding: 30px 20px; }
+            .footer-content { grid-template-columns: 1fr; }
+            footer { padding: 40px 20px 25px; }
+        }
+
+        @media (max-width: 480px) {
+            nav { padding: 10px 15px; }
+            .nav-links { gap: 8px; }
+            .nav-links a { font-size: 13px; }
+            .hero { padding: 100px 15px 50px; }
+            .hero-logo img { height: 70px; }
+            .hero p { font-size: 15px; }
+            .btn-primary { padding: 12px 30px; font-size: 15px; }
+            .materials-section h2 { font-size: 28px; }
+            .material-card h3 { font-size: 20px; }
+            .btn-module { padding: 14px 30px; font-size: 15px; }
         }
     </style>
 </head>
@@ -288,7 +332,7 @@
 
     <nav>
         <div class="logo">
-            <img src="public/assets/img/logoputih.png" alt="">
+            <img src="img/logoputih.png" alt="">
         </div>
         <ul class="nav-links">
             <li><a href="#beranda">✨ Simulasi</a></li>
@@ -298,7 +342,7 @@
 
     <section class="hero" id="beranda">
         <div class="hero-logo">
-            <img src="public/assets/img/logoputih.png" alt="Logo MeshSim">
+            <img src="img/logoputih.png" alt="Logo MeshSim">
         </div>
         <p>Tingkatkan pemahaman tentang sistem transmisi dengan simulasi virtual yang realistis dan interaktif</p>
         <a href="login.html" class="btn-primary">🚀 Mulai Sekarang</a>
@@ -350,7 +394,7 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <div class="logo">
-                    <img src="public/assets/img/logoputih.png" alt="Logo MeshSim">
+                    <img src="img/logoputih.png" alt="Logo MeshSim">
                     <p> </p>
                     <p>Dapatkan informasi terbaru MeshSim<br>dengan follow sosial media di bawah ini!</p>
                 </div>

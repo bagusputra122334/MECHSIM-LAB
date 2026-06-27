@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Masuk - Mechsim Lab</title>
+    <link rel="icon" href="img/logo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -238,10 +239,21 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .login-wrapper { padding: 15px; }
+            .login-card { padding: 32px 24px; border-radius: 24px; }
+            .login-card .logo img { height: 70px; }
+            .login-card p.subtitle { font-size: 13px; }
+            #student-section h3, #teacher-section h3 { font-size: 1.3rem; }
+        }
+
         @media (max-width: 480px) {
-            .login-card {
-                padding: 36px 24px;
-            }
+            body { padding: 10px; }
+            .login-card { padding: 28px 20px; }
+            .login-card .logo img { height: 60px; }
+            .btn { padding: 12px 20px; font-size: 15px; }
+            .form-group input { padding: 12px 15px; font-size: 14px; }
         }
     </style>
 </head>
@@ -255,7 +267,7 @@
 
         <div class="login-card">
             <div class="logo">
-                <img src="public/assets/img/logo-meshsim.png" alt="Logo MeshSim">
+                <img src="img/logo-meshsim.png" alt="Logo MeshSim">
             </div>
             <p class="subtitle">Power Flow Simulator — Manual Transmission</p>
 
