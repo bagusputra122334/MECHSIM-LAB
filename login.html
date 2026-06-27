@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - Mechsim Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --blue: #0066FF; --blue-dark: #0047CC; --blue-light: #E8F1FF;
+            --orange: #FF8A00; --orange-light: #FFE0C2;
+            --text: #1A237E; --text-muted: rgba(26,35,126,0.72);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background: linear-gradient(135deg,rgba(0,102,255,0.9) 0%,rgba(77,163,255,0.9) 60%); 
+            min-height: 100vh; 
+            color: var(--text); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .back-home a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        .back-home a:hover {
+            color: #FF8A00;
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(255,138,0,0.8);
+        }
+
+        .login-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 28px;
+            padding: 52px 44px 44px;
+            width: 100%;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .login-card .logo { margin-bottom: 20px; display: flex; justify-content: center; animation: float 3s ease-in-out infinite; }
+        .login-card .logo img { height: 80px; width: auto; }
+        .login-card p.subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 13px 18px;
+            border: 2px solid #BBDEFB;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            background: rgba(245,250,255,0.8);
+            transition: border-color .2s,box-shadow .2s;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0,102,255,0.15);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #FF8A00 0%, #FFAA33 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255,138,0,0.4), 0 6px 20px rgba(255,138,0,0.3);
+            animation: pulse-glow 2s ease-in-out infinite, shake 0.5s ease-in-out infinite;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        .btn-login:hover { 
+            transform: scale(1.05) translateY(-3px); 
+            box-shadow: 0 0 40px rgba(255,138,0,0.6), 0 10px 30px rgba(255,138,0,0.4);
+            animation: none;
+        }
+        .login-error {
+            color: #EF4444;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255,138,0,0.4), 0 6px 20px rgba(255,138,0,0.3);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(255,138,0,0.8), 0 6px 30px rgba(255,138,0,0.5);
+            }
+        }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-1deg); }
+            75% { transform: rotate(1deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 36px 24px 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="login-wrapper">
+        <div class="back-home">
+            <a href="index.html">← Kembali ke Beranda</a>
+        </div>
+
+        <div class="login-card">
+            <div class="logo">
+                <img src="public/assets/img/logo-meshsim.png" alt="Logo MeshSim">
+            </div>
+            <p class="subtitle">Power Flow Simulator — Manual Transmission</p>
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="nama-input" placeholder="Masukkan nama lengkap..." />
+            </div>
+            <div class="form-group">
+                <label>Nomor Absen</label>
+                <input type="text" id="absen-input" placeholder="Contoh: 15" />
+            </div>
+            <button type="button" class="btn-login" id="btn-masuk">🚀 Mulai Simulasi</button>
+            <p class="login-error" id="login-error">⚠ Nama dan nomor absen harus diisi!</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btn-masuk').addEventListener('click', function() {
+            const nama = document.getElementById('nama-input').value.trim();
+            const absen = document.getElementById('absen-input').value.trim();
+            const errorEl = document.getElementById('login-error');
+
+            if (!nama || !absen) {
+                errorEl.style.display = 'block';
+                return;
+            }
+            errorEl.style.display = 'none';
+
+            if (nama.toLowerCase() === 'guru' && absen === '123') {
+                localStorage.setItem('guruLoggedIn', 'true');
+                window.location.href = 'guru_dashboard.html';
+            } else {
+                let siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
+                // Filter out any existing guru data first
+                siswaList = siswaList.filter(s => s.nama_lengkap.toLowerCase() !== 'guru');
+                
+                let existingSiswa = siswaList.find(s => s.nama_lengkap === nama && s.nomor_absen === absen);
+                
+                if (!existingSiswa) {
+                    existingSiswa = {
+                        id: Date.now(),
+                        nama_lengkap: nama,
+                        nomor_absen: absen,
+                        kelas: 'XI',
+                        waktu_login: new Date().toISOString(),
+                        terakhir_aktif: new Date().toISOString()
+                    };
+                    siswaList.push(existingSiswa);
+                    localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+                } else {
+                    existingSiswa.terakhir_aktif = new Date().toISOString();
+                    const idx = siswaList.findIndex(s => s.id === existingSiswa.id);
+                    siswaList[idx] = existingSiswa;
+                    localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+                }
+                
+                localStorage.setItem('currentSiswa', JSON.stringify(existingSiswa));
+                window.location.href = 'simulasimain.html';
+            }
+        });
+
+        ['nama-input', 'absen-input'].forEach(id => {
+            document.getElementById(id).addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') document.getElementById('btn-masuk').click();
+            });
+        });
+
+        (function init3DBackground() {
+            const canvas = document.getElementById('bg-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+            directionalLight.position.set(10, 10, 10);
+            scene.add(directionalLight);
+            const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            backLight.position.set(-5, -5, -5);
+            scene.add(backLight);
+
+            function createGear(radius, teeth, depth, color) {
+                const shape = new THREE.Shape();
+                const toothDepth = radius * 0.2;
+                const innerRadius = radius - toothDepth;
+                const toothAngle = (Math.PI * 2) / teeth;
+
+                for (let i = 0; i < teeth; i++) {
+                    const angle = i * toothAngle;
+                    const nextAngle = (i + 0.4) * toothAngle;
+                    const nextAngle2 = (i + 0.6) * toothAngle;
+                    const nextAngle3 = (i + 1) * toothAngle;
+
+                    const x1 = Math.cos(angle) * innerRadius;
+                    const y1 = Math.sin(angle) * innerRadius;
+                    const x2 = Math.cos(nextAngle) * radius;
+                    const y2 = Math.sin(nextAngle) * radius;
+                    const x3 = Math.cos(nextAngle2) * radius;
+                    const y3 = Math.sin(nextAngle2) * radius;
+                    const x4 = Math.cos(nextAngle3) * innerRadius;
+                    const y4 = Math.sin(nextAngle3) * innerRadius;
+
+                    if (i === 0) shape.moveTo(x1, y1);
+                    shape.lineTo(x2, y2);
+                    shape.lineTo(x3, y3);
+                    shape.lineTo(x4, y4);
+                }
+                shape.closePath();
+
+                const hole = new THREE.Path();
+                hole.absarc(0, 0, innerRadius * 0.3, 0, Math.PI * 2, true);
+                shape.holes.push(hole);
+
+                const extrudeSettings = {
+                    depth: depth,
+                    bevelEnabled: true,
+                    bevelSegments: 3,
+                    steps: 1,
+                    bevelSize: 0.1,
+                    bevelThickness: 0.1
+                };
+
+                const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                geometry.center();
+
+                const material = new THREE.MeshPhongMaterial({
+                    color: color,
+                    shininess: 120,
+                    specular: 0x444444,
+                    transparent: true,
+                    opacity: 0.85
+                });
+
+                return new THREE.Mesh(geometry, material);
+            }
+
+            const gears = [];
+            const colors = [0x0066FF, 0xFF8A00, 0xFFD700, 0x00ACC1, 0x7B1FA2];
+            const teethCounts = [12, 16, 20, 24];
+            
+            for (let i = 0; i < 12; i++) {
+                const radius = Math.random() * 1.2 + 0.6;
+                const teeth = teethCounts[Math.floor(Math.random() * teethCounts.length)];
+                const depth = Math.random() * 0.4 + 0.2;
+                
+                const gear = createGear(radius, teeth, depth, colors[i % colors.length]);
+                
+                gear.position.set(
+                    (Math.random() - 0.5) * 28,
+                    (Math.random() - 0.5) * 18,
+                    (Math.random() - 0.5) * 15
+                );
+                
+                gear.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+                
+                gear.userData = {
+                    rotationSpeed: (Math.random() * 0.02 + 0.005) * (Math.random() > 0.5 ? 1 : -1),
+                    floatOffset: Math.random() * Math.PI * 2,
+                    floatSpeed: Math.random() * 0.4 + 0.3,
+                    originalY: gear.position.y,
+                    rotationAxis: Math.floor(Math.random() * 3)
+                };
+                
+                gears.push(gear);
+                scene.add(gear);
+            }
+
+            camera.position.z = 14;
+
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.008;
+
+                gears.forEach((gear, index) => {
+                    if (gear.userData.rotationAxis === 0) gear.rotation.x += gear.userData.rotationSpeed;
+                    else if (gear.userData.rotationAxis === 1) gear.rotation.y += gear.userData.rotationSpeed;
+                    else gear.rotation.z += gear.userData.rotationSpeed;
+                    
+                    gear.position.y = gear.userData.originalY + Math.sin(time * gear.userData.floatSpeed + gear.userData.floatOffset) * 1.5;
+                    gear.position.x += Math.sin(time * 0.3 + index * 0.5) * 0.005;
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
+    </script>
+</body>
+</html>

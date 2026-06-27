@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Guru - MECHSIM Laboratory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #0066FF;
+            --blue-dark: #0047CC;
+            --blue-light: #E8F1FF;
+            --orange: #FF8A00;
+            --orange-light: #FFE0C2;
+            --text: #1A237E;
+            --text-muted: rgba(26,35,126,0.72);
+        }
+        *{ box-sizing:border-box; }
+        body{ margin:0; font-family:'Nunito',sans-serif; color:var(--text); background: transparent; }
+        
+        /* Canvas 3D Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .btn-back-home {
+            display:flex; align-items:center; gap:5px;
+            color:var(--blue); text-decoration:none; font-weight:800; font-size:14px;
+            padding:8px 12px; border-radius:12px; transition:all 0.2s;
+        }
+        .btn-back-home:hover {
+            background:rgba(0,102,255,0.1); color:var(--orange);
+        }
+
+        .card{
+            background:rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius:18px; padding:20px; box-shadow:0 8px 28px rgba(0,102,255,0.1);
+            border:1px solid rgba(0,102,255,0.08);
+        }
+
+        .top-bar{
+            display:flex; align-items:center; justify-content:space-between;
+            background:rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding:14px 24px; border-bottom:1px solid rgba(0,102,255,0.08);
+            position:relative; z-index:10;
+        }
+
+        .stat-box{
+            background:rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border:1px solid rgba(0,102,255,0.08); border-radius:14px; padding:16px;
+            box-shadow:0 6px 18px rgba(0,102,255,0.08);
+        }
+
+        .btn{
+            border:none; border-radius:14px; padding:12px 20px; font-weight:800; font-family:'Rajdhani',sans-serif;
+            font-size:15px; cursor:pointer; letter-spacing:.5px; 
+            transition:all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 8px 0 0 rgba(0,0,0,0.15), 0 14px 30px rgba(0,0,0,0.12);
+        }
+        .btn:hover{ 
+            transform: translateY(-4px) scale(1.02); 
+            box-shadow: 0 12px 0 0 rgba(0,0,0,0.15), 0 20px 40px rgba(0,0,0,0.18);
+        }
+        .btn:active{
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 3px 0 0 rgba(0,0,0,0.15), 0 6px 15px rgba(0,0,0,0.12);
+        }
+        .btn-primary{ 
+            background: linear-gradient(135deg, #0066FF 0%, #0047CC 100%);
+            color:#fff; 
+            box-shadow: 0 8px 0 0 #002D8A, 0 14px 30px rgba(0,102,255,0.35);
+        }
+        .btn-primary:hover{
+            box-shadow: 0 12px 0 0 #002D8A, 0 20px 40px rgba(0,102,255,0.45);
+        }
+        .btn-primary:active{
+            box-shadow: 0 3px 0 0 #002D8A, 0 6px 15px rgba(0,102,255,0.25);
+        }
+        .btn-warn{ 
+            background: linear-gradient(135deg, #FF8A00 0%, #E67600 100%);
+            color:#fff; 
+            box-shadow: 0 8px 0 0 #B35900, 0 14px 30px rgba(255,138,0,0.35);
+        }
+        .btn-warn:hover{
+            box-shadow: 0 12px 0 0 #B35900, 0 20px 40px rgba(255,138,0,0.45);
+        }
+        .btn-warn:active{
+            box-shadow: 0 3px 0 0 #B35900, 0 6px 15px rgba(255,138,0,0.25);
+        }
+
+        /* CSS untuk baris yang membutuhkan bantuan */
+        .sos-row {
+            animation: flash-red 1s infinite;
+        }
+        @keyframes flash-red {
+            0%, 100% { background-color: rgba(254, 226, 226, 0.5); }
+            50% { background-color: rgba(254, 226, 226, 1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas 3D Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <div class="flex items-center gap-3">
+            <div class="flex flex-col items-start gap-2">
+                <img src="public/assets/img/logo-meshsim.png" alt="Logo MeshSim" style="height:40px; width:auto;">
+                <a href="index.html" class="btn-back-home">← Beranda</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 flex-wrap">
+            <!-- TOMBOL BEKU LAYAR -->
+            <button id="freeze-btn" class="btn flex items-center gap-2" style="background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); color:#fff; box-shadow:0 8px 0 0 #7F1D1D, 0 14px 30px rgba(220, 38, 38, 0.35);">
+                <span>🚨 Bekukan Layar Siswa</span>
+            </button>
+            <span class="font-bold">Selamat datang, <strong>Muammar</strong></span>
+            <button onclick="logout()" class="btn btn-warn flex items-center gap-2">
+                <span>Logout</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Top Stat Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="stat-box border-l-4 border-blue-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-600 text-sm font-bold mb-1">Total Siswa Terdaftar</p>
+                        <p class="text-4xl font-bold" style="font-family:'Rajdhani',sans-serif; color:var(--blue-dark);" id="totalSiswa">0</p>
+                    </div>
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-3xl">👥</div>
+                </div>
+            </div>
+
+            <div class="stat-box border-l-4 border-green-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-600 text-sm font-bold mb-1">Siswa Online</p>
+                        <p class="text-4xl font-bold" style="font-family:'Rajdhani',sans-serif; color:var(--blue-dark);" id="siswaOnlineCount">0</p>
+                    </div>
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-3xl">🟢</div>
+                </div>
+            </div>
+
+            <div class="stat-box border-l-4 border-orange-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-600 text-sm font-bold mb-1">Akurasi Kelas</p>
+                        <p class="text-4xl font-bold" style="font-family:'Rajdhani',sans-serif; color:var(--blue-dark);" id="akurasiKelas">0%</p>
+                    </div>
+                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center text-3xl">📊</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Siswa Aktif Online Section -->
+        <div class="card mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold" style="font-family:'Rajdhani',sans-serif; color:var(--blue-dark);" class="flex items-center gap-2">
+                    <span class="text-green-500">🟢</span> Siswa Aktif Online
+                </h2>
+                <button onclick="refreshData()" class="btn btn-primary flex items-center gap-2">
+                    🔄 Refresh
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50/50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600 rounded-tl-xl">No</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Nama Lengkap</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Nomor Absen</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Kelas</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600 rounded-tr-xl">Terakhir Aktif</th>
+                        </tr>
+                    </thead>
+                    <tbody id="siswaOnlineTable">
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Laporan Komprehensif Section -->
+        <div class="card">
+            <div class="flex justify-between items-center mb-4 flex-wrap gap-4">
+                <h2 class="text-xl font-bold" style="font-family:'Rajdhani',sans-serif; color:var(--blue-dark);" class="flex items-center gap-2">
+                    <span class="text-blue-500">📋</span> Laporan Percobaan Siswa
+                </h2>
+                <button onclick="exportCSV()" class="btn btn-warn flex items-center gap-2">
+                    📥 Download Laporan
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50/50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600 rounded-tl-xl">No</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Nama</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Absen</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Kelas</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Gigi 1</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Gigi 2</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Gigi 3</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Gigi 4</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Gigi 5</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600 rounded-tr-xl">Reverse</th>
+                        </tr>
+                    </thead>
+                    <tbody id="laporanTable">
+                        <tr>
+                            <td colspan="10" class="px-4 py-8 text-center text-gray-500">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-4 py-6 text-center text-gray-500 text-sm">
+        &copy; 2026 MECHSIM Laboratory. All rights reserved.
+    </footer>
+
+    <script>
+        // Cek apakah guru sudah login
+        if (localStorage.getItem('guruLoggedIn') !== 'true') {
+            window.location.href = 'index.html';
+        }
+
+        // Fungsi logout
+        function logout() {
+            localStorage.removeItem('guruLoggedIn');
+            window.location.href = 'index.html';
+        }
+
+        // Fungsi untuk mendapatkan data dari localStorage
+        function getSiswaData() {
+            let data = localStorage.getItem('mechsim_siswa');
+            if (data) {
+                let siswaList = JSON.parse(data);
+                // Filter out any guru data
+                siswaList = siswaList.filter(s => s.nama_lengkap.toLowerCase() !== 'guru');
+                // Save back the cleaned data
+                localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+                return siswaList;
+            }
+            return [];
+        }
+
+        function getRiwayatData() {
+            const data = localStorage.getItem('mechsim_riwayat');
+            return data ? JSON.parse(data) : [];
+        }
+
+        // Fungsi refresh data
+        function refreshData() {
+            const siswaData = getSiswaData();
+            const riwayatData = getRiwayatData();
+            
+            // Filter siswa online (terakhir aktif dalam 3 menit)
+            const now = new Date().getTime();
+            const tigaMenitLalu = now - (3 * 60 * 1000);
+            const siswaOnline = siswaData.filter(s => new Date(s.terakhir_aktif).getTime() >= tigaMenitLalu);
+            
+            // Update stat cards
+            document.getElementById('totalSiswa').textContent = siswaData.length;
+            document.getElementById('siswaOnlineCount').textContent = siswaOnline.length;
+            
+            // Hitung akurasi
+            const totalPercobaan = riwayatData.length;
+            const totalBenar = riwayatData.filter(r => r.status_jawaban === 'Benar').length;
+            const akurasi = totalPercobaan > 0 ? Math.round((totalBenar / totalPercobaan) * 100) : 0;
+            document.getElementById('akurasiKelas').textContent = akurasi + '%';
+            
+            // Update tabel siswa online
+            updateSiswaOnlineTable(siswaOnline);
+            
+            // Update tabel laporan
+            updateLaporanTable(siswaData, riwayatData);
+        }
+
+        function updateSiswaOnlineTable(siswaOnline) {
+            const tbody = document.getElementById('siswaOnlineTable');
+            
+            if (siswaOnline.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Tidak ada siswa yang online saat ini</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = siswaOnline.map((siswa, index) => `
+                <tr class="border-b border-gray-100/50 hover:bg-gray-50/30">
+                    <td class="px-4 py-3 text-gray-600">${index + 1}</td>
+                    <td class="px-4 py-3 font-bold text-gray-800">${siswa.nama_lengkap}</td>
+                    <td class="px-4 py-3 text-gray-600">${siswa.nomor_absen}</td>
+                    <td class="px-4 py-3 text-gray-600">${siswa.kelas || 'XI'}</td>
+                    <td class="px-4 py-3 text-gray-600">${new Date(siswa.terakhir_aktif).toLocaleTimeString('id-ID')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateLaporanTable(siswaData, riwayatData) {
+            const tbody = document.getElementById('laporanTable');
+            const gigiList = ['Gigi 1', 'Gigi 2', 'Gigi 3', 'Gigi 4', 'Gigi 5', 'Reverse'];
+            
+            if (siswaData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="px-4 py-8 text-center text-gray-500">Belum ada data percobaan</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = siswaData.map((siswa, index) => {
+                const gigiCells = gigiList.map(gigi => {
+                    const riwayatSiswaGigi = riwayatData.filter(r => r.id_siswa === siswa.id && r.nama_gigi === gigi);
+                    const totalPercobaan = riwayatSiswaGigi.length;
+                    const berhasil = riwayatSiswaGigi.some(r => r.status_jawaban === 'Benar');
+                    const color = berhasil ? 'green' : 'red';
+                    const statusText = berhasil ? 'Berhasil' : 'Belum Berhasil';
+                    const bgColor = berhasil ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                    
+                    return `
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-1 rounded-full text-xs font-bold ${bgColor}">
+                                    ${statusText}
+                                </span>
+                                <span class="text-gray-500 text-xs">(${totalPercobaan}x)</span>
+                            </div>
+                        </td>
+                    `;
+                }).join('');
+                
+                return `
+                    <tr class="border-b border-gray-100/50 hover:bg-gray-50/30">
+                        <td class="px-4 py-3 text-gray-600">${index + 1}</td>
+                        <td class="px-4 py-3 font-bold text-gray-800">${siswa.nama_lengkap}</td>
+                        <td class="px-4 py-3 text-gray-600">${siswa.nomor_absen}</td>
+                        <td class="px-4 py-3 text-gray-600">${siswa.kelas || 'XI'}</td>
+                        ${gigiCells}
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Fungsi export CSV
+        function exportCSV() {
+            const siswaData = getSiswaData();
+            const riwayatData = getRiwayatData();
+            const gigiList = ['Gigi 1', 'Gigi 2', 'Gigi 3', 'Gigi 4', 'Gigi 5', 'Reverse'];
+            
+            let csv = '\uFEFF'; // BOM untuk UTF-8
+            csv += 'No,Nama Lengkap,Nomor Absen,Kelas';
+            gigiList.forEach(g => {
+                csv += `,${g} (Percobaan),${g} (Status)`;
+            });
+            csv += '\n';
+            
+            siswaData.forEach((siswa, index) => {
+                csv += `${index + 1},"${siswa.nama_lengkap}",${siswa.nomor_absen},${siswa.kelas || 'XI'}`;
+                gigiList.forEach(g => {
+                    const riwayatSiswaGigi = riwayatData.filter(r => r.id_siswa === siswa.id && r.nama_gigi === g);
+                    const totalPercobaan = riwayatSiswaGigi.length;
+                    const berhasil = riwayatSiswaGigi.some(r => r.status_jawaban === 'Benar');
+                    csv += `,${totalPercobaan},${berhasil ? 'Berhasil' : 'Belum Berhasil'}`;
+                });
+                csv += '\n';
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `laporan_mechsim_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // Inisialisasi dan auto refresh
+        refreshData();
+        setInterval(refreshData, 30000); // Refresh setiap 30 detik
+    </script>
+
+    <script>
+        // ============================================================
+        // THREE.JS BACKGROUND 3D (sama seperti simulasimain.html)
+        // ============================================================
+        (function init3DBackground() {
+            const canvas = document.getElementById('bg-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            
+            scene.background = new THREE.Color(0xF4F8FF);
+            
+            const particlesCount = 200;
+            const positions = new Float32Array(particlesCount * 3);
+            const colors = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount; i++) {
+                const i3 = i * 3;
+                positions[i3] = (Math.random() - 0.5) * 20;
+                positions[i3 + 1] = (Math.random() - 0.5) * 20;
+                positions[i3 + 2] = (Math.random() - 0.5) * 20;
+                
+                if (Math.random() > 0.5) {
+                    colors[i3] = 0.0;
+                    colors[i3 + 1] = 0.4;
+                    colors[i3 + 2] = 1.0;
+                } else {
+                    colors[i3] = 1.0;
+                    colors[i3 + 1] = 0.54;
+                    colors[i3 + 2] = 0.0;
+                }
+            }
+            
+            const particlesGeometry = new THREE.BufferGeometry();
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.15,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+            
+            const cubes = [];
+            for (let i = 0; i < 15; i++) {
+                const cubeGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+                const cubeMaterial = new THREE.MeshBasicMaterial({
+                    color: Math.random() > 0.5 ? 0x0066FF : 0xFF8A00,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+                cube.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20
+                );
+                cube.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+                scene.add(cube);
+                cubes.push(cube);
+            }
+            
+            camera.position.z = 10;
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.x += 0.0005;
+                particles.rotation.y += 0.0005;
+                
+                cubes.forEach((cube, i) => {
+                    cube.rotation.x += 0.005;
+                    cube.rotation.y += 0.005;
+                    cube.position.y += Math.sin(Date.now() * 0.001 + i) * 0.002;
+                });
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
+
+        // ================================
+        // FITUR SOS: TANGANI BANTUAN SISWA
+        // ================================
+        let activeSosData = null;
+
+        // Fungsi untuk memeriksa dan menampilkan SOS
+        function checkForSOS() {
+            const sosValue = localStorage.getItem('mechsim_sos');
+            
+            if (sosValue && sosValue !== 'RESET') {
+                try {
+                    activeSosData = JSON.parse(sosValue);
+                    renderSOSAlert();
+                } catch (e) {
+                    console.error("Error parsing SOS data:", e);
+                }
+            } else if (sosValue === 'RESET') {
+                clearSOSAlert();
+                activeSosData = null;
+            } else {
+                clearSOSAlert();
+                activeSosData = null;
+            }
+        }
+
+        function renderSOSAlert() {
+            if (!activeSosData) return;
+            
+            const tbodySiswa = document.getElementById('siswaOnlineTable');
+            const rows = tbodySiswa.querySelectorAll('tr');
+            
+            // Cari baris siswa yang sesuai
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 3) {
+                    const namaCell = cells[1]?.textContent?.trim();
+                    const absenCell = cells[2]?.textContent?.trim();
+                    
+                    if (namaCell === activeSosData.nama && absenCell === activeSosData.absen) {
+                        // Tambahkan efek flash
+                        row.classList.add('sos-row');
+                        
+                        // Cek apakah alert sudah ditambahkan agar tidak duplikat
+                        if (!row.querySelector('.sos-alert')) {
+                            // Tambahkan badge SOS
+                            const badgeCell = document.createElement('td');
+                            badgeCell.colSpan = 2;
+                            badgeCell.className = "sos-alert px-4 py-3";
+                            badgeCell.innerHTML = `
+                                <div class="flex items-center gap-3">
+                                    <span class="text-red-600 font-bold text-sm">
+                                        🚨 Butuh bantuan di ${activeSosData.gigi}!
+                                    </span>
+                                    <button 
+                                        onclick="resolveSOS()" 
+                                        class="btn btn-primary"
+                                        style="background: #10B981; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); padding: 6px 12px; font-size: 13px;"
+                                    >
+                                        ✅ Selesai Bantu
+                                    </button>
+                                </div>
+                            `;
+                            row.appendChild(badgeCell);
+                        }
+                    }
+                }
+            });
+        }
+
+        function clearSOSAlert() {
+            const tbodySiswa = document.getElementById('siswaOnlineTable');
+            const rows = tbodySiswa.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                row.classList.remove('sos-row');
+                const sosAlert = row.querySelector('.sos-alert');
+                if (sosAlert) {
+                    sosAlert.remove();
+                }
+            });
+        }
+
+        function resolveSOS() {
+            // Kirim sinyal reset ke siswa
+            localStorage.setItem('mechsim_sos', 'RESET');
+            activeSosData = null;
+            clearSOSAlert();
+            
+            // Bersihkan reset signal setelah 1 detik
+            setTimeout(() => {
+                localStorage.removeItem('mechsim_sos');
+            }, 1000);
+        }
+
+        // Listener storage event (untuk perubahan dari tab lain)
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'mechsim_sos') {
+                checkForSOS();
+            }
+        });
+
+        // Fallback: cek setiap 2 detik
+        setInterval(checkForSOS, 2000);
+
+        // Panggil sekali saat halaman dimuat
+        checkForSOS();
+
+        // ================================
+        // FITUR FREEZE LAYAR SISWA
+        // ================================
+        // Pastikan kode berjalan setelah DOM selesai dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            const freezeBtn = document.getElementById('freeze-btn');
+            
+            if (!freezeBtn) {
+                console.error('Freeze button not found!');
+                return;
+            }
+            
+            // Cek state awal dari localStorage
+            function initFreezeState() {
+                const currentState = localStorage.getItem('mechsim_freeze');
+                console.log('Initial freeze state:', currentState);
+                if (currentState === 'true') {
+                    setFrozenUI();
+                } else {
+                    setUnfrozenUI();
+                }
+            }
+            
+            function setFrozenUI() {
+                freezeBtn.innerHTML = '<span>🔓 Buka Kunci Layar Siswa</span>';
+                freezeBtn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+                freezeBtn.style.boxShadow = '0 8px 0 0 #047857, 0 14px 30px rgba(16, 185, 129, 0.35)';
+            }
+            
+            function setUnfrozenUI() {
+                freezeBtn.innerHTML = '<span>🚨 Bekukan Layar Siswa</span>';
+                freezeBtn.style.background = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 100%)';
+                freezeBtn.style.boxShadow = '0 8px 0 0 #7F1D1D, 0 14px 30px rgba(220, 38, 38, 0.35)';
+            }
+            
+            function toggleFreeze() {
+                const currentState = localStorage.getItem('mechsim_freeze');
+                const newState = currentState === 'true' ? 'false' : 'true';
+                console.log('Toggle freeze:', currentState, '→', newState);
+                localStorage.setItem('mechsim_freeze', newState);
+                
+                if (newState === 'true') {
+                    setFrozenUI();
+                } else {
+                    setUnfrozenUI();
+                }
+            }
+            
+            freezeBtn.addEventListener('click', toggleFreeze);
+            
+            // Inisialisasi saat halaman dimuat
+            initFreezeState();
+        });
+    </script>
+</body>
+</html>

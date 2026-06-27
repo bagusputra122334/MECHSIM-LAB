@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul Transfer Case — Media Pembelajaran Interaktif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4F8FF;
+  --bg2: #E8F1FF;
+  --bg3: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface2: #E8F1FF;
+  --border: rgba(26,35,126,0.12);
+  --border2: rgba(26,35,126,0.18);
+  --text: #1A237E;
+  --text2: rgba(26,35,126,0.72);
+  --text3: rgba(26,35,126,0.54);
+  --ink: #1A237E;
+  --accent: #FF8A00;
+  --accent2: #4DA3FF;
+  --accent-bg: rgba(255,138,0,0.12);
+  --accent-border: rgba(255,138,0,0.2);
+  --teal: #4DA3FF;
+  --teal-bg: rgba(77,163,255,0.12);
+  --teal-border: rgba(77,163,255,0.2);
+  --amber: #FF8A00;
+  --amber-bg: rgba(255,138,0,0.12);
+  --amber-border: rgba(255,138,0,0.2);
+  --blue: #0066FF;
+  --blue-bg: rgba(77,163,255,0.12);
+  --blue-border: rgba(77,163,255,0.18);
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.1);
+  --purple-border: rgba(167,139,250,0.18);
+  --green: #34d399;
+  --green-bg: rgba(52,211,153,0.1);
+  --green-border: rgba(52,211,153,0.2);
+  --red: #f87171;
+  --red-bg: rgba(248,113,113,0.1);
+  --red-border: rgba(248,113,113,0.2);
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Space Grotesk', sans-serif;
+  --shadow: 0 10px 30px rgba(0,102,255,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─── LAYOUT ─── */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 1.5rem;
+  min-height: 100vh;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  background: var(--blue);
+  border-right: 1px solid rgba(255,255,255,0.12);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-top {
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.brand-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.8);
+}
+
+.brand-eyebrow::before {
+  content: '';
+  width: 18px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.sidebar-top h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+.sidebar-top p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.78);
+}
+
+/* TOMBOL KEMBALI */
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.8rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+}
+.btn-back-home:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  padding: 0 1.5rem;
+  margin-bottom: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 1.5rem;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.88);
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s;
+  border-left: 2.5px solid transparent;
+  font-family: var(--font-body);
+}
+
+.nav-item:hover {
+  color: #FFFFFF;
+  background: rgba(255,255,255,0.12);
+}
+
+.nav-item.active {
+  color: #FFFFFF;
+  background: rgba(255,255,255,0.16);
+  border-left-color: #FFFFFF;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.prog-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.prog-track {
+  height: 5px;
+  background: var(--bg3);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--amber));
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+/* ─── MAIN ─── */
+.main {
+  overflow-y: auto;
+  min-height: 100vh;
+  padding: 2rem 0 2rem 0;
+}
+
+.section {
+  display: none;
+  padding: 2.5rem;
+  max-width: 1200px;
+  width: min(100%, 1200px);
+  margin: 0 auto;
+  animation: pageIn 0.22s ease;
+}
+
+.section.active { display: block; }
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── PAGE HEADER ─── */
+.page-header { margin-bottom: 2rem; }
+
+.page-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  border: 1px solid;
+}
+
+.page-header h2 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.page-header p {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.65;
+  max-width: 600px;
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+
+.info-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+
+.ic-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.info-card h4 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.info-card p { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+/* ─── BADGE ─── */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  border: 1px solid;
+}
+
+.b-red { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.b-teal { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+.b-amber { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+.b-blue { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-border); }
+.b-purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+.b-green { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.b-accent { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+
+/* ─── COMPARISON CARDS ─── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.compare-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.compare-card-head {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.compare-card-head .cc-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.compare-card-head h4 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.compare-card-head p { font-size: 12px; color: var(--text3); }
+
+.compare-card-body {
+  padding: 1rem 1.25rem;
+}
+
+.compare-card-body ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compare-card-body li {
+  font-size: 13px;
+  color: var(--text2);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.compare-card-body li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--text3);
+  font-size: 11px;
+  top: 2px;
+}
+
+/* ─── SIMULATOR / TRANSFER CASE ─── */
+.tc-panel {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.tc-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text3);
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+/* 4WD Mode Selector */
+.mode-selector {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.mode-btn {
+  padding: 10px 20px;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius);
+  background: var(--bg2);
+  color: var(--text2);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  letter-spacing: 0.03em;
+}
+
+.mode-btn:hover { border-color: var(--border2); background: var(--bg3); color: var(--ink); }
+.mode-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* Vehicle diagram */
+.vehicle-diagram {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto 1.25rem;
+}
+
+.vehicle-diagram svg {
+  width: 100%;
+  height: auto;
+}
+
+.tc-info {
+  background: var(--bg2);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.65;
+  min-height: 64px;
+  border: 1px solid var(--border);
+}
+
+.tc-info strong { color: var(--ink); font-weight: 500; }
+
+/* ─── ACCORDION ─── */
+.accordion { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+
+.acc-item {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s;
+}
+
+.acc-item.open { border-color: var(--border2); }
+
+.acc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-body);
+}
+
+.acc-header:hover { background: var(--bg2); }
+
+.acc-num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+}
+
+.acc-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.acc-sub {
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 400;
+}
+
+.acc-chevron {
+  font-size: 18px;
+  color: var(--text3);
+  transition: transform 0.25s;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.acc-item.open .acc-chevron { transform: rotate(90deg); }
+
+.acc-body {
+  display: none;
+  padding: 1rem 1.25rem 1.25rem 1.25rem;
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.7;
+  border-top: 1px solid var(--border);
+}
+
+.acc-item.open .acc-body { display: block; }
+
+/* ─── TABLE ─── */
+.mod-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.mod-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 8px 14px;
+  border-bottom: 1.5px solid var(--border2);
+  background: var(--bg2);
+}
+
+.mod-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.mod-table tr:last-child td { border-bottom: none; }
+.mod-table tr:hover td { background: var(--bg2); }
+
+/* ─── QUIZ ─── */
+.quiz-wrap { max-width: 640px; }
+
+.quiz-dots {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 1.25rem;
+}
+
+.q-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1.5px solid var(--border2);
+  transition: all 0.2s;
+}
+
+.q-dot.done { background: var(--teal); border-color: var(--teal); }
+.q-dot.cur { background: var(--accent); border-color: var(--accent); transform: scale(1.2); }
+
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.q-num {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.q-text {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+
+.q-opts { display: flex; flex-direction: column; gap: 8px; }
+
+.q-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: .875rem 1rem;
+  background: var(--bg);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  width: 100%;
+  font-family: var(--font-body);
+}
+
+.q-opt:hover:not(.disabled) {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--ink);
+}
+
+.q-opt .opt-l {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--bg3);
+  color: var(--text3);
+  flex-shrink: 0;
+  border: 1.5px solid var(--border2);
+  transition: all 0.15s;
+  font-family: var(--font-display);
+}
+
+.q-opt:hover:not(.disabled) .opt-l {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.q-opt.correct { border-color: var(--teal); background: var(--teal-bg); color: var(--teal); }
+.q-opt.correct .opt-l { background: var(--teal); color: #fff; border-color: var(--teal); }
+.q-opt.wrong { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+.q-opt.wrong .opt-l { background: var(--red); color: #fff; border-color: var(--red); }
+.q-opt.disabled { cursor: default; pointer-events: none; }
+
+.q-feedback {
+  border-radius: var(--radius);
+  padding: .875rem 1.125rem;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-top: 1rem;
+  border: 1px solid;
+  display: none;
+}
+
+.q-feedback.correct { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+.q-feedback.wrong { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+
+.quiz-action { display: flex; justify-content: flex-end; margin-top: .875rem; }
+
+.btn-main {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 22px;
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.02em;
+}
+
+.btn-main:hover { background: var(--accent); }
+.btn-main:disabled { opacity: 0.35; cursor: default; }
+
+.btn-outline {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 22px;
+  background: transparent;
+  color: var(--text2);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+.quiz-result {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.result-donut {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  position: relative;
+  background: conic-gradient(var(--accent) 0% var(--pct, 0%), var(--bg3) var(--pct, 0%));
+}
+
+.result-donut::before {
+  content: '';
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.result-pct {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.quiz-result h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.quiz-result p {
+  font-size: 14px;
+  color: var(--text2);
+  max-width: 420px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.65;
+}
+
+/* ─── DIVIDER ─── */
+.divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+
+@media (max-width: 700px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .section { padding: 1.25rem; }
+  .compare-grid, .grid-2 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <a href="index.html" class="btn-back-home">← Beranda</a>
+      <div class="brand-eyebrow">Modul Pembelajaran</div>
+      <h1>Transfer Case &amp; 4WD</h1>
+      <p>Sistem Pemindah Tenaga</p>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Materi</div>
+      <button class="nav-item active" onclick="show('overview')"><span class="ni">◈</span>Pengantar</button>
+      <button class="nav-item" onclick="show('types')"><span class="ni">⬡</span>Tipe Transfer Case</button>
+      <button class="nav-item" onclick="show('housing')"><span class="ni">⊡</span>Konstruksi Bodi</button>
+      <button class="nav-item" onclick="show('operation')"><span class="ni">⊕</span>Sistem Pengoperasian</button>
+      <button class="nav-item" onclick="show('simulator')"><span class="ni">⚙</span>Simulator 4WD</button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Evaluasi</div>
+      <button class="nav-item" onclick="show('quiz')"><span class="ni">✦</span>Uji Pemahaman</button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="prog-label">
+        <span>Progres Materi</span>
+        <span id="prog-txt">0 / 5</span>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ─── OVERVIEW ─── -->
+    <div id="sec-overview" class="section active">
+      <div class="page-header">
+        <div class="page-eyebrow b-accent">Pengantar</div>
+        <h2>Transfer Case</h2>
+        <p>Unit pemindah tenaga pada kendaraan 4WD yang mendistribusikan torsi ke as roda depan dan belakang. Dipasang di belakang transmisi dengan satu poros input dan dua poros output.</p>
+      </div>
+
+      <div class="card-grid">
+        <div class="info-card">
+          <div class="ic-icon" style="background:var(--accent-bg)">⚡</div>
+          <h4>Fungsi Utama</h4>
+          <p>Mendistribusikan tenaga dari transmisi ke poros penggerak depan dan belakang secara bersamaan untuk traksi maksimal.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon" style="background:var(--teal-bg)">⬡</div>
+          <h4>Diferensial Pusat</h4>
+          <p>Beberapa transfer case memiliki diferensial pusat untuk distribusi torsi proporsional sesuai kondisi permukaan jalan.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon" style="background:var(--amber-bg)">⊞</div>
+          <h4>Differential Lock</h4>
+          <p>Mengunci poros depan dan belakang secara mekanis saat off-road. Ada versi manual dan otomatis untuk traksi di medan berat.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge b-teal" style="margin-bottom:10px">Mengapa diperlukan?</div>
+        <p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:12px">
+          Ketika roda depan dan belakang berputar pada kecepatan berbeda di aspal, terjadi <strong style="color:var(--ink)">ban slip</strong>. Di jalan gembur (pasir, salju, lumpur), perbedaan kecepatan ini tidak menjadi masalah karena ban bisa slip di permukaan. Transfer case mengelola perbedaan ini agar traksi tetap optimal.
+        </p>
+        <div class="divider"></div>
+        <div class="grid-2">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px">Kendaraan yang menggunakan:</div>
+            <ul style="list-style:none;font-size:13px;color:var(--text2);display:flex;flex-direction:column;gap:3px">
+              <li style="padding-left:14px;position:relative"><span style="position:absolute;left:0">—</span>Truk off-road 4WD</li>
+              <li style="padding-left:14px;position:relative"><span style="position:absolute;left:0">—</span>SUV dan Jeep</li>
+              <li style="padding-left:14px;position:relative"><span style="position:absolute;left:0">—</span>Truk komersial & militer</li>
+              <li style="padding-left:14px;position:relative"><span style="position:absolute;left:0">—</span>Mobil sport AWD</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px">Metode pemindahan tenaga:</div>
+            <ul style="list-style:none;font-size:13px;color:var(--text2);display:flex;flex-direction:column;gap:3px">
+              <li style="padding-left:14px;position:relative"><span style="position:absolute;left:0">—</span>Roda gigi (gear-driven)</li>
+              <li style="padding-left:14px;position:relative"><span style="position:absolute;left:0">—</span>Rantai (chain-driven)</li>
+              <li style="padding-left:14px;position:relative"><span style="position:absolute;left:0">—</span>Hidrolik</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TYPES ─── -->
+    <div id="sec-types" class="section">
+      <div class="page-header">
+        <div class="page-eyebrow b-blue">Tipe Transfer Case</div>
+        <h2>Menurut Tipe Penggerak</h2>
+        <p>Transfer case diklasifikasikan berdasarkan mekanisme yang digunakan untuk memindahkan tenaga ke as roda depan dan belakang.</p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="compare-card-head">
+            <div class="cc-icon" style="background:var(--accent-bg)">⚙</div>
+            <div>
+              <h4>Penggerak Roda Gigi</h4>
+              <p class="acc-sub">Gear-driven</p>
+            </div>
+          </div>
+          <div class="compare-card-body">
+            <ul>
+              <li>Menggunakan set roda gigi untuk menggerakkan kedua poros</li>
+              <li>Konstruksi kuat dan tangguh</li>
+              <li>Unit lebih berat dibanding chain-driven</li>
+              <li>Digunakan pada truk-truk besar dan kendaraan kerja berat</li>
+              <li>Kini mulai dipakai juga untuk mobil penumpang modern</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="compare-card">
+          <div class="compare-card-head">
+            <div class="cc-icon" style="background:var(--teal-bg)">⛓</div>
+            <div>
+              <h4>Penggerak Rantai</h4>
+              <p class="acc-sub">Chain-driven</p>
+            </div>
+          </div>
+          <div class="compare-card-body">
+            <ul>
+              <li>Menggunakan rantai untuk menggerakkan poros depan</li>
+              <li>Lebih tenang dan lebih ringan dari gear-driven</li>
+              <li>Umum pada truk ringan, truk ukuran penuh, Jeep, SUV</li>
+              <li>Perawatan lebih mudah karena konstruksi lebih sederhana</li>
+              <li>Tetap bisa menggerakkan kedua as roda</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge b-amber" style="margin-bottom:12px">Perbandingan cepat</div>
+        <div style="overflow-x:auto">
+          <table class="mod-table">
+            <thead>
+              <tr>
+                <th>Aspek</th>
+                <th>Gear-driven</th>
+                <th>Chain-driven</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Kebisingan</td>
+                <td>Lebih berisik</td>
+                <td>Lebih senyap</td>
+              </tr>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Bobot</td>
+                <td>Lebih berat</td>
+                <td>Lebih ringan</td>
+              </tr>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Kekuatan</td>
+                <td>Sangat tinggi</td>
+                <td>Tinggi</td>
+              </tr>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Kendaraan umum</td>
+                <td>Truk besar, off-road berat</td>
+                <td>SUV, Jeep, truk ringan</td>
+              </tr>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Harga</td>
+                <td>Lebih mahal</td>
+                <td>Lebih terjangkau</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── HOUSING ─── -->
+    <div id="sec-housing" class="section">
+      <div class="page-header">
+        <div class="page-eyebrow b-purple">Konstruksi Bodi</div>
+        <h2>Tipe Konstruksi Bodi</h2>
+        <p>Transfer case diklasifikasikan berdasarkan hubungannya dengan transmisi — menyatu atau terpisah.</p>
+      </div>
+
+      <div class="accordion" id="acc-housing"></div>
+
+      <div class="card">
+        <div class="badge b-teal" style="margin-bottom:10px">Ringkasan perbandingan</div>
+        <div style="overflow-x:auto">
+          <table class="mod-table">
+            <thead>
+              <tr><th>Aspek</th><th>Menyatu dengan Transmisi</th><th>Terpisah (Independen)</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Posisi</td>
+                <td>Langsung di belakang transmisi, bodi sama</td>
+                <td>Terpisah di bawah driveline</td>
+              </tr>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Koneksi</td>
+                <td>Integral / poros output transmisi langsung</td>
+                <td>Via driveshaft pendek</td>
+              </tr>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Kendaraan</td>
+                <td>Truk ringan, SUV, kendaraan penumpang 4WD</td>
+                <td>Truk komersial, truk militer, wheelbase panjang</td>
+              </tr>
+              <tr>
+                <td style="color:var(--ink);font-weight:500">Keunggulan</td>
+                <td>Kompak, tidak perlu driveshaft tambahan</td>
+                <td>Fleksibel untuk wheelbase sangat panjang</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── OPERATION ─── -->
+    <div id="sec-operation" class="section">
+      <div class="page-header">
+        <div class="page-eyebrow b-amber">Sistem Pengoperasian</div>
+        <h2>Cara Mengoperasikan Transfer Case</h2>
+        <p>Transfer case dapat dioperasikan secara manual maupun elektronik, bergantung pada desain kendaraan.</p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="compare-card-head">
+            <div class="cc-icon" style="background:var(--amber-bg)">⊢</div>
+            <div>
+              <h4>MSOF</h4>
+              <p class="acc-sub">Manual Shift On-the-Fly</p>
+            </div>
+          </div>
+          <div class="compare-card-body">
+            <ul>
+              <li>Tuas pemilih di lantai kabin pengemudi</li>
+              <li>Pengunci hub otomatis pada as roda depan</li>
+              <li>Atau selector manual hub "LOCK" / "UNLOCK"</li>
+              <li>Operasi mirip tuas transmisi manual biasa</li>
+              <li>Lebih sederhana, tidak butuh listrik untuk operasi dasar</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="compare-card">
+          <div class="compare-card-head">
+            <div class="cc-icon" style="background:var(--blue-bg)">⊕</div>
+            <div>
+              <h4>ESOF</h4>
+              <p class="acc-sub">Electronic Shift On-the-Fly</p>
+            </div>
+          </div>
+          <div class="compare-card-body">
+            <ul>
+              <li>Selector switch / tombol di dasbor</li>
+              <li>Pengunci hub poros depan otomatis</li>
+              <li>Beberapa model punya SelecTrac (saklar slider)</li>
+              <li>Memiliki encoder motor untuk menggerakkan sistem</li>
+              <li>Lebih mudah dioperasikan, cukup tekan tombol</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge b-purple" style="margin-bottom:12px">Posisi selector transfer case</div>
+        <div style="overflow-x:auto">
+          <table class="mod-table">
+            <thead>
+              <tr><th>Posisi</th><th>Mode</th><th>Kondisi Penggunaan</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge b-teal">2H</span></td>
+                <td style="color:var(--ink);font-weight:500">2-Wheel Drive High</td>
+                <td>Jalan normal aspal kering, kecepatan tinggi, efisiensi BBM optimal</td>
+              </tr>
+              <tr>
+                <td><span class="badge b-amber">4H</span></td>
+                <td style="color:var(--ink);font-weight:500">4-Wheel Drive High</td>
+                <td>Jalan licin, hujan, salju, pasir lepas — kecepatan menengah</td>
+              </tr>
+              <tr>
+                <td><span class="badge b-accent">4L</span></td>
+                <td style="color:var(--ink);font-weight:500">4-Wheel Drive Low</td>
+                <td>Off-road berat, lumpur, tanjakan curam, traksi maksimal di kecepatan rendah</td>
+              </tr>
+              <tr>
+                <td><span class="badge b-purple">N</span></td>
+                <td style="color:var(--ink);font-weight:500">Netral</td>
+                <td>Penghela (towing) atau saat kendaraan ditarik tanpa mesin hidup</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SIMULATOR ─── -->
+    <div id="sec-simulator" class="section">
+      <div class="page-header">
+        <div class="page-eyebrow b-teal">Simulator</div>
+        <h2>Simulator Aliran Tenaga 4WD</h2>
+        <p>Pilih mode 4WD untuk melihat ke mana tenaga disalurkan dan bagaimana cara kerjanya.</p>
+      </div>
+
+      <div class="tc-panel">
+        <div class="tc-title">Mode Transfer Case</div>
+        <div class="mode-selector">
+          <button class="mode-btn" onclick="pickMode('2H')">2H</button>
+          <button class="mode-btn" onclick="pickMode('N')">N</button>
+          <button class="mode-btn" onclick="pickMode('4H')">4H</button>
+          <button class="mode-btn" onclick="pickMode('4L')">4L</button>
+        </div>
+
+        <div class="vehicle-diagram">
+          <svg viewBox="0 0 520 280" xmlns="http://www.w3.org/2000/svg" id="tc-svg">
+            <!-- Vehicle body outline -->
+            <rect x="140" y="90" width="240" height="100" rx="14" fill="#f0ede6" stroke="#c5bfb5" stroke-width="1.5"/>
+            <text x="260" y="145" text-anchor="middle" fill="#5a5650" font-size="12" font-family="Space Grotesk" font-weight="500">KENDARAAN</text>
+
+            <!-- Engine -->
+            <rect x="230" y="105" width="60" height="30" rx="6" fill="#e2ddd2" stroke="#9c978f" stroke-width="1"/>
+            <text x="260" y="124" text-anchor="middle" fill="#5a5650" font-size="10" font-family="Space Grotesk">Mesin</text>
+
+            <!-- Transmission -->
+            <rect x="220" y="150" width="80" height="28" rx="6" fill="#e2ddd2" stroke="#9c978f" stroke-width="1"/>
+            <text x="260" y="168" text-anchor="middle" fill="#5a5650" font-size="10" font-family="Space Grotesk">Transmisi</text>
+
+            <!-- Transfer Case box -->
+            <rect x="225" y="195" width="70" height="32" rx="7" id="tc-box" fill="#f5f2eb" stroke="#c4410c" stroke-width="1.5"/>
+            <text x="260" y="215" text-anchor="middle" fill="#c4410c" font-size="10" font-family="Space Grotesk" font-weight="600">Transfer Case</text>
+
+            <!-- Arrow: Transmission to TC -->
+            <line x1="260" y1="178" x2="260" y2="195" stroke="#9c978f" stroke-width="1.5" marker-end="url(#arr)"/>
+
+            <!-- Front axle shaft -->
+            <line x1="260" y1="195" x2="260" y2="165" id="shaft-front-v" stroke="#9c978f" stroke-width="0" opacity="0"/>
+            <line x1="100" y1="60" x2="260" y2="60" id="shaft-front" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Rear axle shaft -->
+            <line x1="260" y1="227" x2="260" y2="252" id="shaft-rear-v" stroke="#9c978f" stroke-width="1.5"/>
+            <line x1="100" y1="252" x2="420" y2="252" id="shaft-rear" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Front shaft from TC -->
+            <line x1="225" y1="205" x2="100" y2="205" id="front-tc-line" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+            <line x1="100" y1="205" x2="100" y2="60" id="front-v-line" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Rear shaft from TC -->
+            <line x1="295" y1="211" x2="420" y2="211" id="rear-tc-line" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+            <line x1="420" y1="211" x2="420" y2="252" id="rear-v-line" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Wheels - Front Left -->
+            <rect x="52" y="40" width="36" height="16" rx="3" id="wFL" fill="#9c978f" stroke="none"/>
+            <text x="70" y="35" text-anchor="middle" fill="#9c978f" font-size="9" font-family="Space Grotesk">Depan Kiri</text>
+
+            <!-- Wheels - Front Right -->
+            <rect x="52" y="252" width="36" height="16" rx="3" id="wFR" fill="#9c978f" stroke="none"/>
+            <text x="70" y="280" text-anchor="middle" fill="#9c978f" font-size="9" font-family="Space Grotesk">Depan Kanan</text>
+
+            <!-- Wheels - Rear Left -->
+            <rect x="432" y="40" width="36" height="16" rx="3" id="wRL" fill="#9c978f" stroke="none"/>
+            <text x="450" y="35" text-anchor="middle" fill="#9c978f" font-size="9" font-family="Space Grotesk">Belakang Kiri</text>
+
+            <!-- Wheels - Rear Right -->
+            <rect x="432" y="252" width="36" height="16" rx="3" id="wRR" fill="#9c978f" stroke="none"/>
+            <text x="450" y="280" text-anchor="middle" fill="#9c978f" font-size="9" font-family="Space Grotesk">Belakang Kanan</text>
+
+            <!-- Front axle horizontal -->
+            <line x1="88" y1="48" x2="52" y2="48" id="axFL" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+            <line x1="88" y1="260" x2="52" y2="260" id="axFR" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+            <line x1="432" y1="48" x2="468" y2="48" id="axRL" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+            <line x1="432" y1="260" x2="468" y2="260" id="axRR" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Differentials -->
+            <circle cx="100" cy="60" r="10" id="diff-front" fill="#e2ddd2" stroke="#9c978f" stroke-width="1.5"/>
+            <text x="100" y="63" text-anchor="middle" fill="#5a5650" font-size="7" font-family="Space Grotesk">Dep</text>
+
+            <circle cx="420" cy="252" r="10" id="diff-rear" fill="#e2ddd2" stroke="#9c978f" stroke-width="1.5"/>
+            <text x="420" y="255" text-anchor="middle" fill="#5a5650" font-size="7" font-family="Space Grotesk">Blk</text>
+
+            <defs>
+              <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L6,3 z" fill="#9c978f"/>
+              </marker>
+            </defs>
+
+            <!-- Mode label -->
+            <rect x="216" y="228" width="88" height="20" rx="5" id="mode-label-bg" fill="#e2ddd2"/>
+            <text x="260" y="242" id="mode-label" text-anchor="middle" fill="#5a5650" font-size="11" font-family="Space Grotesk" font-weight="600">Pilih mode</text>
+          </svg>
+        </div>
+
+        <div class="tc-info" id="tc-info">Pilih mode di atas untuk melihat aliran tenaga transfer case.</div>
+      </div>
+
+      <div class="card">
+        <div class="badge b-accent" style="margin-bottom:10px">Kapan menggunakan setiap mode?</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:.5rem">
+          <div style="padding:.875rem;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+            <div style="font-size:13px;font-weight:600;color:var(--teal);margin-bottom:4px">2H — Jalan Normal</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.5">Aspal kering, jalan raya, kondisi normal. Hanya roda belakang yang aktif. Paling hemat bahan bakar.</div>
+          </div>
+          <div style="padding:.875rem;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+            <div style="font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px">4H — Medan Licin</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.5">Hujan, salju, pasir, kerikil. Semua roda aktif kecepatan sedang. Bisa diaktifkan saat berjalan.</div>
+          </div>
+          <div style="padding:.875rem;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">4L — Off-road Berat</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.5">Lumpur dalam, tanjakan ekstrem, medan sangat berat. Torsi sangat besar, kecepatan rendah.</div>
+          </div>
+          <div style="padding:.875rem;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+            <div style="font-size:13px;font-weight:600;color:var(--purple);margin-bottom:4px">N — Towing / Ditarik</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.5">Saat kendaraan ditarik oleh truk derek tanpa mesin hidup, agar transmisi tidak rusak.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── QUIZ ─── -->
+    <div id="sec-quiz" class="section">
+      <div class="page-header">
+        <div class="page-eyebrow b-green">Evaluasi</div>
+        <h2>Uji Pemahaman</h2>
+        <p>Jawab pertanyaan berikut untuk menguji pemahamanmu tentang transfer case dan sistem 4WD.</p>
+      </div>
+
+      <div class="quiz-wrap">
+        <div class="quiz-dots" id="quiz-dots"></div>
+
+        <div id="quiz-active">
+          <div class="quiz-card">
+            <div class="q-num" id="q-num">Soal 1 dari 8</div>
+            <div class="q-text" id="q-text"></div>
+            <div class="q-opts" id="q-opts"></div>
+            <div class="q-feedback" id="q-fb"></div>
+          </div>
+          <div class="quiz-action">
+            <button class="btn-main" id="q-next" onclick="nextQ()" disabled>Soal berikutnya →</button>
+          </div>
+        </div>
+
+        <div class="quiz-result" id="quiz-result">
+          <div class="result-donut" id="result-donut">
+            <span class="result-pct" id="result-pct">0%</span>
+          </div>
+          <h3 id="result-title"></h3>
+          <p id="result-msg"></p>
+          <button class="btn-outline" onclick="restartQuiz()">Ulangi kuis</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── NAVIGATION ───
+var visited = { overview: true };
+var sectionMap = ['overview','types','housing','operation','simulator','quiz'];
+
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  var items = document.querySelectorAll('.nav-item');
+  var idx = sectionMap.indexOf(id);
+  if (idx >= 0) items[idx].classList.add('active');
+  visited[id] = true;
+  updateProg();
+  if (id === 'housing') initHousing();
+  if (id === 'quiz') initQuiz();
+  if (id === 'simulator') initSimulator();
+}
+
+function updateProg() {
+  var topics = ['overview','types','housing','operation','simulator'];
+  var done = topics.filter(t => visited[t]).length;
+  document.getElementById('prog-txt').textContent = done + ' / ' + topics.length;
+  document.getElementById('prog-fill').style.width = Math.round(done / topics.length * 100) + '%';
+}
+
+// ─── HOUSING ACCORDION ───
+var housingData = [
+  {
+    num: '01', badge: 'b-teal', title: 'Menyatu dengan Transmisi',
+    sub: 'Integral / terpasang langsung',
+    body: 'Transfer case menyatu terpasang langsung ke bodi transmisi, biasanya antara poros output transmisi dan driveshaft (poros propeller) belakang. Kadang-kadang merupakan bagian integral dari transmisi dengan bodi yang sama. Umum digunakan pada truk ringan, SUV, dan kendaraan penumpang 4WD. Lebih kompak karena tidak memerlukan driveshaft tambahan antara transmisi dan transfer case.'
+  },
+  {
+    num: '02', badge: 'b-coral', title: 'Terpisah (Independen) dari Transmisi',
+    sub: 'Stand-alone / dihubungkan via driveshaft',
+    body: 'Transfer case yang terpisah benar-benar independen dari transmisi. Terletak di bagian bawah driveline dan terhubung ke transmisi melalui driveshaft (poros penggerak) yang pendek. Digunakan pada kendaraan dengan wheelbase yang sangat panjang, seperti truk komersial besar atau truk militer, di mana posisi transmisi dan axle berjauhan sehingga tidak memungkinkan pemasangan langsung.'
+  },
+];
+
+var accHousingInited = false;
+function initHousing() {
+  if (accHousingInited) return;
+  accHousingInited = true;
+  var c = document.getElementById('acc-housing');
+  c.innerHTML = housingData.map((d, i) => `
+    <div class="acc-item" id="ah${i}">
+      <button class="acc-header" onclick="toggleAcc('ah${i}')">
+        <div class="acc-num badge ${d.badge}">${d.num}</div>
+        <div>
+          <div class="acc-title">${d.title}</div>
+          <div class="acc-sub">${d.sub}</div>
+        </div>
+        <span class="acc-chevron">›</span>
+      </button>
+      <div class="acc-body">${d.body}</div>
+    </div>`).join('');
+}
+
+function toggleAcc(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ─── SIMULATOR ───
+var simInited = false;
+var modeData = {
+  '2H': {
+    label: '2H — 2WD High',
+    info: '<strong>2H (2-Wheel Drive High):</strong> Hanya poros belakang yang aktif. Hub sleeve ditekan ke gigi "high speed gear", front hub clutch pada posisi netral. Aliran tenaga: Input → High Speed Gear → L/H Clutch Hub → Poros Roda Belakang. Mode ini paling efisien untuk jalan aspal normal.',
+    frontActive: false, rearActive: true, isLow: false
+  },
+  '4H': {
+    label: '4H — 4WD High',
+    info: '<strong>4H (4-Wheel Drive High):</strong> Semua roda aktif pada kecepatan "High". Front hub clutch terhubung ke poros output depan. Poros depan dan belakang berjalan bersama pada kecepatan tinggi. Cocok untuk medan licin, hujan deras, dan permukaan gembur di kecepatan sedang.',
+    frontActive: true, rearActive: true, isLow: false
+  },
+  '4L': {
+    label: '4L — 4WD Low',
+    info: '<strong>4L (4-Wheel Drive Low):</strong> Semua roda aktif pada kecepatan "Low". L/H hub clutch terhubung ke "Low speed gear". Torsi jauh lebih besar, kecepatan sangat rendah. Untuk off-road ekstrem, lumpur dalam, pendakian curam, dan kondisi di mana traksi maksimal dibutuhkan.',
+    frontActive: true, rearActive: true, isLow: true
+  },
+  'N': {
+    label: 'N — Netral',
+    info: '<strong>Netral:</strong> Transfer case tidak meneruskan tenaga ke poros manapun. Digunakan saat kendaraan ditarik (towing) oleh kendaraan lain tanpa mesin hidup, agar transmisi dan komponen driveline tidak rusak akibat putaran paksa.',
+    frontActive: false, rearActive: false, isLow: false
+  },
+};
+
+function initSimulator() {
+  if (simInited) return;
+  simInited = true;
+}
+
+function pickMode(mode) {
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === mode);
+  });
+  var d = modeData[mode];
+  document.getElementById('tc-info').innerHTML = d.info;
+  document.getElementById('mode-label').textContent = d.label;
+
+  var activeColor = '#c4410c';
+  var dimColor = '#d4cfc7';
+  var rearColor = d.rearActive ? activeColor : dimColor;
+  var frontColor = d.frontActive ? activeColor : dimColor;
+  var wheelRear = d.rearActive ? '#2c2820' : '#9c978f';
+  var wheelFront = d.frontActive ? '#2c2820' : '#9c978f';
+  var tcBoxColor = (d.frontActive || d.rearActive) ? '#fff7f4' : '#f0ede6';
+  var tcStroke = (d.frontActive || d.rearActive) ? '#c4410c' : '#9c978f';
+
+  function setLine(id, color) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute('stroke', color);
+  }
+
+  function setFill(id, fill, stroke) {
+    var el = document.getElementById(id);
+    if (el) { el.setAttribute('fill', fill); if (stroke) el.setAttribute('stroke', stroke); }
+  }
+
+  // rear shafts
+  setLine('shaft-rear', rearColor);
+  setLine('rear-tc-line', rearColor);
+  setLine('rear-v-line', rearColor);
+  setLine('axRL', rearColor);
+  setLine('axRR', rearColor);
+  setFill('diff-rear', d.rearActive ? '#ffe4d6' : '#e2ddd2', d.rearActive ? '#c4410c' : '#9c978f');
+  setFill('wRL', wheelRear);
+  setFill('wRR', wheelRear);
+
+  // front shafts
+  setLine('shaft-rear', rearColor);
+  setLine('front-tc-line', frontColor);
+  setLine('front-v-line', frontColor);
+  setLine('axFL', frontColor);
+  setLine('axFR', frontColor);
+  setFill('diff-front', d.frontActive ? '#ffe4d6' : '#e2ddd2', d.frontActive ? '#c4410c' : '#9c978f');
+  setFill('wFL', wheelFront);
+  setFill('wFR', wheelFront);
+
+  // tc box
+  setFill('tc-box', tcBoxColor, tcStroke);
+
+  // label
+  var lbg = document.getElementById('mode-label-bg');
+  if (lbg) lbg.setAttribute('fill', d.isLow ? '#ffe4d6' : (d.frontActive ? '#fff7f4' : '#e2ddd2'));
+  var lbl = document.getElementById('mode-label');
+  if (lbl) lbl.setAttribute('fill', d.frontActive || d.rearActive ? '#c4410c' : '#5a5650');
+}
+
+// ─── QUIZ ───
+var questions = [
+  {
+    q: 'Apa fungsi utama transfer case pada kendaraan 4WD?',
+    opts: ['Mengontrol sistem suspensi kendaraan','Mendistribusikan tenaga ke poros depan dan belakang','Mengubah kecepatan putaran mesin','Mengatur tekanan ban secara otomatis'],
+    ans: 1, fb: 'Transfer case mendistribusikan tenaga dari transmisi ke poros penggerak depan dan belakang, memberikan traksi ke semua roda kendaraan.'
+  },
+  {
+    q: 'Transfer case jenis chain-driven memiliki keunggulan apa dibanding gear-driven?',
+    opts: ['Lebih kuat dan tahan beban berat','Lebih mahal tapi lebih presisi','Lebih tenang dan lebih ringan','Tidak memerlukan pelumasan'],
+    ans: 2, fb: 'Chain-driven transfer case lebih tenang dalam beroperasi dan lebih ringan bobotnya, sehingga banyak digunakan pada SUV, Jeep, dan truk ringan.'
+  },
+  {
+    q: 'Transfer case terpisah (independen) cocok digunakan pada kendaraan seperti apa?',
+    opts: ['Mobil penumpang kecil FWD','Truk komersial atau militer dengan wheelbase sangat panjang','SUV kelas menengah','Kendaraan sport dengan mesin depan'],
+    ans: 1, fb: 'Transfer case terpisah digunakan pada kendaraan wheelbase sangat panjang (truk komersial, truk militer) karena posisi transmisi dan axle terlalu berjauhan untuk pemasangan langsung.'
+  },
+  {
+    q: 'Apa singkatan dari ESOF dan apa bedanya dengan MSOF?',
+    opts: ['Electric Speed On-road; dioperasikan di aspal saja','Electronic Shift On-the-Fly; menggunakan motor dan tombol/switch, bukan tuas manual','Engine-Switch Off-road Function; mematikan mesin saat off-road','Emergency Shift Override Function; untuk keadaan darurat'],
+    ans: 1, fb: 'ESOF (Electronic Shift On-the-Fly) menggunakan selector switch/tombol di dasbor dengan encoder motor, berbeda dengan MSOF yang menggunakan tuas manual di lantai kabin.'
+  },
+  {
+    q: 'Posisi 4L pada transfer case digunakan untuk kondisi apa?',
+    opts: ['Jalan aspal kering kecepatan tinggi','Jalan tol bebas hambatan','Off-road berat, lumpur dalam, tanjakan ekstrem — butuh torsi maksimal','Berkendara di kota dengan banyak lampu merah'],
+    ans: 2, fb: '4L (4-Wheel Drive Low) memberikan torsi sangat besar pada kecepatan rendah. Digunakan untuk off-road ekstrem, lumpur dalam, tanjakan sangat curam, dan medan berat lainnya.'
+  },
+  {
+    q: 'Mengapa posisi N (netral) pada transfer case penting?',
+    opts: ['Agar konsumsi BBM lebih hemat di jalan normal','Agar kendaraan bisa ditarik tanpa merusak transmisi','Untuk mengaktifkan differential lock secara otomatis','Agar gigi transmisi tidak berpindah sendiri'],
+    ans: 1, fb: 'Posisi N (netral) pada transfer case memungkinkan kendaraan ditarik (towing) tanpa mesin hidup, sehingga transmisi dan komponen driveline tidak rusak akibat putaran paksa dari roda.'
+  },
+  {
+    q: 'Apa itu differential lock pada transfer case?',
+    opts: ['Kunci untuk mencegah transfer case bergerak saat parkir','Pengunci mekanis as roda depan dan belakang untuk traksi maksimal di medan licin','Sistem elektronik yang mengatur kecepatan mesin','Komponen yang mengunci transmisi di satu posisi gigi'],
+    ans: 1, fb: 'Differential lock mengunci as roda depan dan belakang secara mekanis saat off-road. Berguna ketika salah satu as roda di permukaan sangat licin (lumpur) sementara yang lain memiliki traksi lebih baik.'
+  },
+  {
+    q: 'Pada posisi 2H, ke mana aliran tenaga dari transfer case diarahkan?',
+    opts: ['Ke poros roda depan saja','Ke poros roda belakang saja','Ke semua empat roda dengan beban seimbang','Ke diferensial pusat, lalu dibagi merata'],
+    ans: 1, fb: 'Pada posisi 2H, front hub clutch pada posisi netral sehingga tenaga hanya disalurkan ke poros roda belakang. Ini membuat kendaraan bergerak hanya dengan dua roda penggerak (RWD mode).'
+  },
+];
+
+var qIdx = 0, score = 0, answered = false, quizReady = false;
+
+function initQuiz() {
+  if (quizReady) return;
+  quizReady = true;
+  buildDots();
+  renderQ();
+}
+
+function buildDots() {
+  var d = document.getElementById('quiz-dots');
+  d.innerHTML = questions.map((_,i) => `<div class="q-dot ${i===0?'cur':''}" id="dot${i}"></div>`).join('');
+}
+
+function syncDots() {
+  questions.forEach((_,i) => {
+    var el = document.getElementById('dot'+i);
+    if (!el) return;
+    el.className = 'q-dot' + (i < qIdx ? ' done' : i === qIdx ? ' cur' : '');
+  });
+}
+
+function renderQ() {
+  var q = questions[qIdx];
+  answered = false;
+  document.getElementById('q-num').textContent = 'Soal ' + (qIdx+1) + ' dari ' + questions.length;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-fb').style.display = 'none';
+  document.getElementById('q-next').disabled = true;
+  document.getElementById('q-next').textContent = qIdx === questions.length-1 ? 'Lihat hasil' : 'Soal berikutnya →';
+  var letters = ['A','B','C','D'];
+  document.getElementById('q-opts').innerHTML = q.opts.map((o,i) =>
+    `<button class="q-opt" onclick="answerQ(${i})">
+      <span class="opt-l">${letters[i]}</span>${o}
+    </button>`).join('');
+}
+
+function answerQ(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[qIdx];
+  document.querySelectorAll('.q-opt').forEach(function(b, idx) {
+    b.classList.add('disabled');
+    if (idx === q.ans) b.classList.add('correct');
+    else if (idx === i && i !== q.ans) b.classList.add('wrong');
+  });
+  if (i === q.ans) score++;
+  var fb = document.getElementById('q-fb');
+  fb.className = 'q-feedback ' + (i === q.ans ? 'correct' : 'wrong');
+  fb.textContent = (i === q.ans ? '✓ Tepat! ' : '✗ Kurang tepat. ') + q.fb;
+  fb.style.display = 'block';
+  document.getElementById('q-next').disabled = false;
+}
+
+function nextQ() {
+  qIdx++;
+  if (qIdx >= questions.length) { showResult(); return; }
+  syncDots();
+  renderQ();
+}
+
+function showResult() {
+  document.getElementById('quiz-active').style.display = 'none';
+  var r = document.getElementById('quiz-result');
+  r.style.display = 'block';
+  var pct = Math.round(score / questions.length * 100);
+  document.getElementById('result-donut').style.setProperty('--pct', pct + '%');
+  document.getElementById('result-pct').textContent = pct + '%';
+  var titles = pct >= 80 ? 'Sangat baik!' : pct >= 60 ? 'Cukup baik!' : 'Perlu lebih banyak belajar.';
+  document.getElementById('result-title').textContent = titles;
+  document.getElementById('result-msg').textContent =
+    'Kamu menjawab ' + score + ' dari ' + questions.length + ' soal dengan benar (' + pct + '%). ' +
+    (pct >= 80 ? 'Pemahamanmu tentang transfer case dan sistem 4WD sudah sangat baik!'
+      : pct >= 60 ? 'Ulangi bagian yang masih kurang, terutama tipe konstruksi dan aliran tenaga.'
+      : 'Pelajari kembali seluruh materi mulai dari pengantar dan tipe-tipe transfer case.');
+}
+
+function restartQuiz() {
+  qIdx = 0; score = 0; answered = false;
+  document.getElementById('quiz-active').style.display = 'block';
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('q-next').textContent = 'Soal berikutnya →';
+  buildDots();
+  renderQ();
+}
+</script>
+</body>
+</html>

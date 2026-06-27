@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prinsip Dasar Transmisi — Interaktif</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4F8FF;
+  --surface: #FFFFFF;
+  --surface2: #E8F1FF;
+  --ink: #1A237E;
+  --ink2: rgba(26,35,126,0.72);
+  --ink3: rgba(26,35,126,0.54);
+  --accent: #FF8A00;
+  --accent2: #4DA3FF;
+  --accent3: #34D399;
+  --accent4: #E67A00;
+  --border: rgba(26,35,126,0.12);
+  --mono: 'Space Mono', monospace;
+  --sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* PROGRESS */
+.progress-bar {
+  position: fixed; top:0; left:0; right:0; height:4px;
+  background: var(--border); z-index:200;
+}
+.progress-fill {
+  height:100%; width:0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent4));
+  transition: width 0.4s ease;
+}
+
+/* TOMBOL KEMBALI */
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s;
+  z-index: 10;
+}
+.btn-back-home:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.4);
+}
+
+/* TOP BAR */
+.topbar {
+  position: fixed; top:4px; left:0; right:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 24px;
+  background: rgba(245,240,232,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index:100;
+}
+
+.topbar-title {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.nav-dots {
+  display: flex; gap:6px; align-items:center;
+}
+.nav-dot {
+  width:8px; height:8px; border-radius:50%;
+  background: var(--border); border:1.5px solid var(--ink3);
+  cursor:pointer; transition:all 0.3s;
+}
+.nav-dot.active { background: var(--accent); border-color:var(--accent); transform:scale(1.3); }
+.nav-dot.done { background: var(--accent3); border-color:var(--accent3); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center; padding: 2rem;
+  background: linear-gradient(135deg, #0066FF 0%, #4DA3FF 100%);
+  position: relative;
+  overflow: hidden;
+  color: #ffffff;
+}
+
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.5;
+}
+
+.hero-gear {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+  animation: spin-slow 12s linear infinite;
+  position: relative;
+}
+
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+
+.hero-tag {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: #FFFFFF;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 4px 14px;
+  border-radius: 3px;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.hero h1 {
+  font-family: var(--mono);
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+  position:relative;
+}
+
+.hero h1 em { color: var(--accent); font-style:normal; }
+
+.hero-sub {
+  font-size: 1rem;
+  color: var(--ink2);
+  max-width: 440px;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  position:relative;
+}
+
+.btn-start {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 14px 36px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 8px;
+  position:relative;
+}
+.btn-start:hover { background: #FF9E33; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255,138,0,0.25); }
+
+/* APP */
+.app { display:none; padding-top: 60px; }
+
+/* SECTIONS */
+.sec {
+  display:none; opacity:0;
+  max-width: 1200px; width: min(100%, 1200px); margin:0 auto;
+  padding: 3rem 1.5rem 6rem;
+  animation: fadeUp 0.4s ease forwards;
+}
+.sec.active { display:block; opacity:1; }
+
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.sec-tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+}
+
+.sec h2 {
+  font-family: var(--mono);
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.sec h2 span { color: var(--accent); }
+
+.sec-sub {
+  font-size: 0.95rem;
+  color: var(--ink2);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  max-width: 560px;
+}
+
+/* RULE CARDS */
+.rule-list {
+  display: flex; flex-direction:column; gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.rule-card {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position:relative;
+}
+
+.rule-card:hover { border-color: var(--accent); box-shadow: 3px 3px 0 rgba(192,57,43,0.1); }
+
+.rule-num {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--accent);
+  background: rgba(192,57,43,0.07);
+  border: 1px solid rgba(192,57,43,0.2);
+  width: 30px; height: 30px;
+  border-radius: 4px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  margin-top: 1px;
+}
+
+.rule-text {
+  font-size: 0.88rem;
+  color: var(--ink2);
+  line-height: 1.6;
+}
+
+.rule-text strong { color: var(--ink); }
+
+/* GEAR VISUAL - SVG animated */
+.gear-demo {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.gear-demo h4 {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.gear-demo p {
+  font-size: 0.8rem;
+  color: var(--ink2);
+  margin-top: 0.75rem;
+}
+
+/* GEAR DESIGN TABS */
+.tabs {
+  display: flex; gap: 6px; margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 7px 16px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--ink2);
+}
+.tab-btn:hover { border-color: var(--ink); color: var(--ink); }
+.tab-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+.gear-detail {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.gear-detail h3 {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--ink);
+}
+
+.pros-cons {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-top: 1rem;
+}
+
+.pros, .cons {
+  border-radius: 6px;
+  padding: 0.85rem;
+}
+
+.pros { background: rgba(39,174,96,0.07); border: 1px solid rgba(39,174,96,0.2); }
+.cons { background: rgba(192,57,43,0.06); border: 1px solid rgba(192,57,43,0.15); }
+
+.pros h5 { color: var(--accent3); font-size: 0.72rem; font-family: var(--mono); letter-spacing:0.08em; margin-bottom:0.5rem; }
+.cons h5 { color: var(--accent); font-size: 0.72rem; font-family: var(--mono); letter-spacing:0.08em; margin-bottom:0.5rem; }
+
+.pros ul, .cons ul { padding-left: 1rem; }
+.pros li, .cons li { font-size: 0.8rem; color: var(--ink2); line-height: 1.6; }
+
+.usage-badge {
+  display:inline-block;
+  padding: 3px 10px;
+  background: rgba(41,128,185,0.08);
+  border: 1px solid rgba(41,128,185,0.2);
+  color: var(--accent2);
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  border-radius: 3px;
+  margin-top: 0.75rem;
+}
+
+/* GEAR POSITION CARDS */
+.pos-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  gap: 12px; margin-bottom: 2rem;
+}
+
+.pos-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow:hidden;
+}
+
+.pos-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background: var(--accent); transform:scaleX(0); transform-origin:left;
+  transition: transform 0.3s;
+}
+
+.pos-card:hover::before, .pos-card.selected::before { transform: scaleX(1); }
+.pos-card.selected { border-color: rgba(192,57,43,0.3); box-shadow: 3px 3px 0 rgba(192,57,43,0.1); }
+
+.pos-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+.pos-card h4 { font-family: var(--mono); font-size: 0.85rem; font-weight:700; margin-bottom:0.4rem; }
+.pos-card p { font-size: 0.78rem; color: var(--ink2); line-height:1.5; }
+
+.pos-detail {
+  background: var(--surface);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--ink2);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  min-height: 56px;
+  transition: all 0.3s;
+}
+
+/* BEARING FLIP CARDS */
+.bearing-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 12px; margin-bottom: 2rem;
+}
+
+.b-card {
+  height: 190px; perspective: 1000px; cursor:pointer;
+}
+
+.b-inner {
+  width:100%; height:100%;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d; position:relative;
+}
+
+.b-card.flipped .b-inner { transform: rotateY(180deg); }
+
+.b-front, .b-back {
+  position:absolute; inset:0;
+  border-radius: 10px;
+  backface-visibility: hidden;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding: 1.25rem; text-align:center;
+  border: 1px solid var(--border);
+}
+
+.b-front { background: var(--surface); }
+.b-back { background: #1a1a1a; transform:rotateY(180deg); border-color: #333; }
+
+.b-icon { font-size: 2.2rem; margin-bottom:0.6rem; }
+.b-front h4 { font-family: var(--mono); font-size:0.82rem; font-weight:700; margin-bottom:0.25rem; }
+.b-front small { font-size: 0.68rem; color:var(--ink3); }
+.b-back h4 { font-size: 0.78rem; font-weight:700; color:#fff; margin-bottom:0.5rem; }
+.b-back p { font-size: 0.72rem; color:#aaa; line-height:1.5; }
+.b-tag { display:inline-block; padding:2px 8px; background:rgba(192,57,43,0.8); color:#fff; font-size:0.65rem; border-radius:3px; font-family:var(--mono); margin-bottom:0.5rem; }
+
+/* GEAR RATIO SIMULATOR */
+.ratio-sim {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.ratio-sim h3 {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight:700;
+  margin-bottom:0.5rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color: var(--ink3);
+}
+
+.ratio-controls {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1rem; margin: 1.5rem 0;
+}
+
+.slider-group label {
+  display:block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink2);
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.slider-group input[type=range] {
+  width:100%; accent-color: var(--accent);
+}
+
+.slider-val {
+  font-family: var(--mono);
+  font-size: 1.2rem;
+  font-weight:700;
+  color: var(--accent);
+}
+
+.ratio-display {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  display: grid; grid-template-columns: repeat(3,1fr); gap:12px; text-align:center;
+}
+
+.ratio-stat label {
+  display:block;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--ink3);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.ratio-stat .val {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.ratio-type {
+  margin-top: 0.75rem;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.type-reduksi { background: rgba(39,174,96,0.1); color: var(--accent3); border:1px solid rgba(39,174,96,0.2); }
+.type-overdrive { background: rgba(41,128,185,0.1); color: var(--accent2); border:1px solid rgba(41,128,185,0.2); }
+.type-tetap { background: rgba(230,126,34,0.1); color: var(--accent4); border:1px solid rgba(230,126,34,0.2); }
+
+/* GEAR ANIMATION CANVAS */
+canvas#gearCanvas { display:block; margin:0 auto; }
+
+/* QUIZ */
+.quiz-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.qprog {
+  display:flex; align-items:center; gap:12px; margin-bottom:1.5rem;
+}
+.qprog-track { flex:1; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+.qprog-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent4)); transition:width 0.4s; }
+.qcount { font-family:var(--mono); font-size:0.72rem; color:var(--ink3); white-space:nowrap; }
+
+.q-text {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight:700;
+  line-height:1.5;
+  margin-bottom:1.5rem;
+  color: var(--ink);
+}
+
+.q-opts { display:flex; flex-direction:column; gap:8px; margin-bottom:1rem; }
+
+.q-opt {
+  display:flex; align-items:center; gap:12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  cursor:pointer; font-size:0.87rem;
+  color:var(--ink); transition:all 0.2s;
+}
+.q-opt:hover:not(.answered) { border-color:var(--ink); }
+.q-opt.correct { border-color:var(--accent3); background:rgba(39,174,96,0.07); color:var(--accent3); }
+.q-opt.wrong { border-color:var(--accent); background:rgba(192,57,43,0.06); color:var(--accent); }
+.q-opt.answered { cursor:default; }
+
+.opt-lbl {
+  width:26px; height:26px; border-radius:3px;
+  background: var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:0.7rem; font-weight:700; flex-shrink:0;
+}
+
+.q-fb {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size:0.83rem;
+  font-weight:500;
+  display:none; margin-bottom:0.75rem;
+}
+.q-fb.ok { display:block; background:rgba(39,174,96,0.08); color:var(--accent3); border:1px solid rgba(39,174,96,0.2); }
+.q-fb.no { display:block; background:rgba(192,57,43,0.07); color:var(--accent); border:1px solid rgba(192,57,43,0.15); }
+
+/* BUTTONS */
+.btn-next {
+  display:inline-flex; align-items:center; gap:8px;
+  background: var(--ink); color:#fff; border:none;
+  padding:11px 26px; font-family:var(--mono); font-weight:700;
+  font-size:0.78rem; letter-spacing:0.05em; border-radius:4px;
+  cursor:pointer; transition:all 0.2s; margin-top:1rem;
+}
+.btn-next:hover { background:var(--accent); transform:translateY(-2px); box-shadow: 3px 3px 0 rgba(192,57,43,0.3); }
+
+.btn-sec {
+  display:inline-flex; align-items:center; gap:8px;
+  background: transparent; color:var(--ink2);
+  border: 1px solid var(--border);
+  padding:9px 22px; font-family:var(--mono); font-size:0.75rem;
+  border-radius:4px; cursor:pointer; transition:all 0.2s;
+  margin-top:1rem; margin-left:8px;
+}
+.btn-sec:hover { border-color:var(--ink); color:var(--ink); }
+
+/* COMPLETION */
+.done-wrap {
+  text-align:center; padding: 5rem 2rem 3rem;
+}
+
+.done-icon {
+  font-size:4rem;
+  display:inline-block;
+  animation: bounce 1.5s ease-in-out infinite;
+  margin-bottom:1.5rem;
+}
+
+@keyframes bounce {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)}
+}
+
+.done-wrap h2 { font-family:var(--mono); font-size:2rem; font-weight:700; margin-bottom:0.75rem; }
+.done-wrap p { color:var(--ink2); margin-bottom:2rem; }
+
+.done-stats {
+  display:flex; gap:1px; justify-content:center; margin-bottom:2.5rem;
+  flex-wrap:wrap; gap:12px;
+}
+
+.done-stat {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px; padding:1rem 1.5rem; text-align:center;
+  min-width: 120px;
+}
+.done-stat .big { font-family:var(--mono); font-size:1.8rem; font-weight:700; color:var(--accent); display:block; }
+.done-stat small { font-size:0.72rem; color:var(--ink3); font-family:var(--mono); }
+
+/* DIVIDER */
+.divider { height:1px; background:var(--border); margin:2rem 0; }
+
+/* INFO BOX */
+.info { display:flex; gap:12px; background:rgba(41,128,185,0.05); border:1px solid rgba(41,128,185,0.18); border-radius:8px; padding:1rem 1.25rem; margin-bottom:1.5rem; }
+.info-icon { font-size:1.1rem; flex-shrink:0; margin-top:2px; }
+.info p { font-size:0.83rem; color:#1a6696; line-height:1.6; }
+
+@media(max-width:500px){
+  .pros-cons{grid-template-columns:1fr;}
+  .ratio-controls{grid-template-columns:1fr;}
+  .ratio-display{grid-template-columns:1fr 1fr;}
+  .bearing-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="pFill"></div></div>
+
+<!-- TOPBAR -->
+<nav class="topbar" id="topbar" style="display:none">
+  <a href="index.html" class="btn-back-home" style="background:rgba(26,35,126,0.1);border-color:rgba(26,35,126,0.2);color:var(--ink);">← Beranda</a>
+  <div class="topbar-title">⚙ PRINSIP DASAR TRANSMISI</div>
+  <div class="nav-dots" id="navDots"></div>
+</nav>
+
+<!-- HERO -->
+<div id="heroWrap">
+  <div class="hero">
+    <div style="position:absolute;top:20px;left:20px;z-index:10;">
+      <a href="index.html" class="btn-back-home">← Beranda</a>
+    </div>
+    <div class="hero-grid"></div>
+    <div class="hero-gear">⚙️</div>
+    <div class="hero-tag">MODUL PEMBELAJARAN INTERAKTIF</div>
+    <h1>Prinsip<br><em>Dasar</em><br>Transmisi</h1>
+    <p class="hero-sub">Pelajari prinsip kerja roda gigi, desain gear, jenis bantalan, dan perhitungan rasio transmisi secara interaktif.</p>
+    <button class="btn-start" onclick="startApp()">MULAI BELAJAR →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+
+<!-- SEC 1: Ketentuan Dasar -->
+<div class="sec active" id="s1">
+  <div class="sec-tag">BAB 1 · KETENTUAN DASAR</div>
+  <h2>Prinsip Kerja<br><span>Transmisi</span></h2>
+  <p class="sec-sub">9 ketentuan fundamental yang mendasari cara kerja sistem transmisi kendaraan.</p>
+
+  <div class="rule-list">
+    <div class="rule-card">
+      <div class="rule-num">01</div>
+      <div class="rule-text"><strong>Tujuan utama transmisi</strong> adalah memperbesar torsi yang dihasilkan oleh mesin.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">02</div>
+      <div class="rule-text"><strong>Torsi</strong>, dalam arti sederhana, adalah <em>usaha untuk memutar</em>.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">03</div>
+      <div class="rule-text"><strong>Daya</strong> adalah kecepatan dalam melakukan pekerjaan.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">04</div>
+      <div class="rule-text"><strong>Daya berhubungan dengan waktu.</strong> Semakin cepat kerja yang dilakukan, semakin besar kekuatan yang terlibat.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">05</div>
+      <div class="rule-text"><strong>Power flow</strong> adalah aliran tenaga dari mesin ke roda. Melalui power flow, komponen powertrain dapat dipahami cara kerjanya.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">06</div>
+      <div class="rule-text">Tujuan dari <strong>roda gigi dalam transmisi/transaxle</strong> adalah untuk mengirimkan gerakan berputar.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">07</div>
+      <div class="rule-text"><strong>Gigi dan poros bekerja bersama:</strong>
+        <br>— Poros menggerakkan roda gigi
+        <br>— Roda gigi menggerakkan poros
+        <br>— Roda gigi dapat berputar bebas pada poros
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">08</div>
+      <div class="rule-text">Unit set roda gigi dapat digunakan untuk <strong>memperbanyak torsi, mengurangi torsi, menurunkan/meningkatkan kecepatan</strong>, dan mengubah arah torsi.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">09</div>
+      <div class="rule-text"><strong>Aturan dasar:</strong> Dua buah roda gigi eksternal yang bertautan akan berputar dalam <em>arah saling berlawanan</em>. Bila gigi ketiga ditambahkan, arah output sama dengan input.</div>
+    </div>
+  </div>
+
+  <!-- Animated Gear Demo -->
+  <div class="gear-demo">
+    <h4>⚡ Simulasi Arah Putaran Roda Gigi</h4>
+    <canvas id="gearCanvas" width="400" height="180"></canvas>
+    <p id="gearDesc">Dua roda gigi → arah berlawanan. Tambahkan gigi ketiga → arah sama!</p>
+    <div style="margin-top:1rem;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-sec" style="margin:0" onclick="setGearMode(2)">2 Roda Gigi</button>
+      <button class="btn-sec" style="margin:0" onclick="setGearMode(3)">3 Roda Gigi</button>
+    </div>
+  </div>
+
+  <button class="btn-next" onclick="go(2)">Desain Roda Gigi →</button>
+</div>
+
+<!-- SEC 2: Desain Roda Gigi -->
+<div class="sec" id="s2">
+  <div class="sec-tag">BAB 2 · DESAIN RODA GIGI</div>
+  <h2>Tipe-Tipe<br><span>Roda Gigi</span></h2>
+  <p class="sec-sub">Klik setiap tipe untuk melihat detail, keunggulan, kelemahan, dan penggunaannya.</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('spur')">Spur Gear</button>
+    <button class="tab-btn" onclick="showTab('helical')">Helical Gear</button>
+    <button class="tab-btn" onclick="showTab('bevel')">Spur Bevel Gear</button>
+  </div>
+
+  <div class="tab-content active" id="tab-spur">
+    <div class="gear-detail">
+      <h3>⚙️ Spur Gear (Gigi Lurus)</h3>
+      <p style="font-size:0.85rem;color:var(--ink2);line-height:1.7">Desain paling sederhana yang digunakan dalam transmisi manual/transaxle. Gigi dipotong lurus sejajar sumbu poros.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h5>✅ KEUNTUNGAN</h5>
+          <ul>
+            <li>Gigi dapat masuk dan keluar dari kontak dengan mudah</li>
+            <li>Mudah dibuat dan diperbaiki</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h5>❌ KERUGIAN</h5>
+          <ul>
+            <li>Berisik saat operasi kecepatan tinggi</li>
+            <li>Getaran lebih besar dibanding helical</li>
+          </ul>
+        </div>
+      </div>
+      <div class="usage-badge">🔧 Digunakan: Gigi mundur (reverse gear)</div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-helical">
+    <div class="gear-detail">
+      <h3>🌀 Helical Gear (Gigi Helikal)</h3>
+      <p style="font-size:0.85rem;color:var(--ink2);line-height:1.7">Gigi dipotong dengan sudut tertentu terhadap sumbu rotasi, memungkinkan dua atau lebih gigi terkait penuh setiap saat selama operasi.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h5>✅ KEUNTUNGAN</h5>
+          <ul>
+            <li>Beroperasi lebih pelan dan senyap</li>
+            <li>Jauh lebih kuat dibanding gigi lurus</li>
+            <li>Kontak gigi lebih merata</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h5>❌ KERUGIAN</h5>
+          <ul>
+            <li>Tidak dapat meluncur masuk/keluar dari kontak</li>
+            <li>Disebut gigi bertautan tetap (selalu terkait)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="usage-badge">🔧 Digunakan: Semua kecepatan maju, kadang mundur</div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-bevel">
+    <div class="gear-detail">
+      <h3>📐 Spur Bevel Gear</h3>
+      <p style="font-size:0.85rem;color:var(--ink2);line-height:1.7">Memungkinkan gigi yang berputar mempunyai offset 90° pada sumbu dari roda gigi pasangannya — memindahkan tenaga antar poros yang tegak lurus.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h5>✅ KEUNTUNGAN</h5>
+          <ul>
+            <li>Memungkinkan perubahan arah 90°</li>
+            <li>Efisiensi transfer daya tinggi</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h5>❌ KETERBATASAN</h5>
+          <ul>
+            <li>Butuh keselarasan poros yang presisi</li>
+            <li>Lebih kompleks dalam pemasangan</li>
+          </ul>
+        </div>
+      </div>
+      <div class="usage-badge">🔧 Digunakan: Gigi pinion dan gigi samping unit diferensial</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Posisi Roda Gigi -->
+  <div class="sec-tag" style="margin-bottom:0.5rem">POSISI RODA GIGI TERHADAP POROS</div>
+  <p class="sec-sub" style="margin-bottom:1rem">Klik untuk memilih dan lihat penjelasan detail.</p>
+
+  <div class="pos-grid">
+    <div class="pos-card" id="pg1" onclick="selectPos('pg1','pos1')">
+      <div class="pos-icon">↔️</div>
+      <h4>Roda Gigi Geser</h4>
+      <p>Sliding Gear — dapat digeser sepanjang alur poros</p>
+    </div>
+    <div class="pos-card" id="pg2" onclick="selectPos('pg2','pos2')">
+      <div class="pos-icon">🔄</div>
+      <h4>Roda Gigi Bebas</h4>
+      <p>Free Gear — dapat berputar bebas terhadap poros</p>
+    </div>
+    <div class="pos-card" id="pg3" onclick="selectPos('pg3','pos3')">
+      <div class="pos-icon">🔒</div>
+      <h4>Roda Gigi Tetap</h4>
+      <p>Fixed Gear — terpasang mati pada poros</p>
+    </div>
+  </div>
+
+  <div class="pos-detail" id="posDetail">👆 Klik salah satu jenis posisi roda gigi di atas untuk melihat penjelasan lengkap...</div>
+
+  <button class="btn-next" onclick="go(3)">Jenis Bantalan →</button>
+  <button class="btn-sec" onclick="go(1)">← Kembali</button>
+</div>
+
+<!-- SEC 3: Bearing -->
+<div class="sec" id="s3">
+  <div class="sec-tag">BAB 3 · JENIS-JENIS BANTALAN</div>
+  <h2>Bearing pada<br><span>Transmisi</span></h2>
+  <p class="sec-sub">Klik kartu untuk membalik dan melihat detail masing-masing bantalan. Ada 4 jenis yang digunakan dalam transmisi.</p>
+
+  <div style="font-size:0.75rem;color:var(--ink3);font-family:var(--mono);margin-bottom:1rem;">👆 KLIK KARTU UNTUK MEMBALIK</div>
+
+  <div class="bearing-grid">
+    <div class="b-card" onclick="this.classList.toggle('flipped')">
+      <div class="b-inner">
+        <div class="b-front">
+          <div class="b-icon">🪡</div>
+          <h4>Bantalan Rol Jarum</h4>
+          <small>Needle Roller Bearing</small>
+        </div>
+        <div class="b-back">
+          <div class="b-tag">NEEDLE ROLLER</div>
+          <h4>Bantalan Rol Jarum</h4>
+          <p>Menggunakan silinder rollers kecil. Rasio diameter/panjang 0.1–0.4. Luas kontak besar, mampu menahan beban radial tinggi di ruang terbatas.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="b-card" onclick="this.classList.toggle('flipped')">
+      <div class="b-inner">
+        <div class="b-front">
+          <div class="b-icon">🔮</div>
+          <h4>Bantalan Bola</h4>
+          <small>Ball Bearing</small>
+        </div>
+        <div class="b-back">
+          <div class="b-tag">BALL BEARING</div>
+          <h4>Bantalan Bola</h4>
+          <p>Menggunakan bola untuk mengurangi gesekan antar races. Menahan beban radial dan aksial. Koefisien gesekan lebih rendah, toleransi ketidaksejajaran baik.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="b-card" onclick="this.classList.toggle('flipped')">
+      <div class="b-inner">
+        <div class="b-front">
+          <div class="b-icon">🛞</div>
+          <h4>Bantalan Rolling</h4>
+          <small>Roller Bearing</small>
+        </div>
+        <div class="b-back">
+          <div class="b-tag">ROLLER BEARING</div>
+          <h4>Bantalan Rolling</h4>
+          <p>Menggunakan rol silinder, kapasitas beban tinggi. Rol dipegang oleh ribs. Cincin dalam dan luar bisa dipisah. Ideal sebagai "sisi bebas bantalan" untuk menyerap ekspansi poros.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="b-card" onclick="this.classList.toggle('flipped')">
+      <div class="b-inner">
+        <div class="b-front">
+          <div class="b-icon">🔧</div>
+          <h4>Plain Bushings</h4>
+          <small>Bushing Polos</small>
+        </div>
+        <div class="b-back">
+          <div class="b-tag">PLAIN BUSHING</div>
+          <h4>Plain Bushings</h4>
+          <p>Mendukung beban besar. Digunakan pada roda gigi tingkat, roda gigi mundur, dan mendukung propeller shaft tergelincir di extension housing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info">
+    <span class="info-icon">💡</span>
+    <p>Pemilihan jenis bantalan sangat berpengaruh pada umur pakai transmisi. Needle roller bearing cocok untuk ruang sempit, sedangkan ball bearing lebih toleran terhadap ketidaksejajaran poros.</p>
+  </div>
+
+  <button class="btn-next" onclick="go(4)">Perbandingan Gigi →</button>
+  <button class="btn-sec" onclick="go(2)">← Kembali</button>
+</div>
+
+<!-- SEC 4: Gear Ratio -->
+<div class="sec" id="s4">
+  <div class="sec-tag">BAB 4 · PERBANDINGAN GIGI</div>
+  <h2>Rasio &amp;<br><span>Gear Ratio</span></h2>
+  <p class="sec-sub">Rasio gigi menggambarkan perbedaan jumlah gigi pada roda gigi dalam transmisi. Gunakan simulator di bawah!</p>
+
+  <div class="info">
+    <span class="info-icon">📐</span>
+    <p>Roda gigi transmisi adalah pengungkit yang melingkar. Mesin dengan torsi 45 Kg.M bisa menggerakkan kendaraan seberat 300 Kg — berkat rasio gigi!</p>
+  </div>
+
+  <!-- Ratio Simulator -->
+  <div class="ratio-sim">
+    <h3>⚡ SIMULATOR RASIO GIGI</h3>
+    <p style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.5rem">Atur jumlah gigi input dan output untuk melihat efeknya pada torsi dan kecepatan.</p>
+
+    <div class="ratio-controls">
+      <div class="slider-group">
+        <label>GIGI INPUT: <span class="slider-val" id="inVal">12</span> gigi</label>
+        <input type="range" min="6" max="36" value="12" id="inSlider" oninput="updateRatio()">
+      </div>
+      <div class="slider-group">
+        <label>GIGI OUTPUT: <span class="slider-val" id="outVal">24</span> gigi</label>
+        <input type="range" min="6" max="36" value="24" id="outSlider" oninput="updateRatio()">
+      </div>
+    </div>
+
+    <div class="ratio-display">
+      <div class="ratio-stat">
+        <label>RASIO GIGI</label>
+        <div class="val" id="ratioVal" style="color:var(--accent)">2 : 1</div>
+      </div>
+      <div class="ratio-stat">
+        <label>TORSI OUTPUT</label>
+        <div class="val" id="torsiVal" style="color:var(--accent3)">20 Kg</div>
+      </div>
+      <div class="ratio-stat">
+        <label>KECEPATAN OUTPUT</label>
+        <div class="val" id="speedVal" style="color:var(--accent2)">0.5×</div>
+      </div>
+    </div>
+
+    <div class="ratio-type" id="ratioType">🟢 REDUKSI — Input berputar lebih cepat, torsi bertambah</div>
+  </div>
+
+  <!-- Ratio Types Explained -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab2('tetap')">Gigi Tetap (1:1)</button>
+    <button class="tab-btn" onclick="showTab2('reduksi')">Gigi Reduksi</button>
+    <button class="tab-btn" onclick="showTab2('overdrive')">Gigi Overdrive</button>
+  </div>
+
+  <div class="tab-content active" id="tab2-tetap">
+    <div class="gear-detail">
+      <h3>⚖️ Perbandingan Gigi Tetap (1:1)</h3>
+      <p style="font-size:0.85rem;color:var(--ink2);line-height:1.7">Dua roda gigi berukuran dan berjumlah gigi sama. Input berputar 1 kali → output berputar 1 kali. Torsi sama, kecepatan sama. Perbedaan satu-satunya: arah putaran berlawanan. Ditulis <strong>1 : 1</strong>.</p>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab2-reduksi">
+    <div class="gear-detail">
+      <h3>📉 Perbandingan Gigi Reduksi (contoh 2:1)</h3>
+      <p style="font-size:0.85rem;color:var(--ink2);line-height:1.7">Input: 12 gigi | Output: 24 gigi. Input berputar 2 kali untuk setiap 1 putaran output. Roda gigi output menghasilkan torsi <strong>dua kali lebih besar</strong>. Torsi input 10 Kg → output 20 Kg. Rasio: <strong>2 : 1</strong>.</p>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab2-overdrive">
+    <div class="gear-detail">
+      <h3>📈 Perbandingan Gigi Overdrive</h3>
+      <p style="font-size:0.85rem;color:var(--ink2);line-height:1.7">Input lebih lambat dari output. Input: 24 gigi | Output: 12 gigi. Output berputar lebih cepat dari mesin. Torsi berkurang, kecepatan meningkat. Digunakan pada percepatan tinggi di jalan tol untuk efisiensi bahan bakar.</p>
+    </div>
+  </div>
+
+  <button class="btn-next" onclick="go(5)">Uji Pemahaman →</button>
+  <button class="btn-sec" onclick="go(3)">← Kembali</button>
+</div>
+
+<!-- SEC 5: QUIZ -->
+<div class="sec" id="s5">
+  <div class="sec-tag">AKTIVITAS · KUIS AKHIR</div>
+  <h2>Uji<br><span>Pemahamanmu</span></h2>
+  <p class="sec-sub">Jawab 7 pertanyaan untuk menyelesaikan modul ini.</p>
+
+  <div class="quiz-box" id="quizBox">
+    <div class="qprog">
+      <div class="qprog-track"><div class="qprog-fill" id="qpFill"></div></div>
+      <div class="qcount" id="qCnt"></div>
+    </div>
+    <div class="q-text" id="qText"></div>
+    <div class="q-opts" id="qOpts"></div>
+    <div class="q-fb" id="qFb"></div>
+    <button class="btn-next" id="btnNxtQ" style="display:none" onclick="nextQ()">Pertanyaan Berikutnya →</button>
+  </div>
+
+  <button class="btn-sec" onclick="go(4)">← Kembali</button>
+</div>
+
+<!-- SEC 6: DONE -->
+<div class="sec" id="s6">
+  <div class="done-wrap">
+    <div class="done-icon">🏆</div>
+    <h2>Modul Selesai!</h2>
+    <p>Kamu telah menyelesaikan semua materi Prinsip Dasar Transmisi.</p>
+    <div class="done-stats">
+      <div class="done-stat"><span class="big">4</span><small>BAB SELESAI</small></div>
+      <div class="done-stat"><span class="big" id="doneScore">0/7</span><small>SKOR KUIS</small></div>
+      <div class="done-stat"><span class="big">⚙️</span><small>TRANSMISI PAHAM</small></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;max-width:580px;margin:0 auto 2rem;text-align:left">
+      <div class="done-stat" style="text-align:left">
+        <div style="font-size:1.2rem;margin-bottom:0.4rem">📋</div>
+        <div style="font-family:var(--mono);font-size:0.78rem;font-weight:700;margin-bottom:0.25rem">Ketentuan Dasar</div>
+        <div style="font-size:0.75rem;color:var(--ink2)">9 prinsip fundamental transmisi</div>
+      </div>
+      <div class="done-stat" style="text-align:left">
+        <div style="font-size:1.2rem;margin-bottom:0.4rem">⚙️</div>
+        <div style="font-family:var(--mono);font-size:0.78rem;font-weight:700;margin-bottom:0.25rem">Desain Roda Gigi</div>
+        <div style="font-size:0.75rem;color:var(--ink2)">Spur, Helical, Bevel + posisi poros</div>
+      </div>
+      <div class="done-stat" style="text-align:left">
+        <div style="font-size:1.2rem;margin-bottom:0.4rem">🔩</div>
+        <div style="font-family:var(--mono);font-size:0.78rem;font-weight:700;margin-bottom:0.25rem">Jenis Bantalan</div>
+        <div style="font-size:0.75rem;color:var(--ink2)">Rol jarum, bola, rolling, bushing</div>
+      </div>
+      <div class="done-stat" style="text-align:left">
+        <div style="font-size:1.2rem;margin-bottom:0.4rem">📐</div>
+        <div style="font-family:var(--mono);font-size:0.78rem;font-weight:700;margin-bottom:0.25rem">Perbandingan Gigi</div>
+        <div style="font-size:0.75rem;color:var(--ink2)">Tetap, reduksi, overdrive</div>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="restart()">🔄 ULANGI MODUL</button>
+  </div>
+</div>
+
+</div><!-- end app -->
+
+<script>
+// ============ NAVIGATION ============
+let cur = 1;
+const TOTAL = 6;
+
+function startApp(){
+  document.getElementById('heroWrap').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('topbar').style.display='flex';
+  buildDots();
+  setProgress(1);
+  initQuiz();
+  drawGears(2);
+}
+
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  setTimeout(()=>{ document.getElementById('s'+n).classList.add('active'); },50);
+  cur=n;
+  setProgress(n);
+  updateDots();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setProgress(n){
+  document.getElementById('pFill').style.width = ((n-1)/(TOTAL-1)*100)+'%';
+}
+
+function buildDots(){
+  const w=document.getElementById('navDots'); w.innerHTML='';
+  for(let i=1;i<=TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='nav-dot'+(i===1?' active':'');
+    d.dataset.s=i; d.onclick=()=>go(i);
+    w.appendChild(d);
+  }
+}
+
+function updateDots(){
+  document.querySelectorAll('.nav-dot').forEach(d=>{
+    const s=+d.dataset.s;
+    d.classList.remove('active','done');
+    if(s===cur)d.classList.add('active');
+    else if(s<cur)d.classList.add('done');
+  });
+}
+
+function restart(){
+  qIdx=0; qScore=0;
+  go(1); initQuiz();
+}
+
+// ============ GEAR ANIMATION ============
+let gearMode=2, gearAngle=0, gearRaf=null;
+
+function setGearMode(m){
+  gearMode=m;
+  document.getElementById('gearDesc').textContent = m===2
+    ? 'Dua roda gigi → arah berlawanan (perhatikan anak panah).'
+    : 'Tiga roda gigi → gigi pertama dan ketiga berputar SAMA arah!';
+}
+
+function drawGears(m){
+  gearMode=m||gearMode;
+  const canvas=document.getElementById('gearCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  cancelAnimationFrame(gearRaf);
+
+  function drawGear(cx,cy,r,teeth,angle,color){
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(angle);
+    ctx.beginPath();
+    for(let i=0;i<teeth;i++){
+      const a=i*(Math.PI*2/teeth);
+      const a1=a-0.1, a2=a+0.1;
+      ctx.lineTo(Math.cos(a1)*(r-6),Math.sin(a1)*(r-6));
+      ctx.lineTo(Math.cos(a1)*(r+7),Math.sin(a1)*(r+7));
+      ctx.lineTo(Math.cos(a2)*(r+7),Math.sin(a2)*(r+7));
+      ctx.lineTo(Math.cos(a2)*(r-6),Math.sin(a2)*(r-6));
+    }
+    ctx.closePath();
+    ctx.fillStyle=color; ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,r*0.3,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,0.15)'; ctx.fill();
+    ctx.restore();
+  }
+
+  function frame(){
+    const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const spd=0.02;
+    if(gearMode===2){
+      drawGear(W/2-65, H/2, 52, 16, gearAngle, '#c0392b');
+      drawGear(W/2+65, H/2, 52, 16, -gearAngle, '#2980b9');
+      // arrows
+      ctx.fillStyle='#c0392b'; ctx.font='18px sans-serif';
+      ctx.fillText('↩', W/2-65-6, H/2-60);
+      ctx.fillStyle='#2980b9';
+      ctx.fillText('↪', W/2+65-10, H/2-60);
+    } else {
+      drawGear(W/2-120, H/2, 40, 12, gearAngle, '#c0392b');
+      drawGear(W/2, H/2, 40, 12, -gearAngle, '#27ae60');
+      drawGear(W/2+120, H/2, 40, 12, gearAngle, '#2980b9');
+      ctx.fillStyle='#c0392b'; ctx.font='16px sans-serif';
+      ctx.fillText('↩', W/2-120-5, H/2-50);
+      ctx.fillStyle='#2980b9';
+      ctx.fillText('↩', W/2+120-5, H/2-50);
+    }
+    gearAngle+=spd;
+    gearRaf=requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ============ TABS ============
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(el=>{
+    if(['tab-spur','tab-helical','tab-bevel'].includes(el.id)) el.classList.remove('active');
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    if(['spur','helical','bevel'][i]===id) b.classList.add('active');
+    else b.classList.remove('active');
+  });
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+function showTab2(id){
+  ['tetap','reduksi','overdrive'].forEach(k=>{
+    document.getElementById('tab2-'+k).classList.remove('active');
+  });
+  document.querySelectorAll('.tabs')[1]?.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList[['tetap','reduksi','overdrive'][i]===id?'add':'remove']('active');
+  });
+  document.getElementById('tab2-'+id).classList.add('active');
+}
+
+// ============ GEAR POSITION ============
+const posData = {
+  pos1: '↔️ <strong>Roda Gigi Geser (Sliding Gear)</strong>: Dapat digeser-geser terhadap porosnya sepanjang alur (spline) pada poros tersebut. Berputar bersama-sama dengan poros. Digunakan pada transmisi geser (sliding mesh) untuk masuk ke gigi.',
+  pos2: '🔄 <strong>Roda Gigi Bebas (Free Gear)</strong>: Dapat berputar bebas terhadap porosnya. Gigi ini selalu berputar bersama gigi pasangannya, namun tidak menggerakkan poros kecuali dikunci oleh synchronizer.',
+  pos3: '🔒 <strong>Roda Gigi Tetap (Fixed Gear)</strong>: Terpasang mati terhadap porosnya dan berputar bersama-sama dengan porosnya. Tidak dapat digeser terhadap porosnya. Biasanya di-press atau dikunci dengan pasak.'
+};
+
+function selectPos(cardId, posId){
+  document.querySelectorAll('.pos-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById(cardId).classList.add('selected');
+  document.getElementById('posDetail').innerHTML = posData[posId];
+}
+
+// ============ RATIO SIMULATOR ============
+function updateRatio(){
+  const inp = +document.getElementById('inSlider').value;
+  const out = +document.getElementById('outSlider').value;
+  document.getElementById('inVal').textContent = inp;
+  document.getElementById('outVal').textContent = out;
+  const ratio = out/inp;
+  const r1 = Math.round(ratio*10)/10;
+  document.getElementById('ratioVal').textContent = r1+' : 1';
+  const torsi = Math.round(10*ratio);
+  document.getElementById('torsiVal').textContent = torsi+' Kg';
+  const speed = Math.round((1/ratio)*100)/100;
+  document.getElementById('speedVal').textContent = speed+'×';
+  const rt = document.getElementById('ratioType');
+  if(Math.abs(ratio-1)<0.05){
+    rt.className='ratio-type type-tetap';
+    rt.textContent='🟡 TETAP (1:1) — Kecepatan dan torsi sama antara input dan output';
+  } else if(ratio>1){
+    rt.className='ratio-type type-reduksi';
+    rt.textContent='🟢 REDUKSI — Input berputar lebih cepat, torsi output bertambah';
+  } else {
+    rt.className='ratio-type type-overdrive';
+    rt.textContent='🔵 OVERDRIVE — Output berputar lebih cepat dari input, torsi berkurang';
+  }
+}
+
+// ============ QUIZ ============
+const questions = [
+  {q:'Apa tujuan utama dari transmisi pada kendaraan?',opts:['Menyalurkan arus listrik','Memperbesar torsi yang dihasilkan mesin','Mengatur sistem pengereman','Menyimpan energi kinetik'],ans:1,fb:'Benar! Tujuan utama transmisi adalah memperbesar torsi yang dihasilkan oleh mesin.'},
+  {q:'Jika dua roda gigi eksternal saling bertautan, bagaimana arah putarannya?',opts:['Sama arah','Saling berlawanan','Bergantian','Diam salah satunya'],ans:1,fb:'Tepat! Dua roda gigi eksternal yang bertautan berputar dalam arah yang saling berlawanan.'},
+  {q:'Roda gigi lurus (Spur Gear) paling umum digunakan untuk?',opts:['Gigi 1 sampai 5','Gigi mundur (reverse)','Gigi overdrive','Diferensial'],ans:1,fb:'Benar! Spur gear paling sering digunakan pada gigi mundur karena dapat masuk/keluar kontak dengan mudah.'},
+  {q:'Keunggulan utama Helical Gear dibanding Spur Gear adalah?',opts:['Lebih mudah dibuat','Lebih murah','Beroperasi lebih senyap dan lebih kuat','Dapat dipakai untuk gigi mundur saja'],ans:2,fb:'Tepat! Helical gear beroperasi lebih pelan, lebih senyap, dan jauh lebih kuat dibanding spur gear.'},
+  {q:'Needle Roller Bearing (bantalan rol jarum) cocok digunakan di mana?',opts:['Tempat berbeban ringan','Ruang radial terbatas','Tempat berbeban aksial besar','Poros yang sangat besar'],ans:1,fb:'Benar! Bantalan rol jarum sangat cocok untuk bantalan pengaturan di mana ruang radial terbatas.'},
+  {q:'Transmisi dengan rasio gigi input 12 dan output 24 disebut?',opts:['Rasio overdrive','Rasio 1:1 (tetap)','Rasio reduksi 2:1','Rasio netral'],ans:2,fb:'Tepat! Input 12 gigi vs output 24 gigi → output berputar 2 kali lebih lambat, torsi 2× lebih besar → rasio reduksi 2:1.'},
+  {q:'Pada perbandingan gigi overdrive, efek yang terjadi adalah?',opts:['Torsi bertambah, kecepatan berkurang','Torsi berkurang, kecepatan output lebih tinggi dari input','Torsi dan kecepatan sama','Kendaraan mundur'],ans:1,fb:'Benar! Pada overdrive, output berputar lebih cepat dari mesin, namun torsi yang tersedia berkurang.'},
+];
+
+let qIdx=0, qScore=0, qAnswered=false;
+
+function initQuiz(){ qIdx=0; qScore=0; renderQ(); }
+
+function renderQ(){
+  if(qIdx>=questions.length){ endQuiz(); return; }
+  qAnswered=false;
+  const q=questions[qIdx];
+  document.getElementById('qpFill').style.width=(qIdx/questions.length*100)+'%';
+  document.getElementById('qCnt').textContent=(qIdx+1)+' / '+questions.length;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qFb').className='q-fb';
+  document.getElementById('btnNxtQ').style.display='none';
+  const opts=document.getElementById('qOpts'); opts.innerHTML='';
+  const labs=['A','B','C','D'];
+  q.opts.forEach((o,i)=>{
+    const el=document.createElement('div');
+    el.className='q-opt';
+    el.innerHTML=`<span class="opt-lbl">${labs[i]}</span>${o}`;
+    el.onclick=()=>answerQ(i,el);
+    opts.appendChild(el);
+  });
+}
+
+function answerQ(idx,el){
+  if(qAnswered)return;
+  qAnswered=true;
+  const q=questions[qIdx];
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.add('answered'));
+  const fb=document.getElementById('qFb');
+  if(idx===q.ans){ el.classList.add('correct'); fb.className='q-fb ok'; fb.textContent='✅ '+q.fb; qScore++; }
+  else {
+    el.classList.add('wrong');
+    document.querySelectorAll('.q-opt')[q.ans].classList.add('correct');
+    fb.className='q-fb no'; fb.textContent='❌ Kurang tepat. '+q.fb;
+  }
+  document.getElementById('btnNxtQ').style.display='inline-flex';
+}
+
+function nextQ(){ qIdx++; renderQ(); }
+
+function endQuiz(){
+  document.getElementById('doneScore').textContent=qScore+'/'+questions.length;
+  go(6);
+}
+
+// Start gear animation when DOM ready
+window.addEventListener('load', ()=>{ /* wait for user to click start */ });
+
+// Expose gear drawing for section 1 load
+document.addEventListener('DOMContentLoaded', ()=>{
+  // tabs section 2
+  const allTabs = document.querySelectorAll('.tabs');
+  // already handled by showTab and showTab2
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul Transmisi Manual — Media Pembelajaran Interaktif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4F8FF;
+  --navbar: #0066FF;
+  --hero-end: #4DA3FF;
+  --bg3: #E8F1FF;
+  --bg4: rgba(77,163,255,0.12);
+  --surface: #FFFFFF;
+  --surface2: #E8F1FF;
+  --border: rgba(26,35,126,0.12);
+  --border2: rgba(26,35,126,0.2);
+  --text: #1A237E;
+  --text2: rgba(26,35,126,0.72);
+  --text3: rgba(26,35,126,0.54);
+  --accent: #FF8A00;
+  --accent2: #E67A00;
+  --accent-glow: rgba(255,138,0,0.16);
+  --teal: #4DA3FF;
+  --teal-bg: rgba(77,163,255,0.12);
+  --amber: #FF8A00;
+  --amber-bg: rgba(255,138,0,0.12);
+  --coral: #f97316;
+  --coral-bg: rgba(249,115,22,0.1);
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.1);
+  --green: #34d399;
+  --green-bg: rgba(52,211,153,0.1);
+  --red: #f87171;
+  --red-bg: rgba(248,113,113,0.1);
+  --radius: 10px;
+  --radius-lg: 16px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─── LAYOUT ─── */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  min-height: 100vh;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  background: var(--navbar);
+  border-right: 1px solid var(--border);
+  padding: 2rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 0 1.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-brand .brand-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-glow);
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(79,143,255,0.2);
+}
+
+.sidebar-brand h1 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #FFFFFF;
+}
+
+.sidebar-brand p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  margin-top: 4px;
+}
+
+/* TOMBOL KEMBALI */
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+}
+.btn-back-home:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.72);
+  padding: 0 1.5rem;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 1.5rem;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.92);
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  margin-bottom: 2px;
+}
+
+.nav-item:hover {
+  color: #FFFFFF;
+  background: rgba(255,255,255,0.12);
+}
+
+.nav-item.active {
+  color: var(--accent);
+  background: var(--accent-glow);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+
+.nav-item .nav-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 15px;
+  opacity: 0.7;
+}
+
+.nav-item.active .nav-icon { opacity: 1; }
+
+.nav-progress {
+  margin: auto 1.5rem 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 6px;
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--teal));
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* ─── MAIN ─── */
+.main {
+  overflow-y: auto;
+  min-height: 100vh;
+  padding: 1rem 2rem 2rem;
+}
+
+.section {
+  display: none;
+  padding: 2rem;
+  max-width: 1200px;
+  width: min(100%, 1200px);
+  margin: 0 auto;
+  animation: fadeIn 0.25s ease;
+}
+
+.section.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── PAGE HEADER ─── */
+.page-header {
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--navbar), var(--hero-end));
+  padding: 2rem;
+  border-radius: 24px;
+  color: #FFFFFF;
+}
+
+.page-header .section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.18);
+  color: #FFFFFF;
+}
+
+.page-header h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.6;
+  max-width: 560px;
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.card:hover {
+  border-color: var(--border2);
+  background: var(--surface2);
+  transform: translateY(-2px);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: all 0.2s;
+}
+
+.info-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+}
+
+.info-card .card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.info-card h4 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.info-card p {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+/* ─── BADGE ─── */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+
+.badge-blue { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(79,143,255,0.2); }
+.badge-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid rgba(45,212,191,0.2); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.badge-coral { background: var(--coral-bg); color: var(--coral); border: 1px solid rgba(249,115,22,0.2); }
+.badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+.badge-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+
+/* ─── COMPONENTS SECTION ─── */
+.comp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.comp-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.comp-card:hover {
+  border-color: var(--border2);
+  background: var(--surface2);
+  transform: translateY(-2px);
+}
+
+.comp-card.selected {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.comp-card .ci {
+  font-size: 22px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.comp-card .cn {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.comp-card .cs {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.comp-detail-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  min-height: 90px;
+}
+
+.comp-detail-box .cd-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.comp-detail-box h4 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.comp-detail-box p {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+/* ─── SIMULATOR ─── */
+.gear-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.gear-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 100px;
+  margin: 1.5rem 0;
+}
+
+.gear-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.gear-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+  padding: 4px;
+}
+
+.gear-circle.spinning { animation: gearSpin 1.5s linear infinite; }
+.gear-circle.spinning-slow { animation: gearSpin 3.5s linear infinite; }
+.gear-circle.dim { opacity: 0.2; }
+
+@keyframes gearSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.gear-node-label {
+  font-size: 10px;
+  color: var(--text3);
+  text-align: center;
+  max-width: 72px;
+  font-weight: 500;
+}
+
+.gear-arrow {
+  font-size: 20px;
+  color: var(--text3);
+  align-self: center;
+  margin-top: -8px;
+  transition: color 0.3s;
+}
+
+.gear-arrow.active { color: var(--teal); }
+
+.gear-info-box {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.6;
+  min-height: 60px;
+  border: 1px solid var(--border);
+}
+
+.gear-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+.gear-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text2);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.gear-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--surface2);
+}
+
+.gear-btn.active {
+  border-color: var(--teal);
+  background: var(--teal-bg);
+  color: var(--teal);
+  box-shadow: 0 0 12px rgba(45,212,191,0.25);
+}
+
+/* ─── SYNCHRO ─── */
+.stage-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+
+.stage-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.stage-item.open { border-color: var(--border2); }
+
+.stage-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.stage-header:hover { background: rgba(255,255,255,0.02); }
+
+.stage-num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stage-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.stage-chevron {
+  font-size: 14px;
+  color: var(--text3);
+  transition: transform 0.25s;
+}
+
+.stage-item.open .stage-chevron { transform: rotate(90deg); }
+
+.stage-body {
+  display: none;
+  padding: 0 1.25rem 1rem;
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.7;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin: 0 1.25rem;
+}
+
+.stage-item.open .stage-body { display: block; }
+
+.cone-types {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.cone-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+}
+
+.cone-card .cone-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.cone-card h4 {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.cone-card p {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.4;
+}
+
+/* ─── POWER FLOW ─── */
+.flow-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 1rem;
+}
+
+.flow-table th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.flow-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: middle;
+}
+
+.flow-table tr:last-child td { border-bottom: none; }
+.flow-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.flow-gear-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.flow-path {
+  font-size: 12px;
+  color: var(--text2);
+  font-family: var(--font-body);
+  line-height: 1.4;
+}
+
+.flow-path .arrow { color: var(--teal); margin: 0 3px; }
+
+/* ─── LUBRICATION ─── */
+.oil-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.oil-table th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.oil-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 13px;
+  vertical-align: top;
+}
+
+.oil-table tr:last-child td { border-bottom: none; }
+.oil-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.oil-grade {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+/* ─── QUIZ ─── */
+.quiz-wrapper {
+  width: min(100%, 900px);
+  max-width: 900px;
+}
+
+.quiz-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.quiz-prog-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.quiz-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.quiz-dot.done { background: var(--teal); border-color: var(--teal); }
+.quiz-dot.current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+
+.quiz-score-chip {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--teal);
+  background: var(--teal-bg);
+  padding: 3px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(45,212,191,0.2);
+}
+
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.quiz-q-num {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.quiz-q-text {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: .875rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  width: 100%;
+}
+
+.quiz-opt:hover:not(.disabled) {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--accent-glow);
+}
+
+.quiz-opt .opt-letter {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--surface2);
+  color: var(--text3);
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  transition: all 0.15s;
+}
+
+.quiz-opt:hover:not(.disabled) .opt-letter {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.quiz-opt.correct {
+  border-color: var(--teal);
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+
+.quiz-opt.correct .opt-letter {
+  background: var(--teal);
+  color: #0d0f14;
+  border-color: var(--teal);
+}
+
+.quiz-opt.wrong {
+  border-color: var(--red);
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.quiz-opt.wrong .opt-letter {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+
+.quiz-opt.disabled { cursor: default; pointer-events: none; }
+
+.quiz-feedback {
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-top: 1rem;
+  border: 1px solid;
+  display: none;
+}
+
+.quiz-feedback.correct {
+  background: var(--teal-bg);
+  color: var(--teal);
+  border-color: rgba(45,212,191,0.25);
+}
+
+.quiz-feedback.wrong {
+  background: var(--red-bg);
+  color: #fca5a5;
+  border-color: rgba(248,113,113,0.25);
+}
+
+.quiz-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.btn-primary {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 22px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+.btn-ghost {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 22px;
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.quiz-result {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.result-score-ring {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: conic-gradient(var(--teal) 0%, var(--teal) var(--pct), var(--surface2) var(--pct));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+
+.result-score-ring::before {
+  content: '';
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.result-score-num {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--teal);
+}
+
+.quiz-result h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.quiz-result p {
+  font-size: 14px;
+  color: var(--text2);
+  max-width: 400px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+
+/* ─── DIVIDER ─── */
+.divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+
+/* ─── GRID 2 ─── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 680px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; padding: 1rem 0; }
+  .sidebar-brand { display: none; }
+  .nav-group-label { display: none; }
+  .nav-item { padding: 8px 1rem; }
+  .section { padding: 1.25rem; }
+  .cone-types { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html" class="btn-back-home">← Beranda</a>
+      <div class="brand-tag">Modul Pembelajaran</div>
+      <h1>Transmisi Manual</h1>
+      <p>Teknik Kendaraan Ringan</p>
+    </div>
+
+    <div class="nav-group-label" style="margin-bottom:8px">Materi</div>
+    <button class="nav-item active" onclick="showSection('overview')">
+      <span class="nav-icon">⬡</span> Pengantar
+    </button>
+    <button class="nav-item" onclick="showSection('components')">
+      <span class="nav-icon">◈</span> Komponen
+    </button>
+    <button class="nav-item" onclick="showSection('simulator')">
+      <span class="nav-icon">⚙</span> Simulator Gigi
+    </button>
+    <button class="nav-item" onclick="showSection('synchro')">
+      <span class="nav-icon">↻</span> Synchronizer
+    </button>
+    <button class="nav-item" onclick="showSection('powerflow')">
+      <span class="nav-icon">→</span> Aliran Tenaga
+    </button>
+    <button class="nav-item" onclick="showSection('lubrication')">
+      <span class="nav-icon">◎</span> Pelumasan
+    </button>
+
+    <div class="divider" style="margin: 1rem 1.5rem"></div>
+    <div class="nav-group-label" style="margin-bottom:8px">Evaluasi</div>
+    <button class="nav-item" onclick="showSection('quiz')">
+      <span class="nav-icon">✦</span> Uji Pemahaman
+    </button>
+
+    <div class="nav-progress">
+      <div class="progress-label">
+        <span>Progres Materi</span>
+        <span id="prog-txt">0 / 6</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ─── OVERVIEW ─── -->
+    <div id="sec-overview" class="section active">
+      <div class="page-header">
+        <div class="section-tag badge-teal">Pengantar</div>
+        <h2>Transmisi Manual</h2>
+        <p>Komponen vital driveline yang mengubah torsi dan kecepatan mesin agar sesuai kebutuhan berkendara, mulai dari berhenti hingga kecepatan tinggi.</p>
+      </div>
+
+      <div class="card-grid">
+        <div class="info-card">
+          <div class="card-icon" style="background:var(--accent-glow)">⚡</div>
+          <h4>Fungsi Utama</h4>
+          <p>Mengubah torsi dan kecepatan dari mesin, lalu meneruskannya ke penggerak aksel melalui kopling dan poros transmisi.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon" style="background:var(--teal-bg)">⚙</div>
+          <h4>Prinsip Kerja</h4>
+          <p>Roda gigi berbeda ukuran memberikan keuntungan mekanis. Tanpa transmisi, mesin tidak mampu menggerakkan kendaraan dari posisi berhenti.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon" style="background:var(--amber-bg)">⬡</div>
+          <h4>Tipe Transmisi</h4>
+          <p>Transmisi tiga poros (RWD) dan dua poros/transaxle (FWD). Keduanya menggunakan prinsip synchronizer untuk perpindahan gigi yang halus.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-blue" style="margin-bottom:10px">Cara kerja dasar</div>
+        <h3 style="font-family:var(--font-display);font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Dari Mesin ke Roda</h3>
+        <p style="font-size:14px;color:var(--text2);line-height:1.7">Tenaga mesin → kopling → <strong style="color:var(--text);font-weight:500">poros input</strong> → roda gigi counter → roda gigi tingkat (sesuai posisi) → <strong style="color:var(--text);font-weight:500">synchronizer</strong> → <strong style="color:var(--text);font-weight:500">poros output</strong> → poros propeller → roda. Hanya satu pasang roda gigi yang aktif pada satu waktu.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="badge badge-teal" style="margin-bottom:10px">Tiga poros</div>
+          <p style="font-size:13.5px;color:var(--text2);line-height:1.6">Dipakai pada kendaraan <strong style="color:var(--text);font-weight:500">RWD (rear-wheel drive)</strong>. Memiliki poros input, poros counter, dan poros output yang terpisah. Tenaga diteruskan via counter gear shaft.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-amber" style="margin-bottom:10px">Dua poros</div>
+          <p style="font-size:13.5px;color:var(--text2);line-height:1.6">Dipakai pada kendaraan <strong style="color:var(--text);font-weight:500">FWD (front-wheel drive)</strong>. Lebih kompak — transmisi menyatu dengan final drive (transaxle). Poros input dan output sejajar.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── COMPONENTS ─── -->
+    <div id="sec-components" class="section">
+      <div class="page-header">
+        <div class="section-tag badge-blue">Komponen</div>
+        <h2>Komponen Transmisi Manual</h2>
+        <p>Klik salah satu komponen untuk melihat penjelasan lengkap fungsinya.</p>
+      </div>
+
+      <div class="comp-grid" id="comp-grid"></div>
+
+      <div class="comp-detail-box" id="comp-detail">
+        <p style="color:var(--text3);font-size:14px;font-style:italic">← Pilih komponen di atas untuk melihat penjelasannya.</p>
+      </div>
+    </div>
+
+    <!-- ─── SIMULATOR ─── -->
+    <div id="sec-simulator" class="section">
+      <div class="page-header">
+        <div class="section-tag badge-teal">Simulator</div>
+        <h2>Simulator Posisi Gigi</h2>
+        <p>Pilih posisi gigi untuk melihat roda gigi mana yang aktif dan aliran tenaganya.</p>
+      </div>
+
+      <div class="gear-panel">
+        <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:4px">Aliran Tenaga</div>
+        <div class="gear-visual" id="gear-visual"></div>
+        <div class="gear-info-box" id="gear-info">Pilih posisi gigi di bawah untuk melihat aliran tenaga.</div>
+        <div class="gear-selector" id="gear-selector"></div>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-amber" style="margin-bottom:8px">Catatan gigi mundur</div>
+        <p style="font-size:13.5px;color:var(--text2);line-height:1.6">Gigi mundur tidak menggunakan synchronizer. Pastikan kendaraan <strong style="color:var(--text);font-weight:500">benar-benar berhenti</strong> sebelum memasukkan gigi mundur untuk menghindari kerusakan roda gigi.</p>
+      </div>
+    </div>
+
+    <!-- ─── SYNCHRO ─── -->
+    <div id="sec-synchro" class="section">
+      <div class="page-header">
+        <div class="section-tag badge-purple">Synchronizer</div>
+        <h2>Cara Kerja Synchronizer</h2>
+        <p>Unit synchronizer menyamakan kecepatan putar sebelum roda gigi terhubung, menghasilkan perpindahan gigi yang mulus tanpa suara kasar.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="badge badge-purple" style="margin-bottom:8px">Mengapa diperlukan?</div>
+        <p style="font-size:13.5px;color:var(--text2);line-height:1.7">Roda gigi maju menggunakan tipe <strong style="color:var(--text);font-weight:500">heliks</strong> yang tidak bisa digeser langsung karena sudut giginya. Roda gigi tingkat juga berputar bebas pada poros output. Synchronizer bertugas mengunci roda gigi ke poros output dengan cara menyamakan kecepatannya terlebih dahulu.</p>
+      </div>
+
+      <div class="stage-list" id="stage-list"></div>
+
+      <div class="card">
+        <div class="badge badge-teal" style="margin-bottom:12px">Tipe synchronizer unit</div>
+        <div class="cone-types">
+          <div class="cone-card">
+            <span class="cone-icon">⬡</span>
+            <h4>Single cone</h4>
+            <p>Satu bidang pengereman. Cocok untuk kendaraan ringan dengan beban pengereman ringan.</p>
+          </div>
+          <div class="cone-card">
+            <span class="cone-icon">◈</span>
+            <h4>Two cone</h4>
+            <p>Dua permukaan gesekan via middle ring. Kapasitas pengereman dua kali lipat single cone.</p>
+          </div>
+          <div class="cone-card">
+            <span class="cone-icon">✦</span>
+            <h4>Three cone</h4>
+            <p>Tiga bidang gesekan. Untuk kendaraan berat atau performa tinggi yang butuh perpindahan cepat.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── POWER FLOW ─── -->
+    <div id="sec-powerflow" class="section">
+      <div class="page-header">
+        <div class="section-tag badge-coral">Aliran Tenaga</div>
+        <h2>Transmission Power Flow</h2>
+        <p>Diagram aliran tenaga membantu mendiagnosis kerusakan transmisi dan menentukan perbaikan yang tepat.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="badge badge-teal" style="margin-bottom:10px">Transmisi tiga poros</div>
+        <div style="overflow-x:auto">
+          <table class="flow-table">
+            <thead>
+              <tr>
+                <th>Gigi</th>
+                <th>Aliran Tenaga</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="flow-table-3"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-amber" style="margin-bottom:10px">Transmisi dua poros</div>
+        <div style="overflow-x:auto">
+          <table class="flow-table">
+            <thead>
+              <tr>
+                <th>Gigi</th>
+                <th>Aliran Tenaga</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="flow-table-2"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem">
+        <div class="badge badge-purple" style="margin-bottom:10px">Mekanisme pengaman</div>
+        <div class="grid-2">
+          <div>
+            <h4 style="font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Bola Pembatas (Detent Ball)</h4>
+            <p style="font-size:13px;color:var(--text2);line-height:1.6">Tiga takik pada tuas garpu. Pegas menahan bola di takik, mencegah gigi bergeser sendiri. Hanya pengemudi yang bisa memindahkannya.</p>
+          </div>
+          <div>
+            <h4 style="font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Interlock Pin</h4>
+            <p style="font-size:13px;color:var(--text2);line-height:1.6">Mencegah dua posisi gigi terhubung sekaligus. Saat satu poros bergerak, pin mengunci poros garpu lainnya agar tidak ikut bergerak.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── LUBRICATION ─── -->
+    <div id="sec-lubrication" class="section">
+      <div class="page-header">
+        <div class="section-tag badge-amber">Pelumasan</div>
+        <h2>Pelumasan Transmisi</h2>
+        <p>Minyak transmisi mencegah overheating, mengurangi gesekan, dan melindungi komponen dari keausan.</p>
+      </div>
+
+      <div class="card-grid" style="margin-bottom:1.25rem">
+        <div class="info-card">
+          <div class="card-icon" style="background:var(--teal-bg)">↓</div>
+          <h4>Kurangi Gesekan</h4>
+          <p>Lapisan oli memisahkan permukaan logam yang bergerak, mencegah kontak langsung antar komponen.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon" style="background:var(--amber-bg)">◎</div>
+          <h4>Hilangkan Panas</h4>
+          <p>Minyak menyerap panas dari roda gigi dan bantalan, kemudian membuangnya ke dinding bak transmisi.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon" style="background:var(--coral-bg)">⊕</div>
+          <h4>Cegah Karat</h4>
+          <p>Lapisan minyak melindungi permukaan logam dari korosi, oksidasi, dan kontaminasi partikel kotoran.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-amber" style="margin-bottom:12px">Klasifikasi minyak gigi API</div>
+        <div style="overflow-x:auto">
+          <table class="oil-table">
+            <thead>
+              <tr>
+                <th>Grade</th>
+                <th>Deskripsi</th>
+                <th>Penggunaan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="oil-grade">GL-1</span></td>
+                <td style="color:var(--text2)">Minyak mineral langsung, dengan aditif minimal</td>
+                <td style="color:var(--text3)">Transmisi non-synchromesh lama</td>
+              </tr>
+              <tr>
+                <td><span class="oil-grade">GL-2</span></td>
+                <td style="color:var(--text2)">Untuk roda gigi yang aus pada aplikasi industri</td>
+                <td style="color:var(--text3)">Sebagian besar industri</td>
+              </tr>
+              <tr>
+                <td><span class="oil-grade">GL-3</span></td>
+                <td style="color:var(--text2)">Mengandung aditif EP ringan</td>
+                <td style="color:var(--text3)">Transmisi manual + final drive spiral bevel</td>
+              </tr>
+              <tr>
+                <td><span class="oil-grade">GL-4</span></td>
+                <td style="color:var(--text2)">Setengah aditif EP dibanding GL-5</td>
+                <td style="color:var(--text3)">Transmisi manual & transaxle hypoid modern</td>
+              </tr>
+              <tr>
+                <td><span class="oil-grade">GL-5</span></td>
+                <td style="color:var(--text2)">Kandungan aditif EP tinggi</td>
+                <td style="color:var(--text3)">Final drive roda gigi hypoid</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-blue" style="margin-bottom:10px">Viskositas SAE</div>
+        <p style="font-size:13.5px;color:var(--text2);line-height:1.7">Viskositas mengukur kekentalan cairan — seberapa cepat cairan mengalir melalui lubang di suhu tertentu. Standar SAE dan API membantu menentukan pelumas yang tepat. Pilih grade sesuai rekomendasi pabrikan kendaraan.</p>
+      </div>
+    </div>
+
+    <!-- ─── QUIZ ─── -->
+    <div id="sec-quiz" class="section">
+      <div class="page-header">
+        <div class="section-tag badge-green">Evaluasi</div>
+        <h2>Uji Pemahaman</h2>
+        <p>Jawab pertanyaan berikut untuk menguji pemahamanmu tentang transmisi manual.</p>
+      </div>
+
+      <div class="quiz-wrapper">
+        <div class="quiz-meta">
+          <div class="quiz-prog-dots" id="quiz-dots"></div>
+          <div class="quiz-score-chip" id="quiz-score-chip" style="display:none">Benar: <span id="quiz-score-num">0</span></div>
+        </div>
+
+        <div id="quiz-active">
+          <div class="quiz-card">
+            <div class="quiz-q-num" id="q-num">Soal 1 dari 8</div>
+            <div class="quiz-q-text" id="q-text"></div>
+            <div class="quiz-options" id="q-opts"></div>
+            <div class="quiz-feedback" id="q-fb"></div>
+          </div>
+          <div class="quiz-actions">
+            <button class="btn-primary" id="q-next-btn" onclick="nextQ()" disabled>Soal berikutnya →</button>
+          </div>
+        </div>
+
+        <div class="quiz-result" id="quiz-result">
+          <div class="result-score-ring" id="result-ring">
+            <span class="result-score-num" id="result-score">0%</span>
+          </div>
+          <h3 id="result-title"></h3>
+          <p id="result-msg"></p>
+          <button class="btn-ghost" onclick="restartQuiz()">Ulangi kuis</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── SECTION NAVIGATION ───
+var visited = {};
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  var items = document.querySelectorAll('.nav-item');
+  var map = ['overview','components','simulator','synchro','powerflow','lubrication','quiz'];
+  var idx = map.indexOf(id);
+  if (idx >= 0) items[idx].classList.add('active');
+
+  visited[id] = true;
+  updateProgress();
+
+  if (id === 'components') initComponents();
+  if (id === 'simulator') initSimulator();
+  if (id === 'synchro') initSynchro();
+  if (id === 'powerflow') initPowerFlow();
+  if (id === 'quiz') initQuiz();
+}
+
+function updateProgress() {
+  var topics = ['overview','components','simulator','synchro','powerflow','lubrication'];
+  var done = topics.filter(t => visited[t]).length;
+  document.getElementById('prog-txt').textContent = done + ' / ' + topics.length;
+  document.getElementById('prog-fill').style.width = Math.round(done / topics.length * 100) + '%';
+}
+
+visited['overview'] = true;
+
+// ─── COMPONENTS ───
+var comps = [
+  { icon:'⚙', name:'Synchronizer unit', badge:'badge-purple', short:'Penghubung roda gigi', detail:'Unit synchronizer menyamakan kecepatan putar sebelum roda gigi terhubung. Terdiri dari: Synchronizer Ring (cincin kuningan pada kerucut gigi), Hub Sleeve (penghubung geser bergerak maju-mundur), Clutch Hub (terpasang tetap di poros output via snap ring), Speed Gear (roda gigi tingkat berputar bebas), Synchronizer Keys (3 kunci), dan Key Springs (2 pegas penahan keys).' },
+  { icon:'→', name:'Input shaft', badge:'badge-blue', short:'Poros input dari kopling', detail:'Poros input (poros kopling) menerima putaran dari mesin melalui kopling. Didukung oleh bantalan pilot pada crankshaft dan bantalan di bagian depan bodi transmisi. Ujung depannya memiliki Main Drive Gear yang selalu berhubungan dengan counter gear.' },
+  { icon:'↻', name:'Counter gear shaft', badge:'badge-teal', short:'Poros gigi kelompok', detail:'Poros counter (cluster shaft) menggerakkan roda gigi 1, 2, 3, dan 5 pada poros output. Selalu berputar saat mesin hidup dan kopling terhubung. Didukung bantalan di bodi depan, plat tengah, dan extension housing transmisi.' },
+  { icon:'←', name:'Output shaft', badge:'badge-amber', short:'Poros keluar ke propeller', detail:'Poros output (main shaft) meneruskan tenaga ke poros propeller atau final drive. Bagian belakang memiliki spline untuk sambungan. Roda gigi pada poros ini berputar bebas dan dikunci ke poros oleh synchronizer unit saat gigi dipilih.' },
+  { icon:'◎', name:'Forward gears', badge:'badge-teal', short:'Roda gigi heliks maju', detail:'Semua roda gigi maju menggunakan tipe heliks — lebih halus, tenang, dan mampu menahan beban lebih besar dari gigi lurus. Clearance kecil mengurangi kebisingan. Transmisi 5 tingkat memiliki 5 pasang roda gigi maju.' },
+  { icon:'⟳', name:'Reverse gear', badge:'badge-coral', short:'Roda gigi mundur', detail:'Gigi mundur menggunakan roda gigi idler tambahan untuk membalik arah putaran poros output. Tidak menggunakan synchronizer sehingga kendaraan harus benar-benar berhenti sebelum memasukkan gigi mundur.' },
+  { icon:'⊢', name:'Shift fork', badge:'badge-blue', short:'Garpu pemindah gigi', detail:'Garpu pemindah (shift fork) menggerakkan synchronizer hub sleeve saat tuas dipindahkan. Terhubung pada poros garpu (shift fork shaft). Dibuat dari baja keras atau aluminium dengan permukaan kontak dari material tahan keausan.' },
+  { icon:'⊡', name:'Interlock pin', badge:'badge-purple', short:'Mencegah double gear', detail:'Interlock pin mencegah dua posisi gigi terhubung secara bersamaan. Saat satu poros garpu pemindah bergerak, dua pin mendorong dan mengunci poros garpu lainnya. Menjamin keamanan transmisi dari kerusakan akibat gigi ganda.' },
+  { icon:'◉', name:'Bola pembatas', badge:'badge-green', short:'Detent ball & spring', detail:'Bola pengaman (detent ball) dan pegas terdapat pada setiap poros garpu pemindah. Tiga takik (notch) di poros: tengah = netral, kiri dan kanan = posisi gigi. Mencegah gigi berpindah sendiri tanpa digerakkan pengemudi.' },
+];
+
+var selectedComp = -1;
+function initComponents() {
+  var g = document.getElementById('comp-grid');
+  if (g.dataset.init) return;
+  g.dataset.init = '1';
+  g.innerHTML = comps.map((c,i) => `
+    <div class="comp-card" id="cc${i}" onclick="pickComp(${i})">
+      <span class="ci">${c.icon}</span>
+      <div class="cn">${c.name}</div>
+      <div class="cs">${c.short}</div>
+    </div>`).join('');
+}
+
+function pickComp(i) {
+  if (selectedComp >= 0) document.getElementById('cc' + selectedComp).classList.remove('selected');
+  selectedComp = i;
+  document.getElementById('cc' + i).classList.add('selected');
+  var c = comps[i];
+  document.getElementById('comp-detail').innerHTML =
+    `<div class="cd-header"><span class="badge ${c.badge}">${c.name}</span></div><p>${c.detail}</p>`;
+}
+
+// ─── SIMULATOR ───
+var gears = {
+  'N': { info: 'Posisi netral — tidak ada roda gigi yang terhubung. Poros input berputar tetapi poros output diam. Synchronizer berada di tengah, tidak mengunci roda gigi manapun.', nodes: ['Input\nShaft','Counter\nGear','Output\nShaft'], colors: ['#4f8fff','#3d6fd4','#21253200'.replace('00','')], actives: [true,true,false], speeds:[1.5,1.5,0] },
+  '1': { info: 'Gigi 1 — Torsi terbesar, kecepatan terendah. Aliran: Input Shaft → Main Drive Gear → Counter Gear → 1st Gear → Clutch Hub Sleeve → Output Shaft.', nodes: ['Input\nShaft','Counter\nGear','1st\nGear','Clutch Hub\nSleeve','Output\nShaft'], actives:[true,true,true,true,true], speeds:[1.5,1.2,0.4,0.4,0.4] },
+  '2': { info: 'Gigi 2 — Lebih cepat dari gigi 1. Aliran: Input Shaft → Main Drive Gear → Counter Gear → 2nd Gear → Clutch Hub Sleeve → Output Shaft.', nodes: ['Input\nShaft','Counter\nGear','2nd\nGear','Clutch Hub\nSleeve','Output\nShaft'], actives:[true,true,true,true,true], speeds:[1.5,1.2,0.65,0.65,0.65] },
+  '3': { info: 'Gigi 3 — Kecepatan menengah. Aliran: Input Shaft → Main Drive Gear → Counter Gear → 3rd Gear → Clutch Hub Sleeve → Output Shaft.', nodes: ['Input\nShaft','Counter\nGear','3rd\nGear','Clutch Hub\nSleeve','Output\nShaft'], actives:[true,true,true,true,true], speeds:[1.5,1.2,0.85,0.85,0.85] },
+  '4': { info: 'Gigi 4 — Direct drive! Tenaga mengalir langsung tanpa counter gear. Aliran: Input Shaft → Main Drive Gear (4th) → Clutch Hub Sleeve → Output Shaft.', nodes: ['Input\nShaft','Main Drive\nGear (4th)','Clutch Hub\nSleeve','Output\nShaft'], actives:[true,true,true,true], speeds:[1.5,1.5,1.5,1.5] },
+  '5': { info: 'Gigi 5 — Overdrive. Output lebih cepat dari input, efisien di kecepatan tinggi. Aliran: Input Shaft → Main Drive Gear → Counter Gear → 5th Gear → Clutch Hub Sleeve → Output Shaft.', nodes: ['Input\nShaft','Counter\nGear','5th\nGear','Clutch Hub\nSleeve','Output\nShaft'], actives:[true,true,true,true,true], speeds:[1.2,1.5,2,2,2] },
+  'R': { info: 'Gigi mundur — Reverse Idle Gear membalik arah putaran output. Kendaraan harus berhenti! Aliran: Input → Counter Gear → Reverse Idler Gear → Reverse Gear → Output Shaft.', nodes: ['Input\nShaft','Counter\nGear','Reverse\nIdler','Reverse\nGear','Output\nShaft'], actives:[true,true,true,true,true], speeds:[1.5,1.5,0.5,0.5,0.5] },
+};
+
+var nodeColors = ['#4f8fff','#2dd4bf','#a78bfa','#f59e0b','#f97316','#34d399'];
+var nodeDimColor = '#2a2f44';
+
+var currentGear = null;
+function initSimulator() {
+  var sel = document.getElementById('gear-selector');
+  if (sel.dataset.init) return;
+  sel.dataset.init = '1';
+  ['N','1','2','3','4','5','R'].forEach(g => {
+    var btn = document.createElement('button');
+    btn.className = 'gear-btn';
+    btn.textContent = g;
+    btn.id = 'gb-' + g;
+    btn.onclick = () => pickGear(g);
+    sel.appendChild(btn);
+  });
+}
+
+function pickGear(g) {
+  document.querySelectorAll('.gear-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('gb-' + g).classList.add('active');
+  var data = gears[g];
+  var vis = document.getElementById('gear-visual');
+  var html = '';
+  data.nodes.forEach(function(n, i) {
+    var active = data.actives[i];
+    var speed = data.speeds ? data.speeds[i] : 1;
+    var dur = speed > 0 ? (2.5 / speed).toFixed(2) + 's' : '999s';
+    var col = active ? nodeColors[i % nodeColors.length] : '#1e2230';
+    var textCol = active ? '#0d0f14' : '#3d4263';
+    var borderCol = active ? col : '#2a2f44';
+    var anim = active && speed > 0 ? `animation:gearSpin ${dur} linear infinite` : '';
+    html += `<div class="gear-node">
+      <div class="gear-circle" style="background:${col};border-color:${borderCol};color:${textCol};${anim};opacity:${active?1:0.18}">
+        ${n.replace('\n','<br>')}
+      </div>
+      <div class="gear-node-label">${n.replace('\n',' ')}</div>
+    </div>`;
+    if (i < data.nodes.length - 1) {
+      html += `<div class="gear-arrow ${active && data.actives[i+1] ? 'active' : ''}">→</div>`;
+    }
+  });
+  vis.innerHTML = html;
+  document.getElementById('gear-info').textContent = data.info;
+  currentGear = g;
+}
+
+// ─── SYNCHRO ───
+var stages = [
+  { title:'Tahap 1 — Kontak awal', color:'badge-blue', body:'Shift lever (tuas pemindah) bergerak → shift fork mendorong hub sleeve → synchronizer key menekan synchronizer ring ke permukaan cone (tirus) roda gigi tingkat. Gesekan menyebabkan synchronizer ring memutar sekitar setengah lebar spline.' },
+  { title:'Tahap 2 — Sinkronisasi kecepatan', color:'badge-amber', body:'Shift lever terus ditekan lebih jauh → kekuatan hub sleeve melawan key springs. Alur dalam synchronizer ring memotong lapisan minyak di cone untuk meningkatkan gesekan. Taper spline hub sleeve menekan taper spline synchronizer ring, memperlambat putaran roda gigi tingkat hingga sama dengan hub sleeve.' },
+  { title:'Tahap 3 — Penguncian (meshing)', color:'badge-teal', body:'Kecepatan hub sleeve dan speed gear telah sama → spline dari hub sleeve dapat masuk ke spline roda gigi tingkat. Roda gigi tingkat kini terkunci ke poros output melalui synchronizer. Torsi dapat ditransfer dengan mulus tanpa bunyi kasar atau hentakan.' },
+];
+
+function initSynchro() {
+  var sl = document.getElementById('stage-list');
+  if (sl.dataset.init) return;
+  sl.dataset.init = '1';
+  sl.innerHTML = stages.map((s, i) => `
+    <div class="stage-item" id="stage-${i}">
+      <div class="stage-header" onclick="toggleStage(${i})">
+        <div class="stage-num badge ${s.color}">${i+1}</div>
+        <div class="stage-title">${s.title}</div>
+        <span class="stage-chevron">›</span>
+      </div>
+      <div class="stage-body">${s.body}</div>
+    </div>`).join('');
+}
+
+function toggleStage(i) {
+  document.getElementById('stage-' + i).classList.toggle('open');
+}
+
+// ─── POWER FLOW ───
+var flow3 = [
+  { gear:'1', badge:'badge-teal', path:'Input Shaft → Main Drive Gear → Counter Gear → 1st Gear → Clutch Hub Sleeve → Output Shaft', note:'Torsi terbesar, kecepatan terendah' },
+  { gear:'2', badge:'badge-teal', path:'Input Shaft → Main Drive Gear → Counter Gear → 2nd Gear → Clutch Hub Sleeve → Output Shaft', note:'Torsi berkurang, kecepatan naik' },
+  { gear:'3', badge:'badge-teal', path:'Input Shaft → Main Drive Gear → Counter Gear → 3rd Gear → Clutch Hub Sleeve → Output Shaft', note:'Kecepatan menengah' },
+  { gear:'4', badge:'badge-blue', path:'Input Shaft → Main Drive Gear (4th) → Clutch Hub Sleeve → Output Shaft', note:'Direct drive — tanpa counter gear' },
+  { gear:'5', badge:'badge-purple', path:'Input Shaft → Main Drive Gear → Counter Gear → 5th Gear → Clutch Hub Sleeve → Output Shaft', note:'Overdrive, hemat BBM' },
+  { gear:'R', badge:'badge-coral', path:'Input Shaft → Counter Gear → Reverse Idler → Reverse Gear → Output Shaft', note:'Idler membalik arah putaran' },
+];
+
+var flow2 = [
+  { gear:'1', badge:'badge-teal', path:'Input Shaft (1st) → Output Shaft (1st) → Clutch Hub Sleeve → Output Shaft → Final Drive', note:'Torsi terbesar' },
+  { gear:'2', badge:'badge-teal', path:'Input Shaft (2nd) → Output Shaft (2nd) → Clutch Hub Sleeve → Output Shaft → Final Drive', note:'' },
+  { gear:'3', badge:'badge-blue', path:'Input Shaft (3rd) → Clutch Hub Sleeve → Output Shaft (3rd) → Final Drive', note:'' },
+  { gear:'4', badge:'badge-blue', path:'Input Shaft (4th) → Clutch Hub Sleeve → Output Shaft → Final Drive', note:'Mendekati direct' },
+  { gear:'5', badge:'badge-purple', path:'Input Shaft (5th) → Clutch Hub Sleeve → Output Shaft (5th) → Final Drive', note:'Overdrive' },
+  { gear:'R', badge:'badge-coral', path:'Input Shaft (R) → Idle Gear → Clutch Hub Sleeve → Output Shaft → Final Drive', note:'Idler membalik arah' },
+];
+
+function initPowerFlow() {
+  var t3 = document.getElementById('flow-table-3');
+  var t2 = document.getElementById('flow-table-2');
+  if (t3.dataset.init) return;
+  t3.dataset.init = '1';
+  t2.dataset.init = '1';
+
+  function makeRows(data) {
+    return data.map(r => {
+      var parts = r.path.split(' → ');
+      var pathHtml = parts.map((p,i) => `${p}${i<parts.length-1?'<span class="arrow"> → </span>':''}`).join('');
+      return `<tr>
+        <td><span class="flow-gear-badge badge ${r.badge}">${r.gear}</span></td>
+        <td><span class="flow-path">${pathHtml}</span></td>
+        <td style="color:var(--text3);font-size:12px;white-space:nowrap">${r.note}</td>
+      </tr>`;
+    }).join('');
+  }
+  t3.innerHTML = makeRows(flow3);
+  t2.innerHTML = makeRows(flow2);
+}
+
+// ─── QUIZ ───
+var questions = [
+  { q:'Apa fungsi utama transmisi manual pada kendaraan?', opts:['Mengubah warna lampu kendaraan','Mengubah torsi dan kecepatan dari mesin ke roda','Menghidupkan mesin kendaraan','Mengontrol sistem pengereman'], ans:1, fb:'Transmisi manual mengubah torsi dan kecepatan yang dihasilkan mesin agar sesuai kebutuhan berkendara, kemudian meneruskannya ke penggerak aksel.' },
+  { q:'Pada posisi gigi netral, apa yang terjadi pada poros output?', opts:['Berputar lebih cepat dari input','Berputar sama dengan input','Diam, tidak berputar','Berputar ke arah mundur'], ans:2, fb:'Di posisi netral, synchronizer berada di tengah dan tidak terhubung ke roda gigi manapun, sehingga putaran poros input tidak diteruskan ke poros output.' },
+  { q:'Dari bahan apa synchronizer ring (cincin sinkronisasi) dibuat?', opts:['Baja keras','Kuningan (brass)','Aluminium','Plastik nilon'], ans:1, fb:'Synchronizer ring terbuat dari kuningan karena memiliki sifat gesekan yang baik terhadap permukaan cone baja dan cukup tahan aus.' },
+  { q:'Mengapa roda gigi maju semua menggunakan tipe heliks?', opts:['Lebih murah diproduksi','Lebih berat sehingga lebih stabil','Lebih halus, tenang, dan mampu menahan beban lebih besar','Mudah dipasang dan dilepas'], ans:2, fb:'Roda gigi heliks memiliki permukaan kontak lebih luas karena sudut kemiringannya, menghasilkan operasi lebih halus, lebih tenang, dan kapasitas beban lebih besar.' },
+  { q:'Apa yang dilakukan interlock pin pada mekanisme pemindah gigi?', opts:['Menambah kecepatan perpindahan gigi','Mencegah dua posisi gigi terhubung bersamaan','Melumasi poros garpu pemindah','Mengunci pedal kopling'], ans:1, fb:'Interlock pin menjamin hanya satu poros garpu yang bergerak pada satu waktu, mencegah dua pasang roda gigi terhubung sekaligus.' },
+  { q:'Transmisi dua poros (transaxle) digunakan pada kendaraan jenis apa?', opts:['Kendaraan RWD (rear-wheel drive)','Kendaraan off-road 4WD','Kendaraan FWD (front-wheel drive)','Semua jenis kendaraan'], ans:2, fb:'Transmisi dua poros/transaxle didesain untuk kendaraan FWD karena konstruksinya kompak — menyatukan transmisi dan final drive dalam satu unit.' },
+  { q:'Pada gigi ke-4 transmisi tiga poros, apa yang unik dari aliran tenaganya?', opts:['Counter gear berputar dua kali lebih cepat','Tenaga langsung dari input ke output tanpa counter gear','Output shaft berputar mundur','Synchronizer tidak digunakan sama sekali'], ans:1, fb:'Gigi 4 adalah "direct drive" — tenaga mengalir langsung dari Input Shaft → Main Drive Gear (4th) → Clutch Hub Sleeve → Output Shaft, tanpa melewati counter gear shaft.' },
+  { q:'API GL-4 cocok digunakan untuk transmisi jenis apa?', opts:['Transmisi non-synchromesh lama','Transmisi otomatis penuh','Transmisi manual dan transaxle dengan final drive hypoid','Transmisi CVT'], ans:2, fb:'API GL-4 digunakan pada transmisi manual dan transaxle dengan final drive roda gigi hypoid. Mengandung setengah aditif EP dibanding GL-5, cocok untuk transmisi synchromesh modern.' },
+];
+
+var qIdx = 0, score = 0, answered = false, quizInited = false;
+
+function initQuiz() {
+  if (quizInited) return;
+  quizInited = true;
+  renderDots();
+  renderQuestion();
+}
+
+function renderDots() {
+  var d = document.getElementById('quiz-dots');
+  d.innerHTML = questions.map((_,i) => `<div class="quiz-dot ${i===0?'current':''}" id="dot-${i}"></div>`).join('');
+}
+
+function updateDots() {
+  questions.forEach((_,i) => {
+    var el = document.getElementById('dot-' + i);
+    if (!el) return;
+    el.className = 'quiz-dot' + (i < qIdx ? ' done' : i === qIdx ? ' current' : '');
+  });
+}
+
+function renderQuestion() {
+  var q = questions[qIdx];
+  answered = false;
+  document.getElementById('q-num').textContent = 'Soal ' + (qIdx+1) + ' dari ' + questions.length;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-fb').style.display = 'none';
+  document.getElementById('q-next-btn').disabled = true;
+  if (qIdx+1 === questions.length) document.getElementById('q-next-btn').textContent = 'Lihat hasil';
+  else document.getElementById('q-next-btn').textContent = 'Soal berikutnya →';
+
+  var letters = ['A','B','C','D'];
+  document.getElementById('q-opts').innerHTML = q.opts.map((o,i) =>
+    `<button class="quiz-opt" onclick="answer(${i})">
+      <span class="opt-letter">${letters[i]}</span>${o}
+    </button>`).join('');
+}
+
+function answer(i) {
+  if (answered) return;
+  answered = true;
+  var q = questions[qIdx];
+  document.querySelectorAll('.quiz-opt').forEach(function(b, idx) {
+    b.classList.add('disabled');
+    if (idx === q.ans) b.classList.add('correct');
+    else if (idx === i) b.classList.add('wrong');
+  });
+  var fb = document.getElementById('q-fb');
+  var correct = i === q.ans;
+  if (correct) score++;
+  fb.className = 'quiz-feedback ' + (correct ? 'correct' : 'wrong');
+  fb.textContent = (correct ? '✓ Tepat! ' : '✗ Kurang tepat. ') + q.fb;
+  fb.style.display = 'block';
+  document.getElementById('q-next-btn').disabled = false;
+  document.getElementById('quiz-score-chip').style.display = 'inline';
+  document.getElementById('quiz-score-num').textContent = score;
+}
+
+function nextQ() {
+  qIdx++;
+  if (qIdx >= questions.length) {
+    showResult();
+    return;
+  }
+  updateDots();
+  renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('quiz-active').style.display = 'none';
+  var result = document.getElementById('quiz-result');
+  result.style.display = 'block';
+  var pct = Math.round(score / questions.length * 100);
+  document.getElementById('result-ring').style.setProperty('--pct', pct + '%');
+  document.getElementById('result-score').textContent = pct + '%';
+  var title = pct >= 80 ? 'Luar biasa! Kamu sangat paham.' : pct >= 60 ? 'Cukup baik! Tetap semangat.' : 'Perlu belajar lebih banyak.';
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-msg').textContent =
+    'Kamu menjawab ' + score + ' dari ' + questions.length + ' soal dengan benar (' + pct + '%). ' +
+    (pct >= 80 ? 'Pemahamanmu tentang transmisi manual sudah sangat baik!'
+      : pct >= 60 ? 'Ulangi bagian yang masih kurang, terutama synchronizer dan power flow.'
+      : 'Pelajari kembali semua materi, mulai dari komponen dan cara kerja synchronizer.');
+}
+
+function restartQuiz() {
+  qIdx = 0; score = 0; answered = false;
+  document.getElementById('quiz-active').style.display = 'block';
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('quiz-score-chip').style.display = 'none';
+  document.getElementById('quiz-score-num').textContent = '0';
+  renderDots();
+  renderQuestion();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulasi Transmisi — MeshSim</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- Three.js untuk latar belakang 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --blue: #0066FF;
+            --blue-dark: #0047CC;
+            --blue-light: #E8F1FF;
+            --orange: #FF8A00;
+            --orange-light: #FFE0C2;
+            --text: #1A237E;
+            --text-muted: rgba(26,35,126,0.72);
+        }
+        *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+        html,body{ height:100%; margin:0; font-family:'Nunito',sans-serif; color:var(--text); }
+        body{ overflow:hidden; }
+        
+        /* Canvas 3D Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Login */
+        #login-screen{
+            position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+            background: linear-gradient(135deg,var(--blue) 0%, #4DA3FF 60%);
+        }
+        .login-card{
+            background:rgba(255,255,255,0.97);
+            border-radius:28px; padding:44px; width:420px; max-width:95vw;
+            box-shadow:0 24px 64px rgba(0,102,255,0.22);
+            text-align:center;
+        }
+        .login-card .logo{ display:flex; justify-content:center; margin-bottom:12px; }
+        .login-card .logo img{ height:80px; width:auto; }
+        .login-card .subtitle{ color:var(--text-muted); font-size:14px; margin-bottom:28px; }
+        .form-group{ text-align:left; margin-bottom:18px; }
+        .form-group label{
+            display:block; font-weight:700; font-size:13px; color:var(--text-muted); margin-bottom:8px;
+            text-transform:uppercase; letter-spacing:.5px;
+        }
+        .form-group input{
+            width:100%; padding:12px 16px; border:2px solid #BBDEFB; border-radius:10px;
+            font-family:'Nunito',sans-serif; font-size:15px; font-weight:700; color:var(--text);
+            background:#f5faff; transition:border-color .2s, box-shadow .2s; outline:none;
+        }
+        .form-group input:focus{ border-color:var(--blue); box-shadow:0 0 0 3px rgba(0,102,255,0.15); }
+        .btn-login{
+            width:100%; padding:13px; border:none; border-radius:12px;
+            font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:800; letter-spacing:1px;
+            background: var(--orange); color:#fff; cursor:pointer; box-shadow:0 6px 20px rgba(255,138,0,0.3);
+            transition:transform .15s, box-shadow .15s;
+        }
+        .btn-login:hover{ transform:translateY(-2px); box-shadow:0 10px 26px rgba(255,138,0,0.35); }
+        .login-error{
+            color:#EF4444; font-size:13px; font-weight:700; margin-top:10px; display:none;
+        }
+
+        /* App */
+        #app{ height:100%; display:none; flex-direction:column; }
+        .top-bar{
+            display:flex; align-items:center; justify-content:space-between;
+            background:rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding:14px 24px; border-bottom:1px solid rgba(0,102,255,0.08);
+            position:relative; z-index:10;
+        }
+        .top-bar-logo {
+            display:flex; flex-direction:column; align-items:flex-start; gap:6px;
+        }
+        .btn-back-home {
+            display:flex; align-items:center; gap:5px;
+            color:var(--blue); text-decoration:none; font-weight:800; font-size:14px;
+            padding:8px 12px; border-radius:12px; transition:all 0.2s;
+        }
+        .btn-back-home:hover {
+            background:rgba(0,102,255,0.1); color:var(--orange);
+        }
+        .top-bar-logo img{ height:40px; width:auto; display:block; }
+        .top-bar-right{ display:flex; align-items:center; gap:16px; }
+        .score-bar{ display:flex; gap:8px; }
+        .score-pill{
+            display:flex; gap:8px; align-items:center; padding:8px 12px; border-radius:14px;
+            background:rgba(232,241,255,0.8); font-weight:800; font-family:'Rajdhani',sans-serif; font-size:14px;
+            letter-spacing:.5px;
+        }
+        .score-pill .label{ opacity:.7; }
+        .user-badge{ display:flex; align-items:center; gap:10px; padding:6px 12px; border-radius:999px; background:rgba(232,241,255,0.8); }
+        .avatar{
+            width:32px; height:32px; border-radius:50%; background:var(--blue); color:#fff;
+            display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px;
+        }
+        .user-badge span{ font-weight:800; font-size:13px; }
+        .main-content{ flex:1; overflow:auto; padding:20px; }
+
+        .grid-2{
+            display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1400px; margin:0 auto;
+        }
+        @media(max-width:980px){ .grid-2{ grid-template-columns:1fr; } }
+        .card{
+            background:rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius:18px; padding:20px; box-shadow:0 8px 28px rgba(0,102,255,0.1);
+            border:1px solid rgba(0,102,255,0.08);
+        }
+        .diagram-title{
+            font-family:'Rajdhani',sans-serif; font-weight:800; font-size:18px; margin-bottom:12px;
+            color:var(--blue-dark);
+        }
+        #tx-svg-container{
+            border:2px dashed rgba(187,222,251,0.7); border-radius:14px; padding:10px; background:rgba(248,251,255,0.7);
+            overflow:hidden;
+        }
+        svg{ width:100%; height:auto; display:block; }
+
+        /* Gear Tabs */
+        .gear-tabs{ display:flex; gap:10px; flex-wrap:wrap; }
+        .gear-tab{
+            border:none; cursor:pointer; padding:10px 16px; border-radius:12px; font-weight:800;
+            font-family:'Rajdhani',sans-serif; font-size:15px; letter-spacing:.5px;
+            background:rgba(236,239,241,0.7); color:#546E7A; transition:transform .15s, background .2s, color .2s;
+        }
+        .gear-tab:hover{ transform:translateY(-2px); }
+        .gear-tab.active{ background:var(--blue); color:#fff; }
+        .gear-tab.reverse{ color:#E53935; }
+        .gear-tab.reverse.active{ background:#E53935; color:#fff; }
+
+        /* Puzzle */
+        .puzzle-info{ font-size:13px; color:var(--text-muted); margin-bottom:10px; }
+        .slots-row{
+            display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px;
+        }
+        @media(max-width:600px){ .slots-row{ grid-template-columns:repeat(2,1fr); } }
+        .slot{
+            min-height:70px; border:2px dashed rgba(187,222,251,0.7); border-radius:12px;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            gap:4px; background:rgba(248,251,255,0.7); cursor:pointer; transition:background .15s, border-color .15s;
+            position:relative; user-select:none;
+        }
+        .slot.drag-over{ background:rgba(227,242,253,0.8); border-color:var(--blue); }
+        .slot.has-card{ border-style:solid; border-color:rgba(187,222,251,0.8); background:rgba(255,255,255,0.7); }
+        .slot.correct-slot{ background:rgba(200,230,201,0.9); border-color:#43A047; }
+        .slot.wrong-slot{ background:rgba(255,205,210,0.9); border-color:#E53935; }
+        .slot-num{
+            position:absolute; top:4px; left:8px; font-family:'Share Tech Mono',monospace; font-size:11px;
+            color:#90A4AE; font-weight:700;
+        }
+        .slot-icon{ font-size:22px; }
+        .slot-label{ font-size:11px; font-weight:800; color:var(--blue-dark); }
+
+        .bank-title{ font-weight:800; color:var(--blue-dark); margin:10px 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.5px; }
+        .bank{
+            display:flex; flex-wrap:wrap; gap:10px; min-height:80px; padding:12px; border:2px dashed rgba(224,224,224,0.7); border-radius:12px; background:rgba(250,250,250,0.7);
+        }
+        .comp-card{
+            padding:10px 14px; border:2px solid var(--blue); border-radius:10px; background:rgba(255,255,255,0.8); color:var(--blue);
+            font-weight:800; font-size:13px; cursor:grab; user-select:none; transition:transform .15s, box-shadow .15s;
+        }
+        .comp-card:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,102,255,0.18); }
+        .comp-card.dragging{ opacity:0.4; }
+        .btn-row{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+        .btn{
+            border:none; border-radius:14px; padding:12px 20px; font-weight:800; font-family:'Rajdhani',sans-serif;
+            font-size:15px; cursor:pointer; letter-spacing:.5px; 
+            transition:all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 8px 0 0 rgba(0,0,0,0.15), 0 14px 30px rgba(0,0,0,0.12);
+        }
+        .btn:hover{ 
+            transform: translateY(-4px) scale(1.02); 
+            box-shadow: 0 12px 0 0 rgba(0,0,0,0.15), 0 20px 40px rgba(0,0,0,0.18);
+        }
+        .btn:active{
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 3px 0 0 rgba(0,0,0,0.15), 0 6px 15px rgba(0,0,0,0.12);
+        }
+        .btn-primary{ 
+            background: linear-gradient(135deg, #0066FF 0%, #0047CC 100%);
+            color:#fff; 
+            box-shadow: 0 8px 0 0 #002D8A, 0 14px 30px rgba(0,102,255,0.35);
+        }
+        .btn-primary:hover{
+            box-shadow: 0 12px 0 0 #002D8A, 0 20px 40px rgba(0,102,255,0.45);
+        }
+        .btn-primary:active{
+            box-shadow: 0 3px 0 0 #002D8A, 0 6px 15px rgba(0,102,255,0.25);
+        }
+        .btn-warn{ 
+            background: linear-gradient(135deg, #FF8A00 0%, #E67600 100%);
+            color:#fff; 
+            box-shadow: 0 8px 0 0 #B35900, 0 14px 30px rgba(255,138,0,0.35);
+        }
+        .btn-warn:hover{
+            box-shadow: 0 12px 0 0 #B35900, 0 20px 40px rgba(255,138,0,0.45);
+        }
+        .btn-warn:active{
+            box-shadow: 0 3px 0 0 #B35900, 0 6px 15px rgba(255,138,0,0.25);
+        }
+        .btn-gray{ 
+            background: linear-gradient(135deg, #90A4AE 0%, #78909C 100%);
+            color:#fff; 
+            box-shadow: 0 8px 0 0 #546E7A, 0 14px 30px rgba(144,164,174,0.35);
+        }
+        .btn-gray:hover{
+            box-shadow: 0 12px 0 0 #546E7A, 0 20px 40px rgba(144,164,174,0.45);
+        }
+        .btn-gray:active{
+            box-shadow: 0 3px 0 0 #546E7A, 0 6px 15px rgba(144,164,174,0.25);
+        }
+
+        /* Style khusus untuk tombol SOS */
+        #btn-sos {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            color:#fff; 
+            box-shadow:0 8px 0 0 #991B1B, 0 14px 30px rgba(239, 68, 68, 0.35);
+        }
+        #btn-sos:hover {
+            box-shadow: 0 12px 0 0 #991B1B, 0 20px 40px rgba(239, 68, 68, 0.45);
+        }
+        #btn-sos:active {
+            box-shadow: 0 3px 0 0 #991B1B, 0 6px 15px rgba(239, 68, 68, 0.25);
+        }
+        #btn-sos:disabled {
+            background: linear-gradient(135deg, #FCA5A5 0%, #F87171 100%);
+            box-shadow: 0 8px 0 0 #B91C1C, 0 14px 30px rgba(248, 113, 113, 0.25);
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        /* Status & Stats */
+        .stats-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0; }
+        @media(max-width:900px){ .stats-row{ grid-template-columns:repeat(2,1fr); } }
+        .stat-box{
+            background:rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border:1px solid rgba(0,102,255,0.08); border-radius:14px; padding:12px; text-align:center;
+            box-shadow:0 6px 18px rgba(0,102,255,0.08);
+        }
+        .stat-val{ font-family:'Rajdhani',sans-serif; font-weight:800; font-size:24px; color:var(--blue-dark); }
+        .stat-label{ font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+        .log-table{ width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+        .log-table th, .log-table td{ padding:8px 10px; border-bottom:1px solid #ECEFF1; text-align:left; }
+        .log-table th{ font-weight:800; font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
+        .badge-correct{ display:inline-flex; padding:4px 10px; border-radius:999px; background:#C8E6C9; color:#2E7D32; font-weight:800; font-size:12px; }
+        .badge-wrong{ display:inline-flex; padding:4px 10px; border-radius:999px; background:#FFCDD2; color:#C62828; font-weight:800; font-size:12px; }
+        .toast{
+            position:fixed; right:20px; bottom:20px; background:#fff; padding:14px 18px; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,0.18);
+            font-weight:800; transform:translateY(20px); opacity:0; transition:opacity .25s, transform .25s; z-index:999;
+        }
+        .toast.show{ transform:translateY(0); opacity:1; }
+        .toast.success{ border-left:6px solid #43A047; }
+        .toast.error{ border-left:6px solid #E53935; }
+        .toast.info{ border-left:6px solid var(--blue); }
+        .section-title{ font-family:'Rajdhani',sans-serif; font-weight:800; font-size:16px; color:var(--blue-dark); margin-top:18px; margin-bottom:10px; }
+        .diag-status{
+            font-size:13px; font-weight:700; padding:7px 14px; border-radius:8px; margin-top:10px; background:#ECEFF1; color:#90A4AE;
+            transition:all .4s;
+        }
+        .diag-status.correct{ background:#C8E6C9; color:#2E7D32; }
+        .diag-status.wrong{ background:#FFCDD2; color:#C62828; }
+
+        @keyframes flowPulse { 0%,100%{opacity:1} 50%{opacity:.55} }
+        .pulse{ animation:flowPulse 1.4s ease-in-out infinite; }
+
+        .gear-info-text{ font-size:14px; color:var(--text-muted); line-height:1.7; margin-bottom:12px; }
+        .gear-info-text b{ color:var(--blue-dark); }
+
+        .info-card {
+            background: linear-gradient(135deg, var(--blue-light), #fff);
+            padding:16px 20px; border-radius:12px; margin-bottom:16px;
+            border:1px solid rgba(0,102,255,0.1);
+        }
+        .info-card h3 {
+            margin:0 0 8px 0; font-size:16px; color:var(--blue-dark); font-weight:800;
+        }
+        .info-card p {
+            margin:0; color:var(--text-muted); font-size:14px;
+        }
+
+        .logo {
+            display:flex; justify-content:center; align-items:center; width:100%;
+        }
+        .logo img {
+            height:45px; width:auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas 3D Background -->
+    <canvas id="bg-canvas"></canvas>
+
+<div id="login-screen">
+    <div class="login-card">
+        <div class="logo">
+            <img src="public/assets/img/logo-meshsim.png" alt="Logo MeshSim">
+        </div>
+        <p class="subtitle">Power Flow Simulator — Manual Transmission</p>
+        <div class="form-group">
+            <label>Nama Lengkap</label>
+            <input type="text" id="input-name" placeholder="Masukkan nama lengkap..."/>
+        </div>
+        <div class="form-group">
+            <label>Nomor Absen</label>
+            <input type="text" id="input-absen" placeholder="Contoh: 15"/>
+        </div>
+        <button type="button" class="btn-login" id="login-button">Mulai Simulasi</button>
+        <p class="login-error" id="login-error">⚠ Nama dan nomor absen harus diisi!</p>
+    </div>
+</div>
+
+<div id="app">
+    <div class="top-bar">
+        <div class="top-bar-logo">
+            <img src="public/assets/img/logo-meshsim.png" alt="Logo MeshSim">
+            <a href="index.html" class="btn-back-home">← Beranda</a>
+        </div>
+        <div class="top-bar-right">
+            <div class="score-bar">
+                <div class="score-pill"><span class="label">BENAR</span> <span id="score-correct">0</span></div>
+                <div class="score-pill"><span class="label">TOTAL</span> <span id="score-total">0</span></div>
+                <div class="score-pill"><span class="label">AKURASI</span> <span id="score-acc">0%</span></div>
+            </div>
+            <div class="user-badge">
+                <div class="avatar" id="user-avatar">A</div>
+                <span id="user-display">Student</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="info-card">
+            <h3>📋 Petunjuk Simulasi</h3>
+            <p>Pilih posisi gigi → <strong>seret komponen</strong> ke slot bernomor → klik <strong>Cek Jawaban</strong>. Jika benar, jalur transmisi di diagram akan <strong>menyala</strong> mengikuti alur tenaga. Diagram hanya menampilkan nomor komponen — ujilah ingatanmu!</p>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-box"><div class="stat-val" id="stat-correct">0</div><div class="stat-label">Jawaban Benar</div></div>
+            <div class="stat-box"><div class="stat-val" id="stat-total">0</div><div class="stat-label">Total Percobaan</div></div>
+            <div class="stat-box"><div class="stat-val" id="stat-acc">0%</div><div class="stat-label">Akurasi</div></div>
+            <div class="stat-box"><div class="stat-val" id="stat-streak">0</div><div class="stat-label">Streak</div></div>
+        </div>
+
+        <p class="section-title">Pilih Posisi Gigi</p>
+        <div class="gear-tabs" id="gear-tabs"></div>
+
+        <div class="grid-2" style="margin-top:24px">
+            <div class="card">
+                <p class="diagram-title">Urutan Aliran Tenaga</p>
+                <div class="puzzle-info">Susun komponen ke slot bernomor untuk <span id="puzzle-gear-label">Gigi 1</span>. Double-click slot untuk mengembalikan.</div>
+                <div class="slots-row" id="slots-row"></div>
+                <div class="bank-title">Komponen</div>
+                <div class="bank" id="bank" ondragover="onBankDragOver(event)" ondrop="onBankDrop(event)"></div>
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="checkAnswer()">✅ Cek Jawaban</button>
+                    <button class="btn btn-warn" onclick="shuffleBank()">🔀 Acak Ulang</button>
+                    <button class="btn btn-gray" onclick="resetPuzzle()">🗑 Reset</button>
+                    
+                    <!-- 🌟 TOMBOL SOS BARU 🌟 -->
+                    <button class="btn" id="btn-sos" onclick="requestHelp()" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color:#fff; box-shadow:0 8px 0 0 #991B1B, 0 14px 30px rgba(239, 68, 68, 0.35);">
+                        ✋ Minta Bantuan Guru
+                    </button>
+                </div>
+                <p class="section-title">Riwayat Percobaan</p>
+                <div style="overflow:auto; max-height:260px; border:1px solid #ECEFF1; border-radius:10px;">
+                    <table class="log-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Gigi</th>
+                                <th>Waktu</th>
+                                <th>Status</th>
+                                <th>Urutan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <p class="diagram-title">Diagram Jalur Transmisi</p>
+                <div class="gear-info-text" id="gear-info-text"></div>
+                <div id="tx-svg-container"></div>
+                <div class="diag-status" id="diag-status">⬜ Susun komponen dengan benar untuk menyalakan jalur aliran!</div>
+                <!-- Area untuk gambar gigi -->
+                <div id="gear-image-container" style="margin-top: 16px; text-align: center;">
+                    <img id="gear-image" src="" alt="Diagram Gigi" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); max-height: 300px; object-fit: contain; display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ============================================================
+// GEAR DATA
+// ============================================================
+const GEARS = {
+    '1': {
+        label:'Gigi 1', color:'#2196F3', reverse:false,
+        components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','1st Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
+        info:'<b>Gigi 1</b> — start/tanjakan. Rasio tertinggi → torsi maks, kecepatan rendah. Jalur: Input → Counter shaft → 1st Gear besar → Output.',
+        image: 'public/assets/img/1.png'
+    },
+    '2': {
+        label:'Gigi 2', color:'#00ACC1', reverse:false,
+        components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','2nd Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
+        info:'<b>Gigi 2</b> — akselerasi lanjutan. Rasio lebih rendah dari gigi 1 → lebih cepat, torsi lebih kecil. Jalur sama tapi via 2nd Gear.',
+        image: 'public/assets/img/2.png'
+    },
+    '3': {
+        label:'Gigi 3', color:'#7B1FA2', reverse:false,
+        components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','3rd Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
+        info:'<b>Gigi 3</b> — kecepatan menengah kota. Torsi sedang, efisiensi mulai baik.',
+        image: 'public/assets/img/3.png'
+    },
+    '4': {
+        label:'Gigi 4', color:'#388E3C', reverse:false,
+        components:['Input Shaft','Main Drive Gear (4th)','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
+        info:'<b>Gigi 4</b> — direct drive. Input langsung terhubung Output via Main Drive Gear (4th). Tanpa counter shaft → efisiensi max.',
+        image: 'public/assets/img/4.png'
+    },
+    '5': {
+        label:'Gigi 5', color:'#F57C00', reverse:false,
+        components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','5th Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
+        info:'<b>Gigi 5</b> — overdrive tol. Rasio < 1 → output lebih cepat dari input. Konsumsi BBM irit.',
+        image: 'public/assets/img/5.png'
+    },
+    'R': {
+        label:'Reverse', color:'#E53935', reverse:true,
+        components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','Reverse Idler Gear','Reverse Gear','Output Shaft'],
+        info:'<b>Reverse</b> — Reverse Idler Gear membalik arah putaran output → kendaraan mundur.',
+        image: 'public/assets/img/6.png'
+    }
+};
+
+// ============================================================
+// TRANSMISSION SVG
+// ============================================================
+function buildTxSVG(gearKey, state) {
+    const active = (state === 'correct' || state === 'reverse');
+    const pathCol = state === 'reverse' ? '#E53935' : (state === 'correct' ? '#43A047' : '#B0BEC5');
+    const nodeFill = state === 'reverse' ? '#FFCDD2' : (state === 'correct' ? '#C8E6C9' : '#ECEFF1');
+    const nodeStroke = state === 'reverse' ? '#E53935' : (state === 'correct' ? '#43A047' : '#90A4AE');
+    const numCol = state === 'reverse' ? '#B71C1C' : (state === 'correct' ? '#1B5E20' : '#546E7A');
+    const pulse = active ? ' pulse' : '';
+    const pw = active ? 4 : 2.5;
+
+    const housing = (w,h) => `
+        <rect x="10" y="10" width="${w-20}" height="${h-20}" rx="22" fill="#E8EAED" stroke="#90A4AE" stroke-width="1.5"/>
+        <rect x="18" y="18" width="${w-36}" height="${h-36}" rx="17" fill="#F5F7FA" stroke="#B0BEC5" stroke-width="0.8"/>
+    `;
+    const gear = (cx,cy,r,num,highlight) => {
+        const f = highlight ? nodeFill : '#ECEFF1';
+        const s = highlight ? nodeStroke : '#90A4AE';
+        const tc = highlight ? numCol : '#546E7A';
+        const pw2 = highlight ? 2 : 1.2;
+        const teeth = [];
+        const nt = Math.max(6, Math.round(r*1.4));
+        for(let i=0;i<nt;i++){
+            const a = (i/nt)*Math.PI*2;
+            const ro = r+4, ri = r+1;
+            const a1=a-0.18, a2=a+0.18;
+            const x1=cx+ri*Math.cos(a1), y1=cy+ri*Math.sin(a1);
+            const x2=cx+ro*Math.cos(a), y2=cy+ro*Math.sin(a);
+            const x3=cx+ri*Math.cos(a2), y3=cy+ri*Math.sin(a2);
+            teeth.push(`<polygon points="${x1.toFixed(1)},${y1.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)} ${x3.toFixed(1)},${y3.toFixed(1)}" fill="${s}" opacity="0.7"/>`);
+        }
+        return `<g class="${highlight?'pulse':''}">
+            ${teeth.join('')}
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="${f}" stroke="${s}" stroke-width="${pw2}"/>
+            <circle cx="${cx}" cy="${cy}" r="${r*0.35}" fill="${s}" opacity="0.5"/>
+            <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-family="Rajdhani,sans-serif" font-size="${r>16?14:12}" font-weight="800" fill="${tc}">${num}</text>
+        </g>`;
+    };
+    const shaft = (x1,y1,x2,y2,num,highlight) => {
+        const f = highlight ? nodeFill : '#ECEFF1';
+        const s = highlight ? nodeStroke : '#90A4AE';
+        const tc = highlight ? numCol : '#546E7A';
+        const pw2 = highlight ? 2 : 1;
+        return `<g class="${highlight?'pulse':''}">
+            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${s}" stroke-width="6" stroke-linecap="round"/>
+            <rect x="${x1-24}" y="${y1-10}" width="48" height="20" rx="8" fill="${f}" stroke="${s}" stroke-width="${pw2}"/>
+            <text x="${x1}" y="${y1}" text-anchor="middle" dominant-baseline="central" font-family="Rajdhani,sans-serif" font-size="13" font-weight="800" fill="${tc}">${num}</text>
+        </g>`;
+    };
+
+    let svg = '';
+    const w=720, h=360;
+    svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+    svg += housing(w,h);
+
+    const ty = 120;
+    const by = 230;
+
+    if(gearKey === '4'){
+        svg += shaft(80, ty, 150, ty, 1, active);
+        svg += gear(220, ty, 28, 2, active);
+        svg += gear(320, ty, 22, 3, active);
+        svg += gear(420, ty, 26, 4, active);
+        svg += shaft(560, ty, 640, ty, 5, active);
+        if(active){
+            svg += `<path d="M 150 ${ty} L 640 ${ty}" stroke="${pathCol}" stroke-width="${pw}" fill="none" stroke-linecap="round" class="pulse"/>`;
+        }
+    } else if(gearKey === 'R'){
+        svg += shaft(80, ty, 140, ty, 1, active);
+        svg += gear(200, ty, 26, 2, active);
+        svg += gear(260, by, 26, 3, active);
+        svg += shaft(360, by, 420, by, 4, active);
+        svg += gear(380, (ty+by)/2+10, 20, 5, active);
+        svg += gear(460, ty, 24, 6, active);
+        svg += shaft(560, ty, 640, ty, 7, active);
+        if(active){
+            svg += `<path d="M 140 ${ty} L 200 ${ty} L 260 ${by} L 420 ${by}" stroke="${pathCol}" stroke-width="${pw}" fill="none" stroke-linecap="round" class="pulse"/>`;
+            svg += `<path d="M 380 ${by} L 380 ${(ty+by)/2+10} L 460 ${ty} L 640 ${ty}" stroke="${pathCol}" stroke-width="${pw}" fill="none" stroke-linecap="round" class="pulse"/>`;
+        }
+    } else {
+        svg += shaft(70, ty, 130, ty, 1, active);
+        svg += gear(190, ty, 24, 2, active);
+        svg += gear(250, by, 24, 3, active);
+        svg += shaft(340, by, 400, by, 4, active);
+        const fifthX = 450;
+        svg += gear(gearKey==='5'? fifthX : 440, by, 22, 5, active);
+        svg += gear(gearKey==='5'? (fifthX+80) : 520, ty, 20, 6, active);
+        svg += gear(gearKey==='5'? (fifthX+130) : 570, ty, 24, 7, active);
+        svg += shaft(640, ty, 660, ty, 8, active);
+        if(active){
+            svg += `<path d="M 130 ${ty} L 190 ${ty} L 250 ${by} L 400 ${by}" stroke="${pathCol}" stroke-width="${pw}" fill="none" stroke-linecap="round" class="pulse"/>`;
+            svg += `<path d="M ${gearKey==='5'? fifthX : 440} ${by} L ${gearKey==='5'? (fifthX+80) : 520} ${ty} L 660 ${ty}" stroke="${pathCol}" stroke-width="${pw}" fill="none" stroke-linecap="round" class="pulse"/>`;
+        }
+    }
+
+    svg += `</svg>`;
+    return svg;
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let currentGear='1', slots=[], bankItems=[], dragSrc=null;
+let attempts=0, corrects=0, streak=0, log=[];
+let userName='', userAbsen='', currentSiswa=null;
+
+// ============================================================
+// PUZZLE & RENDER
+// ============================================================
+const ICONS = {'Input Shaft':'⬛','Main Drive Gear':'⚙','Main Drive Gear (4th)':'⚙','Counter Gear':'⚙','Counter Gear Shaft':'🔩','1st Gear':'1️⃣','2nd Gear':'2️⃣','3rd Gear':'3️⃣','5th Gear':'5️⃣','Clutch Hub Sleeve':'🔘','Clutch Hub':'🔵','Output Shaft':'➡','Reverse Idler Gear':'🔄','Reverse Gear':'🔁'};
+
+function resetPuzzle(){
+    const g=GEARS[currentGear];
+    slots=new Array(g.components.length).fill(null);
+    bankItems=[...g.components]; shuffleArray(bankItems);
+    renderSlots(); renderBank(); renderDiagram('idle');
+}
+function shuffleBank(){ shuffleArray(bankItems); renderBank(); }
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
+
+function renderSlots(){
+    const row=document.getElementById('slots-row'); row.innerHTML='';
+    slots.forEach((comp,i)=>{
+        const slot=document.createElement('div');
+        slot.className='slot'+(comp?' has-card':''); slot.id=`slot-${i}`;
+        slot.innerHTML=`<span class="slot-num">${i+1}</span>`;
+        if(comp){
+            slot.innerHTML += `<span class="slot-icon">${ICONS[comp]||'⚙'}</span><span class="slot-label">${comp}</span>`;
+        } else {
+            slot.innerHTML += `<span style="font-size:22px;opacity:.3">?</span><span class="slot-label" style="color:#90CAF9;font-size:10px">Slot ${i+1}</span>`;
+        }
+        slot.ondragover=e=>onSlotDragOver(e,i);
+        slot.ondrop=e=>onSlotDrop(e,i);
+        slot.ondragleave=()=>slot.classList.remove('drag-over');
+        slot.ondblclick=()=>clearSlot(i);
+        row.appendChild(slot);
+    });
+}
+function renderBank(){
+    const bank=document.getElementById('bank'); bank.innerHTML='';
+    bankItems.forEach((comp,i)=>{
+        const card=document.createElement('div');
+        card.className='comp-card'; card.draggable=true; card.id=`bank-${i}`;
+        card.innerHTML=`${ICONS[comp]||'⚙'} ${comp}`;
+        card.ondragstart=e=>onBankDragStart(e,i);
+        card.ondragend=()=>card.classList.remove('dragging');
+        bank.appendChild(card);
+    });
+}
+
+function onBankDragStart(e,idx){ dragSrc={type:'bank',idx}; e.dataTransfer.effectAllowed='move'; setTimeout(()=>document.getElementById(`bank-${idx}`)?.classList.add('dragging'),0); }
+function onSlotDragOver(e,idx){ e.preventDefault(); e.dataTransfer.dropEffect='move'; document.getElementById(`slot-${idx}`).classList.add('drag-over'); }
+function onSlotDrop(e,idx){
+    e.preventDefault(); document.getElementById(`slot-${idx}`).classList.remove('drag-over');
+    if(!dragSrc) return;
+    if(dragSrc.type==='bank'){
+        const comp=bankItems[dragSrc.idx];
+        if(slots[idx]!==null) bankItems.push(slots[idx]);
+        slots[idx]=comp;
+        bankItems.splice(dragSrc.idx,1);
+    } else if(dragSrc.type==='slot'){
+        const s=dragSrc.idx;
+        if(s===idx) return;
+        [slots[idx], slots[s]]=[slots[s], slots[idx]];
+    }
+    dragSrc=null; renderSlots(); renderBank();
+}
+function onBankDragOver(e){ e.preventDefault(); }
+function onBankDrop(e){
+    e.preventDefault(); if(!dragSrc) return;
+    if(dragSrc.type==='slot'){
+        const idx=dragSrc.idx;
+        if(slots[idx]!==null){ bankItems.push(slots[idx]); slots[idx]=null; }
+        dragSrc=null; renderSlots(); renderBank();
+    }
+    dragSrc=null;
+}
+function clearSlot(idx){ if(slots[idx]!==null){ bankItems.push(slots[idx]); slots[idx]=null; renderSlots(); renderBank(); } }
+
+function renderDiagram(state){
+    document.getElementById('tx-svg-container').innerHTML=buildTxSVG(currentGear,state);
+    const st=document.getElementById('diag-status');
+    st.className='diag-status';
+    if(state==='correct'){ st.textContent='✅ Benar! Jalur aliran menyala — ikuti nomor urutan pada diagram!'; st.classList.add('correct'); }
+    else if(state==='reverse'){ st.textContent='✅ Reverse aktif! Jalur merah menandai arah mundur kendaraan!'; st.classList.add('correct'); }
+    else if(state==='wrong'){ st.textContent='❌ Urutan salah — periksa slot merah, coba lagi!'; st.classList.add('wrong'); }
+    else{ st.textContent='⬜ Susun komponen dengan benar untuk menyalakan jalur aliran!'; }
+}
+
+// ============================================================
+// INIT & LOAD
+// ============================================================
+function initApp(){ buildGearTabs(); loadGear(currentGear); }
+
+function buildGearTabs(){
+    const c=document.getElementById('gear-tabs'); c.innerHTML='';
+    Object.keys(GEARS).forEach(key=>{
+        const g=GEARS[key];
+        const btn=document.createElement('button');
+        btn.className='gear-tab'+(key==='R'?' reverse':'')+(key===currentGear?' active':'');
+        btn.textContent=g.label; btn.onclick=()=>loadGear(key);
+        c.appendChild(btn);
+    });
+}
+
+function loadGear(key) {
+    currentGear=key;
+    document.querySelectorAll('.gear-tab').forEach((btn,i)=>{
+        const k=Object.keys(GEARS)[i];
+        btn.className='gear-tab'+(k==='R'?' reverse':'')+(k===key?' active':'');
+    });
+    document.getElementById('puzzle-gear-label').textContent=GEARS[key].label;
+    document.getElementById('gear-info-text').innerHTML=GEARS[key].info;
+    
+    // Tampilkan gambar gigi
+    const gearImage = document.getElementById('gear-image');
+    if (GEARS[key].image) {
+        gearImage.src = GEARS[key].image;
+        gearImage.style.display = 'block';
+    } else {
+        gearImage.style.display = 'none';
+    }
+    
+    renderDiagram('idle');
+    resetPuzzle();
+}
+
+// ============================================================
+// STATS & LOG
+// ============================================================
+function updateStats(){
+    const acc=attempts>0?Math.round((corrects/attempts)*100):0;
+    ['correct','total','acc','streak'].forEach(k=>{
+        if(k!=='streak'){ document.getElementById(`score-${k==='acc'?'acc':k}`).textContent=(k==='acc'?acc+'%':(k==='correct'?corrects:attempts)); }
+        document.getElementById(`stat-${k}`).textContent=(k==='acc'?acc+'%':(k==='correct'?corrects:(k==='total'?attempts:streak)));
+    });
+}
+
+function renderLog(){
+    const tbody=document.getElementById('log-body'); tbody.innerHTML='';
+    [...log].reverse().forEach((e,i)=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${log.length-i}</td><td>${e.gear}</td><td>${e.time}</td><td><span class="${e.status==='Benar'?'badge-correct':'badge-wrong'}">${e.status}</span></td><td style="font-family:'Share Tech Mono',monospace;font-size:11px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.order}</td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+function showToast(msg,type){
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.className='toast show '+type;
+    setTimeout(()=>{ t.className='toast '+type; }, 3200);
+}
+
+// ============================================================
+// CHECK ANSWER
+// ============================================================
+function checkAnswer(){
+    const g=GEARS[currentGear]; const correct=g.components;
+    if(slots.some(s=>s===null)){ showToast('⚠ Isi semua slot terlebih dahulu!','error'); return; }
+    let allCorrect=true;
+    slots.forEach((comp,i)=>{
+        const slot=document.getElementById(`slot-${i}`);
+        slot.classList.remove('correct-slot','wrong-slot');
+        if(comp===correct[i]){ slot.classList.add('correct-slot'); }
+        else{ slot.classList.add('wrong-slot'); allCorrect=false; }
+    });
+    attempts++;
+    const timeStr=new Date().toLocaleTimeString('id-ID');
+    const userOrder=slots.join(' → ');
+    if(allCorrect){
+        corrects++; streak++;
+        const ds=g.reverse?'reverse':'correct';
+        renderDiagram(ds);
+        showToast('🎉 Benar! Jalur transmisi menyala!','success');
+        log.push({gear:g.label, time:timeStr, status:'Benar', order:userOrder});
+    } else {
+        streak=0; renderDiagram('wrong');
+        showToast('❌ Ada yang salah. Periksa slot merah!','error');
+        log.push({gear:g.label, time:timeStr, status:'Salah', order:userOrder});
+    }
+    updateStats(); renderLog();
+    updateTerakhirAktif();
+
+    if (currentSiswa) {
+        const riwayatList = JSON.parse(localStorage.getItem('mechsim_riwayat') || '[]');
+        riwayatList.push({
+            id: Date.now(),
+            id_siswa: currentSiswa.id,
+            nama_gigi: g.label,
+            urutan_jawaban_siswa: userOrder,
+            status_jawaban: allCorrect ? 'Benar' : 'Salah',
+            waktu_percobaan: new Date().toISOString()
+        });
+        localStorage.setItem('mechsim_riwayat', JSON.stringify(riwayatList));
+    }
+}
+
+// ============================================================
+// LOGIN & SISWA
+// ============================================================
+function updateTerakhirAktif() {
+    if (!currentSiswa) return;
+    const siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
+    const idx = siswaList.findIndex(s => s.id === currentSiswa.id);
+    if (idx !== -1) {
+        siswaList[idx].terakhir_aktif = new Date().toISOString();
+        currentSiswa.terakhir_aktif = siswaList[idx].terakhir_aktif;
+        localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+        localStorage.setItem('currentSiswa', JSON.stringify(currentSiswa));
+    }
+}
+
+function initFromLocalStorage() {
+    const savedSiswa = localStorage.getItem('currentSiswa');
+    if (savedSiswa) {
+        currentSiswa = JSON.parse(savedSiswa);
+        userName = currentSiswa.nama_lengkap;
+        userAbsen = currentSiswa.nomor_absen;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        document.getElementById('user-display').textContent = `${userName} (${userAbsen})`;
+        document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
+        updateTerakhirAktif();
+        initApp();
+        return true;
+    }
+    return false;
+}
+
+function doLogin(){
+    const nama=document.getElementById('input-name').value.trim();
+    const absen=document.getElementById('input-absen').value.trim();
+    const err=document.getElementById('login-error');
+    if(!nama||!absen){ err.style.display='block'; return; }
+    err.style.display='none';
+
+    let siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
+    let existingSiswa = siswaList.find(s => s.nama_lengkap === nama && s.nomor_absen === absen);
+    
+    if (!existingSiswa) {
+        existingSiswa = {
+            id: Date.now(),
+            nama_lengkap: nama,
+            nomor_absen: absen,
+            kelas: 'XI',
+            waktu_login: new Date().toISOString(),
+            terakhir_aktif: new Date().toISOString()
+        };
+        siswaList.push(existingSiswa);
+        localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+    } else {
+        existingSiswa.terakhir_aktif = new Date().toISOString();
+        const idx = siswaList.findIndex(s => s.id === existingSiswa.id);
+        siswaList[idx] = existingSiswa;
+        localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+    }
+    
+    currentSiswa = existingSiswa;
+    localStorage.setItem('currentSiswa', JSON.stringify(existingSiswa));
+
+    userName=nama; userAbsen=absen;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('user-display').textContent=`${userName} (${userAbsen})`;
+    document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
+    updateTerakhirAktif();
+    initApp();
+}
+
+['input-name','input-absen'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',()=>document.getElementById('login-error').style.display='none');
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Enter' && document.getElementById('login-screen').style.display!=='none') doLogin(); });
+document.getElementById('login-button').addEventListener('click',doLogin);
+
+if (!initFromLocalStorage()) {
+    document.getElementById('login-screen').style.display='flex';
+}
+
+// ============================================================
+// THREE.JS BACKGROUND 3D
+// ============================================================
+(function init3DBackground() {
+    // Scene, Camera, Renderer
+    const canvas = document.getElementById('bg-canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    
+    // Warna latar belakang gradasi biru muda
+    scene.background = new THREE.Color(0xF4F8FF);
+    
+    // Buat partikel 3D
+    const particlesCount = 200;
+    const positions = new Float32Array(particlesCount * 3);
+    const colors = new Float32Array(particlesCount * 3);
+    
+    for (let i = 0; i < particlesCount; i++) {
+        const i3 = i * 3;
+        
+        // Posisi partikel acak
+        positions[i3] = (Math.random() - 0.5) * 20;
+        positions[i3 + 1] = (Math.random() - 0.5) * 20;
+        positions[i3 + 2] = (Math.random() - 0.5) * 20;
+        
+        // Warna partikel: biru muda dan oranye (sesuai tema)
+        if (Math.random() > 0.5) {
+            // Biru
+            colors[i3] = 0.0;
+            colors[i3 + 1] = 0.4;
+            colors[i3 + 2] = 1.0;
+        } else {
+            // Oranye
+            colors[i3] = 1.0;
+            colors[i3 + 1] = 0.54;
+            colors[i3 + 2] = 0.0;
+        }
+    }
+    
+    const particlesGeometry = new THREE.BufferGeometry();
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.15,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+    });
+    
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particles);
+    
+    // Tambahkan beberapa kubus kecil berputar
+    const cubes = [];
+    for (let i = 0; i < 15; i++) {
+        const cubeGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+        const cubeMaterial = new THREE.MeshBasicMaterial({
+            color: i % 2 === 0 ? 0x0066FF : 0xFF8A00,
+            transparent: true,
+            opacity: 0.2,
+            wireframe: true
+        });
+        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        
+        cube.position.set(
+            (Math.random() - 0.5) * 15,
+            (Math.random() - 0.5) * 15,
+            (Math.random() - 0.5) * 15
+        );
+        
+        cube.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+        );
+        
+        cubes.push(cube);
+        scene.add(cube);
+    }
+    
+    camera.position.z = 10;
+    
+    // Animasi
+    let time = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.005;
+        
+        // Rotasi partikel
+        particles.rotation.y += 0.002;
+        particles.rotation.x += 0.001;
+        
+        // Gerakkan partikel sedikit ke atas/bawah
+        const pos = particlesGeometry.attributes.position.array;
+        for (let i = 0; i < particlesCount; i++) {
+            const i3 = i * 3;
+            pos[i3 + 1] += Math.sin(time + i) * 0.005;
+        }
+        particlesGeometry.attributes.position.needsUpdate = true;
+        
+        // Rotasi kubus
+        cubes.forEach((cube, i) => {
+            cube.rotation.x += 0.01 + i * 0.001;
+            cube.rotation.y += 0.015 + i * 0.0015;
+            cube.position.y = Math.sin(time + i) * 2;
+        });
+        
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+    
+    // Resize handler
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+})();
+
+// ================================
+// FITUR SOS: MINTA BANTUAN GURU
+// ================================
+function requestHelp() {
+    // Ambil data siswa dari localStorage
+    const currentSiswa = JSON.parse(localStorage.getItem('currentSiswa'));
+    if (!currentSiswa) return;
+
+    // Ambil gigi yang sedang aktif (dari variabel global currentGear dan GEARS)
+    const currentGearData = GEARS[currentGear];
+    const namaGigi = currentGearData ? currentGearData.label : 'Tidak diketahui';
+
+    // Simpan request SOS ke localStorage
+    const sosData = {
+        nama: currentSiswa.nama_lengkap,
+        absen: currentSiswa.nomor_absen,
+        gigi: namaGigi
+    };
+    localStorage.setItem('mechsim_sos', JSON.stringify(sosData));
+
+    // Ubah state tombol
+    const btnSos = document.getElementById('btn-sos');
+    btnSos.disabled = true;
+    btnSos.textContent = "Menunggu Guru...";
+    btnSos.style.opacity = "0.6";
+    btnSos.style.cursor = "not-allowed";
+}
+
+// Listener untuk menangani reset dari guru
+window.addEventListener('storage', (event) => {
+    if (event.key === 'mechsim_sos') {
+        if (event.newValue === 'RESET') {
+            resetSosButton();
+        }
+    }
+});
+
+// Fallback: cek localStorage secara berkala (untuk berjaga-jaga storage event tidak berjalan)
+setInterval(() => {
+    const sosValue = localStorage.getItem('mechsim_sos');
+    if (sosValue === 'RESET') {
+        resetSosButton();
+        localStorage.removeItem('mechsim_sos'); // Bersihkan reset signal
+    }
+}, 1000);
+
+function resetSosButton() {
+            const btnSos = document.getElementById('btn-sos');
+            btnSos.disabled = false;
+            btnSos.textContent = "✋ Minta Bantuan Guru";
+            btnSos.style.opacity = "1";
+            btnSos.style.cursor = "pointer";
+        }
+
+        // ================================
+        // FITUR FREEZE LAYAR DARI GURU
+        // ================================
+        // Pastikan kode berjalan setelah DOM selesai dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            const freezeOverlay = document.getElementById('freeze-overlay');
+            
+            if (!freezeOverlay) {
+                console.error('Freeze overlay not found!');
+                return;
+            }
+
+            function updateOverlayState() {
+                const isFrozen = localStorage.getItem('mechsim_freeze');
+                console.log('Checking freeze state:', isFrozen); // Log untuk debug
+                if (isFrozen === 'true') {
+                    freezeOverlay.classList.remove('hidden');
+                    console.log('Overlay ACTIVE');
+                } else {
+                    freezeOverlay.classList.add('hidden');
+                    console.log('Overlay HIDDEN');
+                }
+            }
+
+            // Storage Listener untuk perubahan dari tab lain
+            window.addEventListener('storage', (event) => {
+                console.log('Storage event detected:', event);
+                if (event.key === 'mechsim_freeze') {
+                    updateOverlayState();
+                }
+            });
+
+            // Fallback interval untuk memastikan sinkronisasi (setiap 500ms)
+            setInterval(updateOverlayState, 500);
+
+            // Cek state awal saat halaman dimuat
+            updateOverlayState();
+        });
+</script>
+    <!-- OVERLAY FREEZE LAYAR -->
+    <div id="freeze-overlay" class="hidden">
+        <div class="text-center max-w-4xl mx-auto px-6">
+            <!-- Emoji Animasi -->
+            <div class="flex justify-center gap-4 mb-8 flex-wrap">
+                <span class="text-7xl animate-bounce" style="animation-delay: 0s;">👀</span>
+                <span class="text-7xl animate-bounce" style="animation-delay: 0.2s;">📚</span>
+                <span class="text-7xl animate-bounce" style="animation-delay: 0.4s;">💡</span>
+                <span class="text-7xl animate-bounce" style="animation-delay: 0.6s;">🎯</span>
+            </div>
+            
+            <!-- Judul -->
+            <h2 class="text-5xl md:text-6xl font-bold mb-6 animate-float" style="font-family: 'Rajdhani', sans-serif; color: #1e40af; text-shadow: 2px 2px 0 #dbeafe;">
+                🎓 MOMENT BELAJAR 🎓
+            </h2>
+            
+            <!-- Pesan Lucu -->
+            <div class="bg-white rounded-3xl p-8 shadow-2xl mb-8 border-4 border-dashed border-blue-300">
+                <p class="text-2xl md:text-3xl font-bold mb-4" style="color: #0f172a; font-family: 'Nunito', sans-serif;">
+                    🛑 Waktunya Fokus!
+                </p>
+                <p class="text-xl md:text-2xl mb-2" style="color: #475569; font-family: 'Nunito', sans-serif;">
+                    Pak Guru sedang menjelaskan materi penting lho! 👨‍🏫
+                </p>
+                <p class="text-xl md:text-2xl" style="color: #64748b; font-family: 'Nunito', sans-serif;">
+                    Lepas mouse & keyboard, perhatikan baik-baik ya! 📝
+                </p>
+            </div>
+            
+            <!-- Animasi Indikator -->
+            <div class="flex justify-center items-center gap-3">
+                <div class="w-4 h-4 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0s;"></div>
+                <div class="w-4 h-4 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                <div class="w-4 h-4 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+            </div>
+            <p class="mt-4 text-blue-600 font-semibold" style="font-family: 'Rajdhani', sans-serif; font-size: 1.25rem;">
+                Menunggu guru membuka kunci layar...
+            </p>
+        </div>
+    </div>
+
+    <style>
+        #freeze-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+            z-index: 999999 !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            pointer-events: auto !important;
+            user-select: none !important;
+            cursor: not-allowed !important;
+        }
+        #freeze-overlay.hidden {
+            display: none !important;
+        }
+        
+        /* Keyframes Animasi */
+        @-webkit-keyframes bounce {
+            0%, 100% { 
+                -webkit-transform: translateY(0); 
+                transform: translateY(0); 
+            }
+            50% { 
+                -webkit-transform: translateY(-25px); 
+                transform: translateY(-25px); 
+            }
+        }
+        @keyframes bounce {
+            0%, 100% { 
+                -webkit-transform: translateY(0); 
+                transform: translateY(0); 
+            }
+            50% { 
+                -webkit-transform: translateY(-25px); 
+                transform: translateY(-25px); 
+            }
+        }
+        
+        @-webkit-keyframes pulse {
+            0%, 100% { 
+                opacity: 1; 
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.6; 
+                -webkit-transform: scale(1.2);
+                transform: scale(1.2);
+            }
+        }
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1; 
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.6; 
+                -webkit-transform: scale(1.2);
+                transform: scale(1.2);
+            }
+        }
+        
+        @-webkit-keyframes float {
+            0%, 100% { 
+                -webkit-transform: translateY(0px); 
+                transform: translateY(0px); 
+            }
+            50% { 
+                -webkit-transform: translateY(-10px); 
+                transform: translateY(-10px); 
+            }
+        }
+        @keyframes float {
+            0%, 100% { 
+                -webkit-transform: translateY(0px); 
+                transform: translateY(0px); 
+            }
+            50% { 
+                -webkit-transform: translateY(-10px); 
+                transform: translateY(-10px); 
+            }
+        }
+        
+        /* Class Animasi */
+        .animate-bounce {
+            -webkit-animation: bounce 1.2s ease-in-out infinite;
+            animation: bounce 1.2s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        .animate-pulse {
+            -webkit-animation: pulse 1.5s ease-in-out infinite;
+            animation: pulse 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        .animate-float {
+            -webkit-animation: float 3s ease-in-out infinite;
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+
+</body>
+</html>

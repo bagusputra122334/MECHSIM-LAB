@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Transmisi — Media Pembelajaran Interaktif</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F8FF;
+    --surface: #FFFFFF;
+    --surface2: #E8F1FF;
+    --accent: #FF8A00;
+    --accent2: #4DA3FF;
+    --accent3: #34D399;
+    --text: #1A237E;
+    --muted: rgba(26,35,126,0.7);
+    --border: rgba(26,35,126,0.12);
+    --glow: 0 0 30px rgba(255,138,0,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.3;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0066FF 0%, #4DA3FF 100%);
+    color: #FFFFFF;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 35%),
+                radial-gradient(circle at bottom right, rgba(255,138,0,0.15), transparent 28%);
+  }
+
+  .hero-ring {
+    position: absolute;
+    width: 560px;
+    height: 560px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 20s linear infinite;
+  }
+  .hero-ring:nth-child(2) { width: 380px; height: 380px; animation-duration: 15s; animation-direction: reverse; border-color: rgba(255,255,255,0.12); }
+  .hero-ring:nth-child(3) { width: 760px; height: 760px; animation-duration: 30s; border-color: rgba(255,255,255,0.08); }
+
+  @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(249,115,22,0.1);
+    border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    position: relative;
+    margin-bottom: 2.5rem;
+  }
+
+  .start-btn {
+    position: relative;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 14px 36px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--glow);
+    letter-spacing: 0.03em;
+  }
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(249,115,22,0.5); }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    z-index: 100;
+    display: none;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.5s ease;
+  }
+
+  /* TOMBOL KEMBALI */
+  .btn-back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+    z-index: 10;
+  }
+  .btn-back-home:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  /* TOP NAV */
+  .top-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 1rem 2rem;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,14,26,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 99;
+  }
+
+  .nav-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--accent);
+  }
+
+  .nav-steps {
+    display: flex;
+    gap: 6px;
+  }
+
+  .nav-step {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    border: 1px solid var(--muted);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-step.done { background: var(--accent3); border-color: var(--accent3); }
+  .nav-step.active { background: var(--accent); border-color: var(--accent); transform: scale(1.3); }
+
+  /* MAIN APP */
+  .app {
+    display: none;
+    padding-top: 70px;
+    min-height: 100vh;
+  }
+
+  /* SECTION */
+  .section {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+    max-width: 1200px;
+    width: min(100%, 1200px);
+    margin: 0 auto;
+    padding: 3rem 2rem 5rem;
+  }
+  .section.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-label .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+  }
+
+  /* CARDS */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover { transform: translateY(-4px); border-color: rgba(249,115,22,0.2); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+  .card:hover::before { opacity: 1; }
+
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .card p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* FLIP CARDS */
+  .flip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .flip-card {
+    height: 180px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+
+  .flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+
+  .flip-front, .flip-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+
+  .flip-front {
+    background: var(--surface);
+  }
+
+  .flip-back {
+    background: var(--surface2);
+    transform: rotateY(180deg);
+    border-color: rgba(249,115,22,0.2);
+  }
+
+  .flip-front .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .flip-front h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; }
+  .flip-hint { font-size: 0.7rem; color: var(--muted); margin-top: 0.5rem; }
+  .flip-back p { font-size: 0.8rem; color: #a0b0c0; line-height: 1.5; }
+  .flip-back .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    background: rgba(249,115,22,0.15);
+    color: var(--accent);
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  /* ACCORDION */
+  .accordion { margin-bottom: 2rem; }
+
+  .acc-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .acc-item.open { border-color: rgba(249,115,22,0.3); }
+
+  .acc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .acc-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .acc-num {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: rgba(249,115,22,0.1);
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .acc-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .acc-chevron {
+    color: var(--muted);
+    font-size: 0.8rem;
+    transition: transform 0.3s;
+  }
+
+  .acc-item.open .acc-chevron { transform: rotate(180deg); color: var(--accent); }
+
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .acc-item.open .acc-body { max-height: 600px; }
+
+  .acc-content {
+    padding: 0 1.25rem 1.25rem;
+    font-size: 0.875rem;
+    color: #a0b0c0;
+    line-height: 1.7;
+  }
+
+  /* QUIZ */
+  .quiz-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .quiz-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .quiz-progress-bg {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .quiz-count {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .quiz-question {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .quiz-option {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .quiz-option:hover:not(.answered) { border-color: rgba(249,115,22,0.3); background: rgba(249,115,22,0.05); }
+  .quiz-option.correct { border-color: var(--accent3); background: rgba(16,185,129,0.1); color: var(--accent3); }
+  .quiz-option.wrong { border-color: #ef4444; background: rgba(239,68,68,0.08); color: #ef4444; }
+  .quiz-option.answered { cursor: default; }
+
+  .opt-label {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .quiz-feedback {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: none;
+    margin-bottom: 1rem;
+  }
+
+  .quiz-feedback.correct { display: block; background: rgba(16,185,129,0.1); color: var(--accent3); border: 1px solid rgba(16,185,129,0.2); }
+  .quiz-feedback.wrong { display: block; background: rgba(239,68,68,0.08); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+
+  /* MATCHING GAME */
+  .match-game {
+    margin-bottom: 2rem;
+  }
+
+  .match-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .match-col h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .match-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .match-item:hover:not(.matched):not(.disabled) { border-color: rgba(249,115,22,0.4); }
+  .match-item.selected { border-color: var(--accent); background: rgba(249,115,22,0.08); }
+  .match-item.matched { border-color: var(--accent3); background: rgba(16,185,129,0.1); color: var(--accent3); cursor: default; opacity: 0.7; }
+  .match-item.error { border-color: #ef4444; animation: shake 0.3s ease; }
+
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+  }
+
+  .match-status {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    min-height: 24px;
+  }
+
+  /* NEXT BUTTON */
+  .btn-next {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(249,115,22,0.4); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 10px 24px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+    margin-left: 8px;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+  /* INFO BOX */
+  .info-box {
+    background: rgba(59,130,246,0.05);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .info-box .info-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+  .info-box p { font-size: 0.85rem; color: #93c5fd; line-height: 1.6; }
+
+  /* DIAGRAM VISUAL */
+  .diagram-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diagram-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .tree-root {
+    background: linear-gradient(135deg, var(--accent), #ea580c);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 20px rgba(249,115,22,0.3);
+  }
+
+  .tree-line {
+    width: 2px;
+    height: 24px;
+    background: var(--border);
+  }
+
+  .tree-branch {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .tree-branch-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .tree-node {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .tree-node.blue { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
+  .tree-node.green { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #6ee7b7; font-size: 0.72rem; padding: 6px 12px; }
+
+  .h-line {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 0;
+  }
+
+  .tree-children {
+    display: flex;
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  /* SUMMARY */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .summary-card:hover { transform: translateY(-3px); }
+
+  .summary-card .big-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .summary-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem; }
+  .summary-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* COMPLETION */
+  .completion {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .completion-badge {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #ea580c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    box-shadow: 0 0 60px rgba(249,115,22,0.4);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  .completion h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .completion p {
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .match-columns { grid-template-columns: 1fr; }
+    .flip-grid { grid-template-columns: 1fr 1fr; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2.2rem; }
+  }
+
+  /* REVEAL ANIM */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal { animation: slideUp 0.5s ease forwards; }
+  .reveal-delay-1 { animation-delay: 0.1s; opacity: 0; }
+  .reveal-delay-2 { animation-delay: 0.2s; opacity: 0; }
+  .reveal-delay-3 { animation-delay: 0.3s; opacity: 0; }
+  .reveal-delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+  .drag-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  /* Hotspot diagram */
+  .hotspot-wrap {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hotspot-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+
+  .transmisi-visual {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .t-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-size: 0.82rem;
+    text-align: center;
+    min-width: 140px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .t-box:hover { transform: scale(1.05); border-color: rgba(249,115,22,0.4); }
+  .t-box .t-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .t-box h5 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem; margin-bottom: 0.25rem; }
+  .t-box p { font-size: 0.7rem; color: var(--muted); }
+  .t-box .t-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 100px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .t-detail {
+    background: rgba(249,115,22,0.05);
+    border: 1px solid rgba(249,115,22,0.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.83rem;
+    color: #fcd5a8;
+    line-height: 1.6;
+    min-height: 60px;
+    transition: all 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap" id="progressBarWrap">
+  <div class="progress-bar-fill" id="progressFill"></div>
+</div>
+
+<!-- TOP NAV -->
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="btn-back-home" style="padding:6px 12px;font-size:0.75rem;">← Beranda</a>
+  <div class="nav-title">⚙️ Sistem Transmisi</div>
+  <div class="nav-steps" id="navSteps"></div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="heroScreen">
+  <div style="position:absolute;top:20px;left:20px;z-index:10;">
+    <a href="index.html" class="btn-back-home">← Beranda</a>
+  </div>
+  <div class="hero-bg"></div>
+  <div class="hero-ring"></div>
+  <div class="hero-ring"></div>
+  <div class="hero-ring"></div>
+
+  <div class="badge reveal">
+    <span class="dot"></span>
+    Media Pembelajaran Interaktif
+  </div>
+
+  <h1 class="reveal reveal-delay-1">Sistem<br><span>Transmisi</span><br>Kendaraan</h1>
+
+  <p class="reveal reveal-delay-2">
+    Pelajari jenis-jenis transmisi kendaraan melalui pengalaman belajar interaktif. Klik kartu, cocokkan istilah, dan uji pemahaman Anda!
+  </p>
+
+  <button class="start-btn reveal reveal-delay-3" onclick="startApp()">
+    Mulai Belajar →
+  </button>
+</div>
+
+<!-- APP -->
+<div class="app" id="appScreen">
+
+  <!-- SECTION 1: Pendahuluan -->
+  <div class="section active" id="sec1">
+    <div class="section-label"><span class="dot"></span> Bab 1 · Pendahuluan</div>
+    <h2 class="reveal">Apa itu<br>Transmisi?</h2>
+    <p class="subtitle reveal reveal-delay-1">Transmisi adalah bagian dari sistem pemindah tenaga yang mengatur perbandingan putaran mesin dengan poros penggerak aksel.</p>
+
+    <div class="cards-grid">
+      <div class="card reveal reveal-delay-1">
+        <div class="card-icon" style="background:rgba(249,115,22,0.1)">⚙️</div>
+        <h3>Fungsi Utama</h3>
+        <p>Menghasilkan momen puntir dan putaran yang diinginkan sesuai kondisi berkendara.</p>
+      </div>
+      <div class="card reveal reveal-delay-2">
+        <div class="card-icon" style="background:rgba(59,130,246,0.1)">🔄</div>
+        <h3>Prinsip Kerja</h3>
+        <p>Mengubah rasio gigi antara mesin dan roda penggerak untuk menyesuaikan torsi dan kecepatan.</p>
+      </div>
+      <div class="card reveal reveal-delay-3">
+        <div class="card-icon" style="background:rgba(16,185,129,0.1)">🏎️</div>
+        <h3>Posisi di Kendaraan</h3>
+        <p>Terletak di antara kopling dan poros propeler, sebagai penghubung tenaga ke roda.</p>
+      </div>
+    </div>
+
+    <div class="diagram-wrap reveal">
+      <div class="diagram-title">Klasifikasi Transmisi</div>
+      <div class="tree">
+        <div class="tree-root">Transmisi</div>
+        <div class="tree-line"></div>
+        <div class="tree-branch">
+          <div class="tree-branch-item">
+            <div class="tree-node blue">Manual</div>
+            <div class="tree-line"></div>
+            <div style="display:flex;gap:8px">
+              <div class="tree-node green">2 Poros</div>
+              <div class="tree-node green">3 Poros</div>
+              <div class="tree-node green">4WD</div>
+            </div>
+          </div>
+          <div style="width:40px;height:2px;background:var(--border);margin-top:20px;flex-shrink:0"></div>
+          <div class="tree-branch-item">
+            <div class="tree-node blue">Otomatis</div>
+            <div class="tree-line"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+              <div class="tree-node green">Helikal</div>
+              <div class="tree-node green">Planetari</div>
+              <div class="tree-node green">CVT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-next" onclick="goToSection(2)">Lanjut: Transmisi Manual →</button>
+  </div>
+
+  <!-- SECTION 2: Transmisi Manual — Flip Cards -->
+  <div class="section" id="sec2">
+    <div class="section-label"><span class="dot"></span> Bab 2 · Transmisi Manual</div>
+    <h2>Transmisi<br><span style="color:var(--accent)">Manual</span></h2>
+    <p class="subtitle">Perpindahan posisi gigi dilakukan oleh pengemudi. Klik kartu untuk melihat detail setiap jenis.</p>
+
+    <div class="drag-hint">👆 Klik kartu untuk membalik</div>
+
+    <div class="flip-grid" id="flipGrid">
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="icon">🚗</div>
+            <h4>Transmisi 2 Poros</h4>
+            <div class="flip-hint">Klik untuk detail</div>
+          </div>
+          <div class="flip-back">
+            <div class="tag">Front Wheel Drive</div>
+            <p>Digunakan untuk kendaraan penggerak roda depan (FWD). Input dan output berada pada dua poros terpisah dalam satu casing.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="icon">🚚</div>
+            <h4>Transmisi 3 Poros</h4>
+            <div class="flip-hint">Klik untuk detail</div>
+          </div>
+          <div class="flip-back">
+            <div class="tag">Rear Wheel Drive</div>
+            <p>Digunakan untuk kendaraan penggerak roda belakang (RWD). Memiliki poros counter gear sebagai perantara.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div class="icon">🚙</div>
+            <h4>Transmisi 4WD</h4>
+            <div class="flip-hint">Klik untuk detail</div>
+          </div>
+          <div class="flip-back">
+            <div class="tag">Four Wheel Drive</div>
+            <p>Menggerakkan keempat roda. Bisa 2 atau 3 poros, ditambah Transfer Case Unit untuk membagi tenaga ke sumbu depan dan belakang.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hotspot-wrap">
+      <div class="hotspot-title">🔍 Jelajahi Jenis Transmisi Manual</div>
+      <div class="transmisi-visual">
+        <div class="t-box" onclick="showDetail('d1')">
+          <div class="t-icon">🔧</div>
+          <h5>2 Poros</h5>
+          <p>FWD · Kompak</p>
+          <div class="t-badge">FWD</div>
+        </div>
+        <div class="t-box" onclick="showDetail('d2')">
+          <div class="t-icon">⚙️</div>
+          <h5>3 Poros</h5>
+          <p>RWD · Klasik</p>
+          <div class="t-badge">RWD</div>
+        </div>
+        <div class="t-box" onclick="showDetail('d3')">
+          <div class="t-icon">🏔️</div>
+          <h5>4WD + Transfer Case</h5>
+          <p>Off-road · SUV</p>
+          <div class="t-badge">4WD</div>
+        </div>
+      </div>
+      <div class="t-detail" id="tDetail">👆 Klik salah satu jenis di atas untuk melihat penjelasan lebih lanjut...</div>
+    </div>
+
+    <button class="btn-next" onclick="goToSection(3)">Lanjut: Transmisi Otomatis →</button>
+    <button class="btn-secondary" onclick="goToSection(1)">← Kembali</button>
+  </div>
+
+  <!-- SECTION 3: Transmisi Otomatis — Accordion -->
+  <div class="section" id="sec3">
+    <div class="section-label"><span class="dot"></span> Bab 3 · Transmisi Otomatis</div>
+    <h2>Transmisi<br><span style="color:var(--accent2)">Otomatis</span></h2>
+    <p class="subtitle">Perpindahan posisi gigi terjadi secara otomatis sesuai putaran dan beban mesin. Klik setiap item untuk detail.</p>
+
+    <div class="info-box">
+      <span class="info-icon">💡</span>
+      <p>Transmisi otomatis dibagi menjadi 3 golongan utama berdasarkan mekanisme perpindahan giginya.</p>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-item" id="acc1">
+        <div class="acc-header" onclick="toggleAcc('acc1')">
+          <div class="acc-header-left">
+            <div class="acc-num">1</div>
+            <div class="acc-title">Tipe Gigi Helikal</div>
+          </div>
+          <span class="acc-chevron">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p>Transmisi otomatis dengan <strong style="color:#fbbf24">gigi helikal</strong> menggunakan roda gigi berbentuk spiral yang memberikan perpindahan yang lebih halus dan senyap dibandingkan gigi lurus.</p>
+            <br>
+            <p>✅ Keunggulan: Senyap, halus, tahan lama.</p>
+            <p>⚡ Digunakan pada: Kendaraan penumpang modern.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item" id="acc2">
+        <div class="acc-header" onclick="toggleAcc('acc2')">
+          <div class="acc-header-left">
+            <div class="acc-num">2</div>
+            <div class="acc-title">Tipe Gigi Planetari</div>
+          </div>
+          <span class="acc-chevron">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p>Sistem <strong style="color:#93c5fd">gigi planetari</strong> menggunakan susunan ring gear, planet gear, sun gear, dan carrier. Rasio gigi diubah dengan mengunci atau melepas elemen-elemen tersebut.</p>
+            <br>
+            <p>✅ Keunggulan: Kompak, banyak pilihan rasio gigi.</p>
+            <p>⚡ Digunakan pada: Transmisi AT konvensional 4–10 percepatan.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item" id="acc3">
+        <div class="acc-header" onclick="toggleAcc('acc3')">
+          <div class="acc-header-left">
+            <div class="acc-num">3</div>
+            <div class="acc-title">Tipe CVT (Continuously Variable Transaxle)</div>
+          </div>
+          <span class="acc-chevron">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            <p><strong style="color:#6ee7b7">CVT</strong> tidak menggunakan gigi bertahap, melainkan sabuk/rantai baja dan dua pulley variabel. Rasio transmisi berubah secara kontinyu tanpa perpindahan gigi yang terasa.</p>
+            <br>
+            <p>✅ Keunggulan: Efisiensi bahan bakar tinggi, akselerasi mulus.</p>
+            <p>⚡ Digunakan pada: City car, hybrid, kendaraan ekonomis.</p>
+            <p>🔄 Prinsip: Pulley primer mengecil → rasio rendah; membesar → rasio tinggi.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-next" onclick="goToSection(4)">Lanjut: Cocokkan Istilah →</button>
+    <button class="btn-secondary" onclick="goToSection(2)">← Kembali</button>
+  </div>
+
+  <!-- SECTION 4: MATCHING GAME -->
+  <div class="section" id="sec4">
+    <div class="section-label"><span class="dot"></span> Aktivitas · Mencocokkan</div>
+    <h2>Cocokkan<br><span style="color:var(--accent3)">Istilah!</span></h2>
+    <p class="subtitle">Klik satu item di kolom kiri, lalu klik pasangannya di kolom kanan.</p>
+
+    <div class="match-game">
+      <div class="match-columns">
+        <div class="match-col">
+          <h4>Jenis Transmisi</h4>
+          <div id="leftCol"></div>
+        </div>
+        <div class="match-col">
+          <h4>Deskripsi / Kegunaan</h4>
+          <div id="rightCol"></div>
+        </div>
+      </div>
+      <div class="match-status" id="matchStatus">Pilih item dari kolom kiri untuk memulai</div>
+    </div>
+
+    <div id="matchResult" style="display:none">
+      <div class="info-box">
+        <span class="info-icon">🎉</span>
+        <p>Semua pasangan berhasil ditemukan! Lanjut ke kuis akhir.</p>
+      </div>
+    </div>
+
+    <button class="btn-next" id="btnToQuiz" style="display:none" onclick="goToSection(5)">Lanjut: Kuis Akhir →</button>
+    <button class="btn-secondary" onclick="goToSection(3)">← Kembali</button>
+    <button class="btn-secondary" onclick="resetMatch()" style="margin-left:0">🔄 Reset</button>
+  </div>
+
+  <!-- SECTION 5: QUIZ -->
+  <div class="section" id="sec5">
+    <div class="section-label"><span class="dot"></span> Aktivitas · Kuis</div>
+    <h2>Uji<br><span style="color:var(--accent)">Pemahamanmu</span></h2>
+    <p class="subtitle">Jawab pertanyaan berikut untuk menguji penguasaan materi.</p>
+
+    <div class="quiz-container" id="quizContainer">
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-bg">
+          <div class="quiz-progress-fill" id="quizProgressFill"></div>
+        </div>
+        <div class="quiz-count" id="quizCount"></div>
+      </div>
+      <div class="quiz-question" id="quizQuestion"></div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <button class="btn-next" id="btnNextQ" style="display:none" onclick="nextQuestion()">Pertanyaan Berikutnya →</button>
+    </div>
+
+    <button class="btn-secondary" onclick="goToSection(4)">← Kembali</button>
+  </div>
+
+  <!-- SECTION 6: SUMMARY -->
+  <div class="section" id="sec6">
+    <div class="completion">
+      <div class="completion-badge">🏆</div>
+      <h2>Materi Selesai!</h2>
+      <p>Kamu telah mempelajari seluruh materi Sistem Transmisi Kendaraan.</p>
+
+      <div class="summary-grid" style="text-align:left; max-width:600px; margin:0 auto 2rem;">
+        <div class="summary-card">
+          <div class="big-icon">📖</div>
+          <h3>Konsep Dasar</h3>
+          <p>Fungsi & prinsip kerja transmisi dalam sistem pemindah tenaga kendaraan.</p>
+        </div>
+        <div class="summary-card">
+          <div class="big-icon">🔧</div>
+          <h3>Transmisi Manual</h3>
+          <p>3 jenis: 2 poros (FWD), 3 poros (RWD), dan 4WD dengan transfer case.</p>
+        </div>
+        <div class="summary-card">
+          <div class="big-icon">⚡</div>
+          <h3>Transmisi Otomatis</h3>
+          <p>3 tipe: Helikal, Planetari, dan CVT dengan keunggulan masing-masing.</p>
+        </div>
+        <div class="summary-card">
+          <div class="big-icon">✅</div>
+          <h3>Kuis Selesai</h3>
+          <p id="quizScoreSummary">Kamu telah menyelesaikan semua soal kuis.</p>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="restartApp()">🔄 Ulangi Materi</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const totalSections = 6;
+let currentSection = 1;
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+// ===== NAVIGATION =====
+function startApp() {
+  document.getElementById('heroScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('progressBarWrap').style.display = 'block';
+  document.getElementById('topNav').style.display = 'flex';
+  buildNavSteps();
+  updateProgress();
+  initMatch();
+  initQuiz();
+}
+
+function goToSection(n) {
+  document.getElementById('sec' + currentSection).classList.remove('active');
+  setTimeout(() => {
+    document.getElementById('sec' + n).classList.add('active');
+  }, 50);
+  currentSection = n;
+  updateProgress();
+  updateNavSteps();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const pct = ((currentSection - 1) / (totalSections - 1)) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function buildNavSteps() {
+  const wrap = document.getElementById('navSteps');
+  wrap.innerHTML = '';
+  for (let i = 1; i <= totalSections; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-step' + (i === 1 ? ' active' : '');
+    d.dataset.step = i;
+    d.onclick = () => goToSection(i);
+    wrap.appendChild(d);
+  }
+}
+
+function updateNavSteps() {
+  document.querySelectorAll('.nav-step').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.remove('active', 'done');
+    if (s === currentSection) el.classList.add('active');
+    else if (s < currentSection) el.classList.add('done');
+  });
+}
+
+function restartApp() {
+  quizIndex = 0; quizScore = 0;
+  goToSection(1);
+  initQuiz();
+  resetMatch();
+}
+
+// ===== SECTION 2: DETAIL BOX =====
+const details = {
+  d1: '🚗 <strong>Transmisi 2 Poros (Twin Shaft)</strong>: Digunakan pada kendaraan penggerak roda depan (FWD). Poros input dan output sejajar dalam satu unit kompak. Cocok untuk mobil sedan dan hatchback kecil.',
+  d2: '⚙️ <strong>Transmisi 3 Poros (Counter Shaft)</strong>: Digunakan pada kendaraan penggerak roda belakang (RWD). Memiliki poros utama, poros counter gear, dan poros output. Umum ditemukan pada pikap dan SUV klasik.',
+  d3: '🏔️ <strong>Transmisi 4WD + Transfer Case</strong>: Menggerakkan keempat roda. Transfer Case membagi torsi ke sumbu depan dan belakang. Digunakan pada kendaraan off-road seperti Jeep, Land Cruiser, dll.'
+};
+
+function showDetail(id) {
+  document.getElementById('tDetail').innerHTML = details[id];
+}
+
+// ===== SECTION 3: ACCORDION =====
+function toggleAcc(id) {
+  const item = document.getElementById(id);
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.acc-item').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ===== SECTION 4: MATCHING GAME =====
+const matchPairs = [
+  { id: 'a', left: '2 Poros', right: 'FWD — Penggerak Roda Depan' },
+  { id: 'b', left: '3 Poros', right: 'RWD — Penggerak Roda Belakang' },
+  { id: 'c', left: '4WD + Transfer Case', right: 'Semua Roda Penggerak' },
+  { id: 'd', left: 'CVT', right: 'Rasio Gigi Berubah Kontinyu' },
+  { id: 'e', left: 'Gigi Planetari', right: 'Sun Gear, Planet Gear, Ring Gear' },
+];
+
+let selectedLeft = null;
+let matchedCount = 0;
+
+function initMatch() {
+  matchedCount = 0; selectedLeft = null;
+  document.getElementById('matchResult').style.display = 'none';
+  document.getElementById('btnToQuiz').style.display = 'none';
+
+  const leftArr = [...matchPairs].sort(() => Math.random() - 0.5);
+  const rightArr = [...matchPairs].sort(() => Math.random() - 0.5);
+
+  const lc = document.getElementById('leftCol');
+  const rc = document.getElementById('rightCol');
+  lc.innerHTML = ''; rc.innerHTML = '';
+
+  leftArr.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'match-item';
+    el.textContent = p.left;
+    el.dataset.id = p.id;
+    el.dataset.side = 'left';
+    el.onclick = () => handleMatchClick(el);
+    lc.appendChild(el);
+  });
+
+  rightArr.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'match-item';
+    el.textContent = p.right;
+    el.dataset.id = p.id;
+    el.dataset.side = 'right';
+    el.onclick = () => handleMatchClick(el);
+    rc.appendChild(el);
+  });
+}
+
+function handleMatchClick(el) {
+  if (el.classList.contains('matched') || el.classList.contains('disabled')) return;
+
+  if (el.dataset.side === 'left') {
+    document.querySelectorAll('.match-item[data-side="left"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedLeft = el;
+    document.getElementById('matchStatus').textContent = `"${el.textContent}" dipilih. Sekarang pilih pasangannya.`;
+  } else {
+    if (!selectedLeft) {
+      document.getElementById('matchStatus').textContent = 'Pilih item dari kolom kiri dulu!';
+      return;
+    }
+    if (selectedLeft.dataset.id === el.dataset.id) {
+      // CORRECT
+      selectedLeft.classList.remove('selected');
+      selectedLeft.classList.add('matched');
+      el.classList.add('matched');
+      matchedCount++;
+      document.getElementById('matchStatus').textContent = `✅ Benar! ${matchedCount}/${matchPairs.length} pasang`;
+      selectedLeft = null;
+      if (matchedCount === matchPairs.length) {
+        setTimeout(() => {
+          document.getElementById('matchResult').style.display = 'block';
+          document.getElementById('btnToQuiz').style.display = 'inline-flex';
+          document.getElementById('matchStatus').textContent = '🎉 Semua pasangan ditemukan!';
+        }, 300);
+      }
+    } else {
+      // WRONG
+      selectedLeft.classList.add('error');
+      el.classList.add('error');
+      document.getElementById('matchStatus').textContent = '❌ Bukan pasangan yang tepat. Coba lagi!';
+      setTimeout(() => {
+        selectedLeft.classList.remove('error', 'selected');
+        el.classList.remove('error');
+        selectedLeft = null;
+        document.getElementById('matchStatus').textContent = 'Pilih ulang dari kolom kiri';
+      }, 700);
+    }
+  }
+}
+
+function resetMatch() {
+  initMatch();
+}
+
+// ===== SECTION 5: QUIZ =====
+const questions = [
+  {
+    q: 'Apa fungsi utama transmisi dalam kendaraan?',
+    opts: ['Menghasilkan tenaga mesin', 'Mengatur perbandingan putaran mesin dengan poros penggerak aksel', 'Menyimpan bahan bakar', 'Mengatur sistem pengereman'],
+    ans: 1,
+    fb: 'Benar! Transmisi mengatur perbandingan putaran untuk menghasilkan momen puntir dan putaran yang diinginkan.'
+  },
+  {
+    q: 'Transmisi 2 poros umumnya digunakan pada kendaraan dengan penggerak?',
+    opts: ['Roda Belakang (RWD)', 'Semua Roda (4WD)', 'Roda Depan (FWD)', 'Roda Tengah'],
+    ans: 2,
+    fb: 'Tepat! Transmisi 2 poros digunakan untuk kendaraan penggerak roda depan (FWD).'
+  },
+  {
+    q: 'Apa perbedaan utama transmisi manual dan otomatis?',
+    opts: ['Jumlah roda penggerak', 'Cara perpindahan posisi gigi — manual oleh pengemudi, otomatis oleh sistem', 'Kapasitas mesin', 'Jenis bahan bakar'],
+    ans: 1,
+    fb: 'Benar! Pada transmisi manual pengemudi memindahkan gigi, sedangkan pada transmisi otomatis perpindahan terjadi sendiri sesuai putaran dan beban mesin.'
+  },
+  {
+    q: 'Transmisi 4WD membutuhkan komponen tambahan berupa?',
+    opts: ['Torque Converter', 'Differential Lock', 'Transfer Case Unit', 'Planetary Gear Set'],
+    ans: 2,
+    fb: 'Betul! Transfer Case Unit berfungsi membagi tenaga ke sumbu roda depan dan belakang.'
+  },
+  {
+    q: 'Keunggulan utama transmisi CVT dibanding transmisi otomatis konvensional adalah?',
+    opts: ['Lebih banyak tingkat percepatan', 'Rasio gigi berubah secara kontinyu tanpa hentakan', 'Lebih cocok untuk off-road', 'Lebih mudah diperbaiki'],
+    ans: 1,
+    fb: 'Tepat! CVT mengubah rasio gigi secara halus dan kontinyu sehingga akselerasi terasa lebih mulus dan efisiensi bahan bakar meningkat.'
+  },
+  {
+    q: 'Mekanisme gigi apa yang digunakan pada transmisi otomatis tipe Planetari?',
+    opts: ['Gigi Helikal dan Lurus', 'Sun Gear, Planet Gear, Ring Gear, dan Carrier', 'Sabuk Baja dan Pulley', 'Bevel Gear dan Worm Gear'],
+    ans: 1,
+    fb: 'Benar! Sistem planetari menggunakan susunan sun gear, planet gear, ring gear, dan carrier untuk menghasilkan berbagai rasio.'
+  },
+];
+
+function initQuiz() {
+  quizIndex = 0; quizScore = 0;
+  showQuestion();
+}
+
+function showQuestion() {
+  if (quizIndex >= questions.length) {
+    endQuiz();
+    return;
+  }
+  quizAnswered = false;
+  const q = questions[quizIndex];
+  const pct = (quizIndex / questions.length) * 100;
+  document.getElementById('quizProgressFill').style.width = pct + '%';
+  document.getElementById('quizCount').textContent = `${quizIndex + 1} / ${questions.length}`;
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('quizFeedback').className = 'quiz-feedback';
+  document.getElementById('btnNextQ').style.display = 'none';
+
+  const labels = ['A', 'B', 'C', 'D'];
+  const optWrap = document.getElementById('quizOptions');
+  optWrap.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const el = document.createElement('div');
+    el.className = 'quiz-option';
+    el.innerHTML = `<span class="opt-label">${labels[i]}</span> ${opt}`;
+    el.onclick = () => answerQuestion(i, el);
+    optWrap.appendChild(el);
+  });
+}
+
+function answerQuestion(idx, el) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = questions[quizIndex];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.classList.add('answered'));
+
+  const fb = document.getElementById('quizFeedback');
+  if (idx === q.ans) {
+    el.classList.add('correct');
+    opts[q.ans].classList.add('correct');
+    fb.className = 'quiz-feedback correct';
+    fb.textContent = '✅ ' + q.fb;
+    quizScore++;
+  } else {
+    el.classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    fb.className = 'quiz-feedback wrong';
+    fb.textContent = '❌ Kurang tepat. ' + q.fb;
+  }
+
+  document.getElementById('btnNextQ').style.display = 'inline-flex';
+}
+
+function nextQuestion() {
+  quizIndex++;
+  showQuestion();
+}
+
+function endQuiz() {
+  const pct = Math.round((quizScore / questions.length) * 100);
+  document.getElementById('quizScoreSummary').textContent =
+    `Skor kuis: ${quizScore}/${questions.length} (${pct}%)`;
+  goToSection(6);
+}
+
+</script>
+</body>
+</html>
