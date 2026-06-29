@@ -418,37 +418,37 @@ const GEARS = {
         label:'Gigi 1', color:'#2196F3', reverse:false,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','1st Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 1</b> — start/tanjakan. Rasio tertinggi → torsi maks, kecepatan rendah. Jalur: Input → Counter shaft → 1st Gear besar → Output.',
-        image: 'img/1.png'
+        image: 'img/engine.png'
     },
     '2': {
         label:'Gigi 2', color:'#00ACC1', reverse:false,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','2nd Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 2</b> — akselerasi lanjutan. Rasio lebih rendah dari gigi 1 → lebih cepat, torsi lebih kecil. Jalur sama tapi via 2nd Gear.',
-        image: 'img/2.png'
+        image: 'img/engine.png'
     },
     '3': {
         label:'Gigi 3', color:'#7B1FA2', reverse:false,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','3rd Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 3</b> — kecepatan menengah kota. Torsi sedang, efisiensi mulai baik.',
-        image: 'img/3.png'
+        image: 'img/engine.png'
     },
     '4': {
         label:'Gigi 4', color:'#388E3C', reverse:false,
         components:['Input Shaft','Main Drive Gear (4th)','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 4</b> — direct drive. Input langsung terhubung Output via Main Drive Gear (4th). Tanpa counter shaft → efisiensi max.',
-        image: 'img/4.png'
+        image: 'img/engine.png'
     },
     '5': {
         label:'Gigi 5', color:'#F57C00', reverse:false,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','5th Gear','Clutch Hub Sleeve','Clutch Hub','Output Shaft'],
         info:'<b>Gigi 5</b> — overdrive tol. Rasio < 1 → output lebih cepat dari input. Konsumsi BBM irit.',
-        image: 'img/5.png'
+        image: 'img/engine.png'
     },
     'R': {
         label:'Reverse', color:'#E53935', reverse:true,
         components:['Input Shaft','Main Drive Gear','Counter Gear','Counter Gear Shaft','Reverse Idler Gear','Reverse Gear','Output Shaft'],
         info:'<b>Reverse</b> — Reverse Idler Gear membalik arah putaran output → kendaraan mundur.',
-        image: 'img/6.png'
+        image: 'img/engine.png'
     }
 };
 
@@ -562,7 +562,22 @@ let userName='', userAbsen='', currentSiswa=null;
 // ============================================================
 // PUZZLE & RENDER
 // ============================================================
-const ICONS = {'Input Shaft':'⬛','Main Drive Gear':'⚙','Main Drive Gear (4th)':'⚙','Counter Gear':'⚙','Counter Gear Shaft':'🔩','1st Gear':'1️⃣','2nd Gear':'2️⃣','3rd Gear':'3️⃣','5th Gear':'5️⃣','Clutch Hub Sleeve':'🔘','Clutch Hub':'🔵','Output Shaft':'➡','Reverse Idler Gear':'🔄','Reverse Gear':'🔁'};
+const COMPONENT_IMAGES = {
+    'Input Shaft': 'img/Input Shaft.png',
+    'Main Drive Gear': 'img/Main Drive Gear.png',
+    'Main Drive Gear (4th)': 'img/Main Drive Gear (4th).png',
+    'Counter Gear': 'img/Counter Shaft.png',
+    'Counter Gear Shaft': 'img/Counter Gear Shaft.png',
+    '1st Gear': 'img/1st Gear.png',
+    '2nd Gear': 'img/2nd Gear.png',
+    '3rd Gear': 'img/3rd Gear.png',
+    '5th Gear': 'img/5th Gear.png',
+    'Clutch Hub Sleeve': 'img/Clutch Hub Sleeve.png',
+    'Clutch Hub': 'img/Clutch Hub.png',
+    'Output Shaft': 'img/Output Shaft.png',
+    'Reverse Idler Gear': 'img/Reverse Idler Gear.png',
+    'Reverse Gear': 'img/Reverse Gear.png'
+};
 
 function resetPuzzle(){
     const g=GEARS[currentGear];
@@ -580,7 +595,8 @@ function renderSlots(){
         slot.className='slot'+(comp?' has-card':''); slot.id=`slot-${i}`;
         slot.innerHTML=`<span class="slot-num">${i+1}</span>`;
         if(comp){
-            slot.innerHTML += `<span class="slot-icon">${ICONS[comp]||'⚙'}</span><span class="slot-label">${comp}</span>`;
+            const imgPath = COMPONENT_IMAGES[comp];
+            slot.innerHTML += `<img src="${imgPath}" alt="${comp}" class="slot-comp-img" style="width: 100%; height: 60%; object-fit: contain; margin-top: 4px;"/><span class="slot-label" style="margin-top: 4px;">${comp}</span>`;
         } else {
             slot.innerHTML += `<span style="font-size:22px;opacity:.3">?</span><span class="slot-label" style="color:#90CAF9;font-size:10px">Slot ${i+1}</span>`;
         }
@@ -596,7 +612,8 @@ function renderBank(){
     bankItems.forEach((comp,i)=>{
         const card=document.createElement('div');
         card.className='comp-card'; card.draggable=true; card.id=`bank-${i}`;
-        card.innerHTML=`${ICONS[comp]||'⚙'} ${comp}`;
+        const imgPath = COMPONENT_IMAGES[comp];
+        card.innerHTML=`<img src="${imgPath}" alt="${comp}" class="bank-comp-img" style="width: 40px; height: 40px; object-fit: contain; margin-right: 8px;"/>${comp}`;
         card.ondragstart=e=>onBankDragStart(e,i);
         card.ondragend=()=>card.classList.remove('dragging');
         bank.appendChild(card);
@@ -667,7 +684,7 @@ function loadGear(key) {
     document.getElementById('puzzle-gear-label').textContent=GEARS[key].label;
     document.getElementById('gear-info-text').innerHTML=GEARS[key].info;
     
-    // Tampilkan gambar gigi
+    // Tampilkan gambar
     const gearImage = document.getElementById('gear-image');
     if (GEARS[key].image) {
         gearImage.src = GEARS[key].image;
@@ -1005,51 +1022,51 @@ setInterval(() => {
 }, 1000);
 
 function resetSosButton() {
-            const btnSos = document.getElementById('btn-sos');
-            btnSos.disabled = false;
-            btnSos.textContent = "✋ Minta Bantuan Guru";
-            btnSos.style.opacity = "1";
-            btnSos.style.cursor = "pointer";
+    const btnSos = document.getElementById('btn-sos');
+    btnSos.disabled = false;
+    btnSos.textContent = "✋ Minta Bantuan Guru";
+    btnSos.style.opacity = "1";
+    btnSos.style.cursor = "pointer";
+}
+
+// ================================
+// FITUR FREEZE LAYAR DARI GURU
+// ================================
+// Pastikan kode berjalan setelah DOM selesai dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    const freezeOverlay = document.getElementById('freeze-overlay');
+    
+    if (!freezeOverlay) {
+        console.error('Freeze overlay not found!');
+        return;
+    }
+
+    function updateOverlayState() {
+        const isFrozen = localStorage.getItem('mechsim_freeze');
+        console.log('Checking freeze state:', isFrozen); // Log untuk debug
+        if (isFrozen === 'true') {
+            freezeOverlay.classList.remove('hidden');
+            console.log('Overlay ACTIVE');
+        } else {
+            freezeOverlay.classList.add('hidden');
+            console.log('Overlay HIDDEN');
         }
+    }
 
-        // ================================
-        // FITUR FREEZE LAYAR DARI GURU
-        // ================================
-        // Pastikan kode berjalan setelah DOM selesai dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            const freezeOverlay = document.getElementById('freeze-overlay');
-            
-            if (!freezeOverlay) {
-                console.error('Freeze overlay not found!');
-                return;
-            }
-
-            function updateOverlayState() {
-                const isFrozen = localStorage.getItem('mechsim_freeze');
-                console.log('Checking freeze state:', isFrozen); // Log untuk debug
-                if (isFrozen === 'true') {
-                    freezeOverlay.classList.remove('hidden');
-                    console.log('Overlay ACTIVE');
-                } else {
-                    freezeOverlay.classList.add('hidden');
-                    console.log('Overlay HIDDEN');
-                }
-            }
-
-            // Storage Listener untuk perubahan dari tab lain
-            window.addEventListener('storage', (event) => {
-                console.log('Storage event detected:', event);
-                if (event.key === 'mechsim_freeze') {
-                    updateOverlayState();
-                }
-            });
-
-            // Fallback interval untuk memastikan sinkronisasi (setiap 500ms)
-            setInterval(updateOverlayState, 500);
-
-            // Cek state awal saat halaman dimuat
+    // Storage Listener untuk perubahan dari tab lain
+    window.addEventListener('storage', (event) => {
+        console.log('Storage event detected:', event);
+        if (event.key === 'mechsim_freeze') {
             updateOverlayState();
-        });
+        }
+    });
+
+    // Fallback interval untuk memastikan sinkronisasi (setiap 500ms)
+    setInterval(updateOverlayState, 500);
+
+    // Cek state awal saat halaman dimuat
+    updateOverlayState();
+});
 </script>
     <!-- OVERLAY FREEZE LAYAR -->
     <div id="freeze-overlay" class="hidden">
