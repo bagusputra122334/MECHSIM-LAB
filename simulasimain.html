@@ -398,9 +398,11 @@
                 <div class="gear-info-text" id="gear-info-text"></div>
                 <div id="tx-svg-container"></div>
                 <div class="diag-status" id="diag-status">⬜ Susun komponen dengan benar untuk menyalakan jalur aliran!</div>
-                <!-- Area untuk gambar gigi -->
+                <!-- Area untuk video gigi -->
                 <div id="gear-image-container" style="margin-top: 16px; text-align: center;">
-                    <img id="gear-image" src="" alt="Diagram Gigi" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); max-height: 300px; object-fit: contain; display: none;">
+                    <video id="gear-video" autoplay loop muted playsinline style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); max-height: 300px; object-fit: contain; display: none;">
+                        <source src="img/3d.MP4" type="video/mp4">
+                    </video>
                 </div>
             </div>
         </div>
@@ -684,14 +686,10 @@ function loadGear(key) {
     document.getElementById('puzzle-gear-label').textContent=GEARS[key].label;
     document.getElementById('gear-info-text').innerHTML=GEARS[key].info;
     
-    // Tampilkan gambar
-    const gearImage = document.getElementById('gear-image');
-    if (GEARS[key].image) {
-        gearImage.src = GEARS[key].image;
-        gearImage.style.display = 'block';
-    } else {
-        gearImage.style.display = 'none';
-    }
+    // Tampilkan video dan lambatkan kecepatan
+    const gearVideo = document.getElementById('gear-video');
+    gearVideo.style.display = 'block';
+    gearVideo.playbackRate = 0.5; // 0.5x kecepatan normal
     
     renderDiagram('idle');
     resetPuzzle();
@@ -1030,10 +1028,19 @@ function resetSosButton() {
 }
 
 // ================================
-// FITUR FREEZE LAYAR DARI GURU
+// FITUR FREEZE LAYAR DARI GURU & VIDEO SETUP
 // ================================
 // Pastikan kode berjalan setelah DOM selesai dimuat
 document.addEventListener('DOMContentLoaded', function() {
+    // Setup video playback rate
+    const gearVideo = document.getElementById('gear-video');
+    if (gearVideo) {
+        gearVideo.addEventListener('loadedmetadata', function() {
+            this.playbackRate = 0.5; // Lambatkan 0.5x
+        });
+        gearVideo.playbackRate = 0.5;
+    }
+
     const freezeOverlay = document.getElementById('freeze-overlay');
     
     if (!freezeOverlay) {
