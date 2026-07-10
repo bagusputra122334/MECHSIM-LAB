@@ -243,6 +243,81 @@
             transform: scale(1.05) translateY(-3px); 
             box-shadow: 0 8px 30px rgba(255,138,0,0.4);
         }
+        .module-links-section {
+            max-width: 1200px;
+            margin: 10px auto 0;
+        }
+        .module-links-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--blue-dark);
+            margin: 10px 0 12px;
+        }
+        .module-links-text {
+            font-size: 17px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        .module-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .module-link-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 36px 28px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 2px solid rgba(0,102,255,0.1);
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.4s;
+        }
+        .module-link-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            background: rgba(232,241,255,0.95);
+            box-shadow: 0 20px 50px rgba(0,82,204,0.2);
+            border-color: var(--blue);
+        }
+        .module-link-card img {
+            width: 100px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+        .module-link-card h3 {
+            color: var(--text);
+            font-size: 24px;
+            margin-bottom: 14px;
+            font-weight: 800;
+        }
+        .module-link-card p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+        .module-link-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #0052CC 0%, #0066FF 100%);
+            color: #ffffff;
+            padding: 12px 34px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,82,204,0.3);
+            transition: all 0.3s;
+        }
+        .module-link-card:hover .module-link-button {
+            background: linear-gradient(135deg, #ffffff 0%, #E8F1FF 100%);
+            color: #0052CC;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,82,204,0.4);
+        }
 
         /* Footer */
         footer {
@@ -323,6 +398,10 @@
             .materials-section h2 { font-size: 28px; }
             .material-card h3 { font-size: 20px; }
             .btn-module { padding: 14px 30px; font-size: 15px; }
+            .module-links-title { font-size: 26px; }
+            .module-links-text { font-size: 15px; }
+            .module-link-card { padding: 28px 20px; }
+            .module-link-card h3 { font-size: 20px; }
         }
     </style>
 </head>
@@ -385,9 +464,24 @@
                 </a>
             </div>
         </div>
-        <a href="https://drive.google.com/file/d/1pDvuclEjnCjoc94eTRzmfA7MKiQ_aUoo/view?usp=sharing" class="btn-module" target="_blank" rel="noopener noreferrer">
-            📖 Lihat Modul Pembelajaran
-        </a>
+        <div class="module-links-section">
+            <p class="module-links-title">Lihat Modul</p>
+            <p class="module-links-text">Pilih modul pembelajaran yang ingin kamu buka.</p>
+            <div class="module-links-grid">
+                <a href="https://drive.google.com/file/d/1pDvuclEjnCjoc94eTRzmfA7MKiQ_aUoo/view?usp=sharing" class="module-link-card" target="_blank" rel="noopener noreferrer">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%230066FF'%3E%3Cpath d='M56 8h-12l-2 10a32 32 0 00-8 3l-8-6-8 8 6 8a32 32 0 00-3 8L8 44v12l10 2a32 32 0 003 8l-6 8 8 8 8-6a32 32 0 008 3l2 10h12l2-10a32 32 0 008-3l8 6 8-8-6-8a32 32 0 003-8l10-2V44l-10-2a32 32 0 00-3-8l6-8-8-8-8 6a32 32 0 00-8-3z'/%3E%3Ccircle cx='50' cy='50' r='15' fill='white'/%3E%3C/g%3E%3C/svg%3E" alt="Ikon Modul">
+                    <h3>Sistem Transmisi</h3>
+                    <p>Pelajari modul utama sistem transmisi dengan materi yang terstruktur dan mudah dipahami.</p>
+                    <span class="module-link-button">Buka Modul</span>
+                </a>
+                <a href="https://drive.google.com/file/d/1lXEfcG4Acx7FCWlhmZPWeu0j_emiC2wk/view?usp=sharing" class="module-link-card" target="_blank" rel="noopener noreferrer">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%230066FF'%3E%3Cpath d='M56 8h-12l-2 10a32 32 0 00-8 3l-8-6-8 8 6 8a32 32 0 00-3 8L8 44v12l10 2a32 32 0 003 8l-6 8 8 8 8-6a32 32 0 008 3l2 10h12l2-10a32 32 0 008-3l8 6 8-8-6-8a32 32 0 003-8l10-2V44l-10-2a32 32 0 00-3-8l6-8-8-8-8 6a32 32 0 00-8-3z'/%3E%3Ccircle cx='50' cy='50' r='15' fill='white'/%3E%3C/g%3E%3C/svg%3E" alt="Ikon Modul">
+                    <h3>Sistem Transmisi Berbasis MECHSIM Laboratory</h3>
+                    <p>Buka versi modul berbasis MECHSIM Laboratory untuk pembelajaran yang lebih kontekstual.</p>
+                    <span class="module-link-button">Buka Modul</span>
+                </a>
+            </div>
+        </div>
     </section>
 
     <footer>
