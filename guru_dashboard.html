@@ -105,13 +105,13 @@
             box-shadow: 0 3px 0 0 #B35900, 0 6px 15px rgba(255,138,0,0.25);
         }
 
-        /* CSS untuk baris yang membutuhkan bantuan */
+        /* Aksen peringatan tetap pakai oranye agar konsisten dengan brand */
         .sos-row {
-            animation: flash-red 1s infinite;
+            animation: flash-orange 1s infinite;
         }
-        @keyframes flash-red {
-            0%, 100% { background-color: rgba(254, 226, 226, 0.5); }
-            50% { background-color: rgba(254, 226, 226, 1); }
+        @keyframes flash-orange {
+            0%, 100% { background-color: rgba(255, 224, 194, 0.45); }
+            50% { background-color: rgba(255, 224, 194, 0.95); }
         }
 
         /* Custom Responsive Styles */
@@ -171,7 +171,7 @@
         <div class="flex items-center gap-4 flex-wrap">
             <span class="font-bold" style="font-size: 1.1rem;" id="guru-sapaan">Selamat datang, Bapak/Ibu Guru 👋</span>
             <!-- TOMBOL BEKU LAYAR -->
-            <button id="freeze-btn" class="btn flex items-center gap-2" style="background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); color:#fff; box-shadow:0 8px 0 0 #7F1D1D, 0 14px 30px rgba(220, 38, 38, 0.35);">
+            <button id="freeze-btn" class="btn flex items-center gap-2" style="background: linear-gradient(135deg, #FF8A00 0%, #E67600 100%); color:#fff; box-shadow:0 8px 0 0 #B35900, 0 14px 30px rgba(255, 138, 0, 0.35);">
                 <span>🚨 Bekukan Layar Siswa</span>
             </button>
             <button onclick="logout()" class="btn btn-warn flex items-center gap-2">
@@ -193,13 +193,13 @@
                 </div>
             </div>
 
-            <div class="stat-box border-l-4 border-green-500">
+            <div class="stat-box border-l-4 border-orange-400">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-gray-600 text-sm font-bold mb-1">Siswa Online</p>
                         <p class="text-4xl font-bold" style="font-family:'Rajdhani',sans-serif; color:var(--blue-dark);" id="siswaOnlineCount">0</p>
                     </div>
-                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-3xl">🟢</div>
+                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center text-3xl">📡</div>
                 </div>
             </div>
 
@@ -218,7 +218,7 @@
         <div class="card mb-8">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold" style="font-family:'Rajdhani',sans-serif; color:var(--blue-dark);" class="flex items-center gap-2">
-                    <span class="text-green-500">🟢</span> Siswa Aktif Online
+                    <span class="text-orange-500">📡</span> Siswa Aktif Online
                 </h2>
                 <button onclick="refreshData()" class="btn btn-primary flex items-center gap-2">
                     🔄 Refresh
@@ -376,9 +376,8 @@
                     const riwayatSiswaGigi = riwayatData.filter(r => r.id_siswa === siswa.id && r.nama_gigi === gigi);
                     const totalPercobaan = riwayatSiswaGigi.length;
                     const berhasil = riwayatSiswaGigi.some(r => r.status_jawaban === 'Benar');
-                    const color = berhasil ? 'green' : 'red';
                     const statusText = berhasil ? 'Berhasil' : 'Belum Berhasil';
-                    const bgColor = berhasil ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                    const bgColor = berhasil ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700';
                     
                     return `
                         <td class="px-4 py-3">
@@ -589,13 +588,13 @@
                             badgeCell.className = "sos-alert px-4 py-3";
                             badgeCell.innerHTML = `
                                 <div class="flex items-center gap-3">
-                                    <span class="text-red-600 font-bold text-sm">
+                                    <span class="text-orange-600 font-bold text-sm">
                                         🚨 Butuh bantuan di ${activeSosData.gigi}!
                                     </span>
                                     <button 
                                         onclick="resolveSOS()" 
                                         class="btn btn-primary"
-                                        style="background: #10B981; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); padding: 6px 12px; font-size: 13px;"
+                                        style="background: linear-gradient(135deg, #0066FF 0%, #0047CC 100%); box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3); padding: 6px 12px; font-size: 13px;"
                                     >
                                         ✅ Selesai Bantu
                                     </button>
@@ -671,14 +670,14 @@
             
             function setFrozenUI() {
                 freezeBtn.innerHTML = '<span>🔓 Buka Kunci Layar Siswa</span>';
-                freezeBtn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
-                freezeBtn.style.boxShadow = '0 8px 0 0 #047857, 0 14px 30px rgba(16, 185, 129, 0.35)';
+                freezeBtn.style.background = 'linear-gradient(135deg, #0066FF 0%, #0047CC 100%)';
+                freezeBtn.style.boxShadow = '0 8px 0 0 #002D8A, 0 14px 30px rgba(0, 102, 255, 0.35)';
             }
             
             function setUnfrozenUI() {
                 freezeBtn.innerHTML = '<span>🚨 Bekukan Layar Siswa</span>';
-                freezeBtn.style.background = 'linear-gradient(135deg, #DC2626 0%, #B91C1C 100%)';
-                freezeBtn.style.boxShadow = '0 8px 0 0 #7F1D1D, 0 14px 30px rgba(220, 38, 38, 0.35)';
+                freezeBtn.style.background = 'linear-gradient(135deg, #FF8A00 0%, #E67600 100%)';
+                freezeBtn.style.boxShadow = '0 8px 0 0 #B35900, 0 14px 30px rgba(255, 138, 0, 0.35)';
             }
             
             function toggleFreeze() {

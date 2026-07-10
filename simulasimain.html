@@ -91,12 +91,12 @@
             background:rgba(0,102,255,0.1); color:var(--orange);
         }
         .top-bar-logo img{ height:40px; width:auto; display:block; }
-        .top-bar-right{ display:flex; align-items:center; gap:16px; }
-        .score-bar{ display:flex; gap:8px; }
+        .top-bar-right{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; justify-content:flex-end; }
+        .score-bar{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
         .score-pill{
             display:flex; gap:8px; align-items:center; padding:8px 12px; border-radius:14px;
             background:rgba(232,241,255,0.8); font-weight:800; font-family:'Rajdhani',sans-serif; font-size:14px;
-            letter-spacing:.5px;
+            letter-spacing:.5px; min-width:88px; justify-content:center;
         }
         .score-pill .label{ opacity:.7; }
         .user-badge{ display:flex; align-items:center; gap:10px; padding:6px 12px; border-radius:999px; background:rgba(232,241,255,0.8); }
@@ -104,7 +104,7 @@
             width:32px; height:32px; border-radius:50%; background:var(--blue); color:#fff;
             display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px;
         }
-        .user-badge span{ font-weight:800; font-size:13px; }
+        .user-badge span{ font-weight:800; font-size:13px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .main-content{ flex:1; overflow:auto; padding:20px; }
 
         .grid-2{
@@ -142,15 +142,19 @@
 
         /* Puzzle */
         .puzzle-info{ font-size:13px; color:var(--text-muted); margin-bottom:10px; }
+        .puzzle-touch-hint{
+            display:none; margin:0 0 12px; padding:10px 12px; border-radius:12px;
+            background:rgba(232,241,255,0.85); color:var(--blue-dark); font-size:12px; font-weight:800;
+        }
         .slots-row{
             display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px;
         }
         @media(max-width:600px){ .slots-row{ grid-template-columns:repeat(2,1fr); } }
         .slot{
-            min-height:70px; border:2px dashed rgba(187,222,251,0.7); border-radius:12px;
+            min-height:118px; border:2px dashed rgba(187,222,251,0.7); border-radius:12px;
             display:flex; flex-direction:column; align-items:center; justify-content:center;
-            gap:4px; background:rgba(248,251,255,0.7); cursor:pointer; transition:background .15s, border-color .15s;
-            position:relative; user-select:none;
+            gap:6px; background:rgba(248,251,255,0.7); cursor:pointer; transition:background .15s, border-color .15s, transform .15s;
+            position:relative; user-select:none; padding:18px 10px 12px; text-align:center;
         }
         .slot.drag-over{ background:rgba(227,242,253,0.8); border-color:var(--blue); }
         .slot.has-card{ border-style:solid; border-color:rgba(187,222,251,0.8); background:rgba(255,255,255,0.7); }
@@ -161,18 +165,34 @@
             color:#90A4AE; font-weight:700;
         }
         .slot-icon{ font-size:22px; }
-        .slot-label{ font-size:11px; font-weight:800; color:var(--blue-dark); }
+        .slot-label{ font-size:11px; font-weight:800; color:var(--blue-dark); line-height:1.35; max-width:100%; overflow-wrap:anywhere; }
+        .slot-label.placeholder{ color:#90CAF9; font-size:10px; }
+        .slot-empty-mark{ font-size:22px; opacity:.3; }
+        .slot-comp-img{
+            width:min(100%,78px); height:60px; object-fit:contain; margin-top:6px; flex-shrink:0;
+        }
+        .slot-clear{
+            position:absolute; top:6px; right:6px; width:24px; height:24px; border:none; border-radius:999px;
+            background:rgba(255,255,255,0.95); color:var(--orange); font-size:16px; font-weight:800; cursor:pointer;
+            box-shadow:0 2px 8px rgba(0,0,0,0.12);
+        }
 
         .bank-title{ font-weight:800; color:var(--blue-dark); margin:10px 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.5px; }
         .bank{
             display:flex; flex-wrap:wrap; gap:10px; min-height:80px; padding:12px; border:2px dashed rgba(224,224,224,0.7); border-radius:12px; background:rgba(250,250,250,0.7);
         }
         .comp-card{
-            padding:10px 14px; border:2px solid var(--blue); border-radius:10px; background:rgba(255,255,255,0.8); color:var(--blue);
-            font-weight:800; font-size:13px; cursor:grab; user-select:none; transition:transform .15s, box-shadow .15s;
+            display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid var(--blue); border-radius:10px; background:rgba(255,255,255,0.8); color:var(--blue);
+            font-weight:800; font-size:13px; cursor:grab; user-select:none; transition:transform .15s, box-shadow .15s, background .15s, color .15s; touch-action:manipulation;
         }
         .comp-card:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,102,255,0.18); }
         .comp-card.dragging{ opacity:0.4; }
+        .comp-card.selected{
+            background:linear-gradient(135deg, var(--blue), var(--blue-dark)); color:#fff; box-shadow:0 10px 24px rgba(0,102,255,0.28);
+        }
+        .comp-card.selected .bank-comp-img{ filter:brightness(0) invert(1); }
+        .bank-comp-img{ width:40px; height:40px; object-fit:contain; flex-shrink:0; }
+        .comp-card-title{ overflow-wrap:anywhere; line-height:1.35; }
         .btn-row{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
         .btn{
             border:none; border-radius:14px; padding:12px 20px; font-weight:800; font-family:'Rajdhani',sans-serif;
@@ -300,6 +320,45 @@
         .logo img {
             height:45px; width:auto;
         }
+        @media(max-width:900px){
+            .top-bar{ padding:12px 16px; flex-wrap:wrap; gap:12px; }
+            .top-bar-right{ width:100%; justify-content:space-between; }
+            .main-content{ padding:16px; }
+        }
+        @media(max-width:768px){
+            .top-bar-logo img{ height:34px; }
+            .top-bar-right{ gap:10px; }
+            .score-bar{ width:100%; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); }
+            .score-pill{ min-width:0; padding:8px 10px; font-size:13px; }
+            .user-badge{ width:100%; justify-content:center; border-radius:16px; }
+            .user-badge span{ max-width:calc(100% - 52px); }
+            .card{ padding:16px; }
+            .gear-tabs{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; }
+            .gear-tab{ padding:12px 8px; font-size:14px; }
+            .puzzle-info{ line-height:1.6; }
+            .puzzle-touch-hint{ display:block; }
+            .slots-row{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
+            .slot{ min-height:138px; padding:20px 10px 12px; }
+            .bank{ display:grid; grid-template-columns:1fr; padding:10px; }
+            .comp-card{ width:100%; min-height:72px; padding:12px; }
+            .btn-row{ display:grid; grid-template-columns:1fr 1fr; }
+            .btn{ width:100%; padding:12px 14px; font-size:14px; }
+            #btn-sos{ grid-column:1 / -1; }
+            .toast{ left:12px; right:12px; bottom:12px; }
+        }
+        @media(max-width:480px){
+            .top-bar{ padding:12px; }
+            .score-bar{ grid-template-columns:1fr; }
+            .gear-tabs{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+            .slots-row{ grid-template-columns:1fr; }
+            .slot{ min-height:126px; }
+            .slot-comp-img{ width:min(100%,72px); height:56px; }
+            .bank-comp-img{ width:36px; height:36px; }
+            .btn-row{ grid-template-columns:1fr; }
+            .section-title{ font-size:15px; }
+            .diagram-title{ font-size:17px; }
+            .gear-info-text{ font-size:13px; }
+        }
     </style>
 </head>
 <body>
@@ -364,6 +423,7 @@
             <div class="card">
                 <p class="diagram-title">Urutan Aliran Tenaga</p>
                 <div class="puzzle-info">Susun komponen ke slot bernomor untuk <span id="puzzle-gear-label">Gigi 1</span>. Double-click slot untuk mengembalikan.</div>
+                <p class="puzzle-touch-hint">Mode HP: tap komponen dulu, lalu tap slot tujuan. Gunakan tombol `×` pada slot untuk mengosongkan.</p>
                 <div class="slots-row" id="slots-row"></div>
                 <div class="bank-title">Komponen</div>
                 <div class="bank" id="bank" ondragover="onBankDragOver(event)" ondrop="onBankDrop(event)"></div>
@@ -557,7 +617,7 @@ function buildTxSVG(gearKey, state) {
 // ============================================================
 // STATE
 // ============================================================
-let currentGear='1', slots=[], bankItems=[], dragSrc=null;
+let currentGear='1', slots=[], bankItems=[], dragSrc=null, selectedBankIndex=null;
 let attempts=0, corrects=0, streak=0, log=[];
 let userName='', userAbsen='', currentSiswa=null;
 
@@ -585,9 +645,10 @@ function resetPuzzle(){
     const g=GEARS[currentGear];
     slots=new Array(g.components.length).fill(null);
     bankItems=[...g.components]; shuffleArray(bankItems);
+    selectedBankIndex=null;
     renderSlots(); renderBank(); renderDiagram('idle');
 }
-function shuffleBank(){ shuffleArray(bankItems); renderBank(); }
+function shuffleBank(){ shuffleArray(bankItems); selectedBankIndex=null; renderBank(); }
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
 
 function renderSlots(){
@@ -598,14 +659,24 @@ function renderSlots(){
         slot.innerHTML=`<span class="slot-num">${i+1}</span>`;
         if(comp){
             const imgPath = COMPONENT_IMAGES[comp];
-            slot.innerHTML += `<img src="${imgPath}" alt="${comp}" class="slot-comp-img" style="width: 100%; height: 60%; object-fit: contain; margin-top: 4px;"/><span class="slot-label" style="margin-top: 4px;">${comp}</span>`;
+            slot.innerHTML += `<button type="button" class="slot-clear" aria-label="Kosongkan slot ${i+1}">×</button><img src="${imgPath}" alt="${comp}" class="slot-comp-img"/><span class="slot-label">${comp}</span>`;
         } else {
-            slot.innerHTML += `<span style="font-size:22px;opacity:.3">?</span><span class="slot-label" style="color:#90CAF9;font-size:10px">Slot ${i+1}</span>`;
+            slot.innerHTML += `<span class="slot-empty-mark">?</span><span class="slot-label placeholder">Slot ${i+1}</span>`;
         }
         slot.ondragover=e=>onSlotDragOver(e,i);
         slot.ondrop=e=>onSlotDrop(e,i);
         slot.ondragleave=()=>slot.classList.remove('drag-over');
         slot.ondblclick=()=>clearSlot(i);
+        slot.onclick=e=>{
+            if(e.target.closest('.slot-clear')) return;
+            handleSlotTap(i);
+        };
+        if(comp){
+            slot.querySelector('.slot-clear').addEventListener('click', e=>{
+                e.stopPropagation();
+                clearSlot(i);
+            });
+        }
         row.appendChild(slot);
     });
 }
@@ -613,16 +684,35 @@ function renderBank(){
     const bank=document.getElementById('bank'); bank.innerHTML='';
     bankItems.forEach((comp,i)=>{
         const card=document.createElement('div');
-        card.className='comp-card'; card.draggable=true; card.id=`bank-${i}`;
+        card.className='comp-card'+(selectedBankIndex===i?' selected':''); card.draggable=true; card.id=`bank-${i}`;
         const imgPath = COMPONENT_IMAGES[comp];
-        card.innerHTML=`<img src="${imgPath}" alt="${comp}" class="bank-comp-img" style="width: 40px; height: 40px; object-fit: contain; margin-right: 8px;"/>${comp}`;
+        card.innerHTML=`<img src="${imgPath}" alt="${comp}" class="bank-comp-img"/><span class="comp-card-title">${comp}</span>`;
         card.ondragstart=e=>onBankDragStart(e,i);
         card.ondragend=()=>card.classList.remove('dragging');
+        card.onclick=()=>selectBankItem(i);
         bank.appendChild(card);
     });
 }
 
-function onBankDragStart(e,idx){ dragSrc={type:'bank',idx}; e.dataTransfer.effectAllowed='move'; setTimeout(()=>document.getElementById(`bank-${idx}`)?.classList.add('dragging'),0); }
+function selectBankItem(idx){
+    selectedBankIndex = selectedBankIndex === idx ? null : idx;
+    renderBank();
+}
+function placeBankItemInSlot(bankIdx, slotIdx){
+    const comp = bankItems[bankIdx];
+    if(typeof comp === 'undefined') return;
+    if(slots[slotIdx]!==null) bankItems.push(slots[slotIdx]);
+    slots[slotIdx]=comp;
+    bankItems.splice(bankIdx,1);
+    selectedBankIndex=null;
+    renderSlots();
+    renderBank();
+}
+function handleSlotTap(idx){
+    if(selectedBankIndex===null) return;
+    placeBankItemInSlot(selectedBankIndex, idx);
+}
+function onBankDragStart(e,idx){ selectedBankIndex=null; dragSrc={type:'bank',idx}; e.dataTransfer.effectAllowed='move'; setTimeout(()=>document.getElementById(`bank-${idx}`)?.classList.add('dragging'),0); }
 function onSlotDragOver(e,idx){ e.preventDefault(); e.dataTransfer.dropEffect='move'; document.getElementById(`slot-${idx}`).classList.add('drag-over'); }
 function onSlotDrop(e,idx){
     e.preventDefault(); document.getElementById(`slot-${idx}`).classList.remove('drag-over');
@@ -637,7 +727,7 @@ function onSlotDrop(e,idx){
         if(s===idx) return;
         [slots[idx], slots[s]]=[slots[s], slots[idx]];
     }
-    dragSrc=null; renderSlots(); renderBank();
+    dragSrc=null; selectedBankIndex=null; renderSlots(); renderBank();
 }
 function onBankDragOver(e){ e.preventDefault(); }
 function onBankDrop(e){
@@ -645,11 +735,11 @@ function onBankDrop(e){
     if(dragSrc.type==='slot'){
         const idx=dragSrc.idx;
         if(slots[idx]!==null){ bankItems.push(slots[idx]); slots[idx]=null; }
-        dragSrc=null; renderSlots(); renderBank();
+        dragSrc=null; selectedBankIndex=null; renderSlots(); renderBank();
     }
     dragSrc=null;
 }
-function clearSlot(idx){ if(slots[idx]!==null){ bankItems.push(slots[idx]); slots[idx]=null; renderSlots(); renderBank(); } }
+function clearSlot(idx){ if(slots[idx]!==null){ bankItems.push(slots[idx]); slots[idx]=null; selectedBankIndex=null; renderSlots(); renderBank(); } }
 
 function renderDiagram(state){
     document.getElementById('tx-svg-container').innerHTML=buildTxSVG(currentGear,state);
