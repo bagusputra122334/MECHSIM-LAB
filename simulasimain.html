@@ -388,7 +388,7 @@
     <div class="top-bar">
         <div class="top-bar-logo">
             <img src="img/logo-meshsim.png" alt="Logo MeshSim">
-            <a href="index.html" class="btn-back-home">← Beranda</a>
+            <a href="#" onclick="handleKembaliKeBeranda(event)" class="btn-back-home">← Beranda</a>
         </div>
         <div class="top-bar-right">
             <div class="score-bar">
@@ -864,10 +864,40 @@ function updateTerakhirAktif() {
     const idx = siswaList.findIndex(s => s.id === currentSiswa.id);
     if (idx !== -1) {
         siswaList[idx].terakhir_aktif = new Date().toISOString();
+        siswaList[idx].is_logout = false;
         currentSiswa.terakhir_aktif = siswaList[idx].terakhir_aktif;
+        currentSiswa.is_logout = false;
         localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
         localStorage.setItem('currentSiswa', JSON.stringify(currentSiswa));
     }
+}
+
+let keepAliveInterval = null;
+function startKeepAlive() {
+    if (keepAliveInterval) clearInterval(keepAliveInterval);
+    updateTerakhirAktif();
+    keepAliveInterval = setInterval(() => {
+        if (currentSiswa) updateTerakhirAktif();
+    }, 30 * 1000);
+}
+
+function handleKembaliKeBeranda(event) {
+    event.preventDefault();
+    if (currentSiswa) {
+        const siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
+        const idx = siswaList.findIndex(s => s.id === currentSiswa.id);
+        if (idx !== -1) {
+            siswaList[idx].is_logout = true;
+            siswaList[idx].terakhir_aktif = new Date().toISOString();
+            localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+        }
+        localStorage.removeItem('currentSiswa');
+        if (keepAliveInterval) clearInterval(keepAliveInterval);
+        currentSiswa = null;
+        userName = '';
+        userAbsen = '';
+    }
+    window.location.href = 'index.html';
 }
 
 function initFromLocalStorage() {
@@ -882,6 +912,7 @@ function initFromLocalStorage() {
         document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
         updateTerakhirAktif();
         initApp();
+        startKeepAlive();
         return true;
     }
     return false;
@@ -904,12 +935,14 @@ function doLogin(){
             nomor_absen: absen,
             kelas: 'XI',
             waktu_login: new Date().toISOString(),
-            terakhir_aktif: new Date().toISOString()
+            terakhir_aktif: new Date().toISOString(),
+            is_logout: false
         };
         siswaList.push(existingSiswa);
         localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
     } else {
         existingSiswa.terakhir_aktif = new Date().toISOString();
+        existingSiswa.is_logout = false;
         const idx = siswaList.findIndex(s => s.id === existingSiswa.id);
         siswaList[idx] = existingSiswa;
         localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
@@ -919,12 +952,13 @@ function doLogin(){
     localStorage.setItem('currentSiswa', JSON.stringify(existingSiswa));
 
     userName=nama; userAbsen=absen;
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app').style.display='flex';
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
     document.getElementById('user-display').textContent=`${userName} (${userAbsen})`;
     document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
     updateTerakhirAktif();
     initApp();
+    startKeepAlive();
 }
 
 ['input-name','input-absen'].forEach(id=>{

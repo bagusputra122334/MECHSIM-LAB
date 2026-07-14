@@ -321,10 +321,8 @@
             const siswaData = getSiswaData();
             const riwayatData = getRiwayatData();
             
-            // Filter siswa online (terakhir aktif dalam 3 menit)
-            const now = new Date().getTime();
-            const tigaMenitLalu = now - (3 * 60 * 1000);
-            const siswaOnline = siswaData.filter(s => new Date(s.terakhir_aktif).getTime() >= tigaMenitLalu);
+            // Filter siswa online: TANPA BATAS WAKTU, hanya filter hanya yang belum logout
+            const siswaOnline = siswaData.filter(s => s.is_logout !== true);
             
             // Update stat cards
             document.getElementById('totalSiswa').textContent = siswaData.length;
