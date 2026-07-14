@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="img/logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Konfigurasi Supabase Client -->
+    <script src="js/supabaseClient.js"></script>
     <!-- Three.js untuk latar belakang 3D -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
@@ -814,7 +818,7 @@ function showToast(msg,type){
 // ============================================================
 // CHECK ANSWER
 // ============================================================
-function checkAnswer(){
+async function checkAnswer(){
     const g=GEARS[currentGear]; const correct=g.components;
     if(slots.some(s=>s===null)){ showToast('⚠ Isi semua slot terlebih dahulu!','error'); return; }
     let allCorrect=true;
@@ -839,60 +843,22 @@ function checkAnswer(){
         log.push({gear:g.label, time:timeStr, status:'Salah', order:userOrder});
     }
     updateStats(); renderLog();
-    updateTerakhirAktif();
 
     if (currentSiswa) {
-        const riwayatList = JSON.parse(localStorage.getItem('mechsim_riwayat') || '[]');
-        riwayatList.push({
-            id: Date.now(),
-            id_siswa: currentSiswa.id,
-            nama_gigi: g.label,
-            urutan_jawaban_siswa: userOrder,
-            status_jawaban: allCorrect ? 'Benar' : 'Salah',
-            waktu_percobaan: new Date().toISOString()
-        });
-        localStorage.setItem('mechsim_riwayat', JSON.stringify(riwayatList));
+        await saveRiwayatToSupabase(currentSiswa.id, g.label, userOrder, allCorrect ? 'Benar' : 'Salah');
     }
 }
 
 // ============================================================
 // LOGIN & SISWA
 // ============================================================
-function updateTerakhirAktif() {
-    if (!currentSiswa) return;
-    const siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
-    const idx = siswaList.findIndex(s => s.id === currentSiswa.id);
-    if (idx !== -1) {
-        siswaList[idx].terakhir_aktif = new Date().toISOString();
-        siswaList[idx].is_logout = false;
-        currentSiswa.terakhir_aktif = siswaList[idx].terakhir_aktif;
-        currentSiswa.is_logout = false;
-        localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
-        localStorage.setItem('currentSiswa', JSON.stringify(currentSiswa));
-    }
-}
-
-let keepAliveInterval = null;
-function startKeepAlive() {
-    if (keepAliveInterval) clearInterval(keepAliveInterval);
-    updateTerakhirAktif();
-    keepAliveInterval = setInterval(() => {
-        if (currentSiswa) updateTerakhirAktif();
-    }, 30 * 1000);
-}
 
 function handleKembaliKeBeranda(event) {
     event.preventDefault();
     if (currentSiswa) {
-        const siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
-        const idx = siswaList.findIndex(s => s.id === currentSiswa.id);
-        if (idx !== -1) {
-            siswaList[idx].is_logout = true;
-            siswaList[idx].terakhir_aktif = new Date().toISOString();
-            localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
-        }
+        logoutSiswaFromSupabase(currentSiswa.id);
+        stopKeepAliveSupabase();
         localStorage.removeItem('currentSiswa');
-        if (keepAliveInterval) clearInterval(keepAliveInterval);
         currentSiswa = null;
         userName = '';
         userAbsen = '';
@@ -910,60 +876,36 @@ function initFromLocalStorage() {
         document.getElementById('app').style.display = 'flex';
         document.getElementById('user-display').textContent = `${userName} (${userAbsen})`;
         document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
-        updateTerakhirAktif();
         initApp();
-        startKeepAlive();
+        startKeepAliveSupabase(currentSiswa.id);
         return true;
     }
     return false;
 }
 
-function doLogin(){
+async function doLogin(){
     const nama=document.getElementById('input-name').value.trim();
     const absen=document.getElementById('input-absen').value.trim();
     const err=document.getElementById('login-error');
     if(!nama||!absen){ err.style.display='block'; return; }
     err.style.display='none';
 
-    let siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
-    // Backfill properti is_logout untuk data lama
-    siswaList = siswaList.map(s => ({
-        ...s,
-        is_logout: s.is_logout !== undefined ? s.is_logout : true
-    }));
-    let existingSiswa = siswaList.find(s => s.nama_lengkap === nama && s.nomor_absen === absen);
-    
-    if (!existingSiswa) {
-        existingSiswa = {
-            id: Date.now(),
-            nama_lengkap: nama,
-            nomor_absen: absen,
-            kelas: 'XI',
-            waktu_login: new Date().toISOString(),
-            terakhir_aktif: new Date().toISOString(),
-            is_logout: false
-        };
-        siswaList.push(existingSiswa);
-        localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
-    } else {
-        existingSiswa.terakhir_aktif = new Date().toISOString();
-        existingSiswa.is_logout = false;
-        const idx = siswaList.findIndex(s => s.id === existingSiswa.id);
-        siswaList[idx] = existingSiswa;
-        localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+    const siswa = await getOrCreateSiswa(nama, absen);
+    if (!siswa) {
+        showToast('⚠ Gagal login. Coba lagi!', 'error');
+        return;
     }
     
-    currentSiswa = existingSiswa;
-    localStorage.setItem('currentSiswa', JSON.stringify(existingSiswa));
+    currentSiswa = siswa;
+    localStorage.setItem('currentSiswa', JSON.stringify(siswa));
 
     userName=nama; userAbsen=absen;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     document.getElementById('user-display').textContent=`${userName} (${userAbsen})`;
     document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
-    updateTerakhirAktif();
     initApp();
-    startKeepAlive();
+    startKeepAliveSupabase(siswa.id);
 }
 
 ['input-name','input-absen'].forEach(id=>{
