@@ -283,6 +283,33 @@
                 </table>
             </div>
         </div>
+
+        <!-- Permintaan Bantuan Siswa Section -->
+        <div class="card mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold" style="font-family:'Rajdhani',sans-serif; color:var(--blue-dark);" class="flex items-center gap-2">
+                    <span class="text-orange-500">✋</span> Permintaan Bantuan Siswa
+                </h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50/50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600 rounded-tl-xl">No</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Nama Lengkap</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Nomor Absen</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600">Kesulitan di Gigi</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold text-gray-600 rounded-tr-xl">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sos-table">
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </main>
 
     <footer class="max-w-7xl mx-auto px-4 py-6 text-center text-gray-500 text-sm">
@@ -303,6 +330,8 @@
 
         let globalSiswaData = [];
         let globalRiwayatData = [];
+        let globalSosData = [];
+        let isCurrentlyFrozen = false;
 
         // Fungsi untuk mendapatkan data dari Supabase
         async function getSiswaData() {
@@ -342,9 +371,11 @@
         async function refreshData() {
             const siswaData = await getSiswaData();
             const riwayatData = await getRiwayatData();
+            const sosData = await getActiveSosRequests();
             
             globalSiswaData = siswaData;
             globalRiwayatData = riwayatData;
+            globalSosData = sosData;
             
             // Filter siswa online: is_logout === false DAN terakhir_aktif kurang dari 60 detik yang lalu
             const now = new Date();
@@ -369,6 +400,39 @@
             
             // Update tabel laporan
             updateLaporanTable(siswaData, riwayatData);
+
+            // Update tabel SOS
+            updateSosTable(sosData);
+        }
+
+        // Fungsi untuk memperbarui tabel SOS
+        function updateSosTable(sosData) {
+            const tbody = document.getElementById('sos-table');
+            
+            if (sosData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Tidak ada permintaan bantuan saat ini</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = sosData.map((sos, index) => `
+                <tr class="border-b border-gray-100/50 hover:bg-gray-50/30">
+                    <td class="px-4 py-3 text-gray-600">${index + 1}</td>
+                    <td class="px-4 py-3 font-bold text-gray-800">${sos.siswa?.nama_lengkap || 'Tidak diketahui'}</td>
+                    <td class="px-4 py-3 text-gray-600">${sos.siswa?.nomor_absen || 'Tidak diketahui'}</td>
+                    <td class="px-4 py-3 text-gray-600">${sos.nama_gigi || 'Tidak diketahui'}</td>
+                    <td class="px-4 py-3">
+                        <button onclick="resolveSos(${sos.id})" class="btn btn-primary" style="padding:8px 16px; font-size:0.9rem;">
+                            ✅ Selesai Bantu
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Fungsi untuk menyelesaikan permintaan SOS
+        async function resolveSos(sosId) {
+            await resolveSosRequest(sosId);
+            await refreshData();
         }
 
         function updateSiswaOnlineTable(siswaOnline) {
@@ -599,118 +663,12 @@
             });
         })();
 
-        // ================================
-        // FITUR SOS: TANGANI BANTUAN SISWA
-        // ================================
-        let activeSosData = null;
 
-        // Fungsi untuk memeriksa dan menampilkan SOS
-        function checkForSOS() {
-            const sosValue = localStorage.getItem('mechsim_sos');
-            
-            if (sosValue && sosValue !== 'RESET') {
-                try {
-                    activeSosData = JSON.parse(sosValue);
-                    renderSOSAlert();
-                } catch (e) {
-                    console.error("Error parsing SOS data:", e);
-                }
-            } else if (sosValue === 'RESET') {
-                clearSOSAlert();
-                activeSosData = null;
-            } else {
-                clearSOSAlert();
-                activeSosData = null;
-            }
-        }
-
-        function renderSOSAlert() {
-            if (!activeSosData) return;
-            
-            const tbodySiswa = document.getElementById('siswaOnlineTable');
-            const rows = tbodySiswa.querySelectorAll('tr');
-            
-            // Cari baris siswa yang sesuai
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                if (cells.length >= 3) {
-                    const namaCell = cells[1]?.textContent?.trim();
-                    const absenCell = cells[2]?.textContent?.trim();
-                    
-                    if (namaCell === activeSosData.nama && absenCell === activeSosData.absen) {
-                        // Tambahkan efek flash
-                        row.classList.add('sos-row');
-                        
-                        // Cek apakah alert sudah ditambahkan agar tidak duplikat
-                        if (!row.querySelector('.sos-alert')) {
-                            // Tambahkan badge SOS
-                            const badgeCell = document.createElement('td');
-                            badgeCell.colSpan = 2;
-                            badgeCell.className = "sos-alert px-4 py-3";
-                            badgeCell.innerHTML = `
-                                <div class="flex items-center gap-3">
-                                    <span class="text-orange-600 font-bold text-sm">
-                                        🚨 Butuh bantuan di ${activeSosData.gigi}!
-                                    </span>
-                                    <button 
-                                        onclick="resolveSOS()" 
-                                        class="btn btn-primary"
-                                        style="background: linear-gradient(135deg, #0066FF 0%, #0047CC 100%); box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3); padding: 6px 12px; font-size: 13px;"
-                                    >
-                                        ✅ Selesai Bantu
-                                    </button>
-                                </div>
-                            `;
-                            row.appendChild(badgeCell);
-                        }
-                    }
-                }
-            });
-        }
-
-        function clearSOSAlert() {
-            const tbodySiswa = document.getElementById('siswaOnlineTable');
-            const rows = tbodySiswa.querySelectorAll('tr');
-            
-            rows.forEach(row => {
-                row.classList.remove('sos-row');
-                const sosAlert = row.querySelector('.sos-alert');
-                if (sosAlert) {
-                    sosAlert.remove();
-                }
-            });
-        }
-
-        function resolveSOS() {
-            // Kirim sinyal reset ke siswa
-            localStorage.setItem('mechsim_sos', 'RESET');
-            activeSosData = null;
-            clearSOSAlert();
-            
-            // Bersihkan reset signal setelah 1 detik
-            setTimeout(() => {
-                localStorage.removeItem('mechsim_sos');
-            }, 1000);
-        }
-
-        // Listener storage event (untuk perubahan dari tab lain)
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'mechsim_sos') {
-                checkForSOS();
-            }
-        });
-
-        // Fallback: cek setiap 2 detik
-        setInterval(checkForSOS, 2000);
-
-        // Panggil sekali saat halaman dimuat
-        checkForSOS();
 
         // ================================
-        // FITUR FREEZE LAYAR SISWA
+        // FITUR FREEZE LAYAR SISWA & SOS
         // ================================
-        // Pastikan kode berjalan setelah DOM selesai dimuat
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             const freezeBtn = document.getElementById('freeze-btn');
             
             if (!freezeBtn) {
@@ -718,46 +676,64 @@
                 return;
             }
             
-            // Cek state awal dari localStorage
-            function initFreezeState() {
-                const currentState = localStorage.getItem('mechsim_freeze');
-                console.log('Initial freeze state:', currentState);
-                if (currentState === 'true') {
-                    setFrozenUI();
-                } else {
-                    setUnfrozenUI();
-                }
-            }
-            
             function setFrozenUI() {
+                isCurrentlyFrozen = true;
                 freezeBtn.innerHTML = '<span>🔓 Buka Kunci Layar Siswa</span>';
                 freezeBtn.style.background = 'linear-gradient(135deg, #0066FF 0%, #0047CC 100%)';
                 freezeBtn.style.boxShadow = '0 8px 0 0 #002D8A, 0 14px 30px rgba(0, 102, 255, 0.35)';
             }
             
             function setUnfrozenUI() {
+                isCurrentlyFrozen = false;
                 freezeBtn.innerHTML = '<span>🚨 Bekukan Layar Siswa</span>';
                 freezeBtn.style.background = 'linear-gradient(135deg, #FF8A00 0%, #E67600 100%)';
                 freezeBtn.style.boxShadow = '0 8px 0 0 #B35900, 0 14px 30px rgba(255, 138, 0, 0.35)';
             }
             
-            function toggleFreeze() {
-                const currentState = localStorage.getItem('mechsim_freeze');
-                const newState = currentState === 'true' ? 'false' : 'true';
-                console.log('Toggle freeze:', currentState, '→', newState);
-                localStorage.setItem('mechsim_freeze', newState);
-                
-                if (newState === 'true') {
-                    setFrozenUI();
-                } else {
-                    setUnfrozenUI();
-                }
+            async function toggleFreeze() {
+                const newState = isCurrentlyFrozen ? 'false' : 'true';
+                await setAppState('freeze', newState);
             }
             
             freezeBtn.addEventListener('click', toggleFreeze);
             
-            // Inisialisasi saat halaman dimuat
-            initFreezeState();
+            // Realtime subscription untuk app_state changes
+            supabaseClient
+                .channel('public:app_state')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'app_state' },
+                    async (payload) => {
+                        if (payload.new.key === 'freeze') {
+                            if (payload.new.value === 'true') {
+                                setFrozenUI();
+                            } else {
+                                setUnfrozenUI();
+                            }
+                        }
+                    }
+                )
+                .subscribe();
+            
+            // Realtime subscription untuk sos_requests changes
+            supabaseClient
+                .channel('public:sos_requests')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'sos_requests' },
+                    () => {
+                        refreshData();
+                    }
+                )
+                .subscribe();
+            
+            // Cek state awal freeze
+            const initialFreezeState = await getAppState('freeze');
+            if (initialFreezeState === 'true') {
+                setFrozenUI();
+            } else {
+                setUnfrozenUI();
+            }
 
             // Tampilkan nama guru
             const guruName = localStorage.getItem('guruName');

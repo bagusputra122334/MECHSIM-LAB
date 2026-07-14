@@ -1063,22 +1063,20 @@ if (!initFromLocalStorage()) {
 // ================================
 // FITUR SOS: MINTA BANTUAN GURU
 // ================================
-function requestHelp() {
-    // Ambil data siswa dari localStorage
-    const currentSiswa = JSON.parse(localStorage.getItem('currentSiswa'));
+let currentSosRequestId = null;
+
+async function requestHelp() {
     if (!currentSiswa) return;
 
-    // Ambil gigi yang sedang aktif (dari variabel global currentGear dan GEARS)
+    // Ambil gigi yang sedang aktif
     const currentGearData = GEARS[currentGear];
     const namaGigi = currentGearData ? currentGearData.label : 'Tidak diketahui';
 
-    // Simpan request SOS ke localStorage
-    const sosData = {
-        nama: currentSiswa.nama_lengkap,
-        absen: currentSiswa.nomor_absen,
-        gigi: namaGigi
-    };
-    localStorage.setItem('mechsim_sos', JSON.stringify(sosData));
+    // Buat request SOS di Supabase
+    const sosRequest = await createSosRequest(currentSiswa.id, namaGigi);
+    if (!sosRequest) return;
+
+    currentSosRequestId = sosRequest.id;
 
     // Ubah state tombol
     const btnSos = document.getElementById('btn-sos');
@@ -1088,25 +1086,8 @@ function requestHelp() {
     btnSos.style.cursor = "not-allowed";
 }
 
-// Listener untuk menangani reset dari guru
-window.addEventListener('storage', (event) => {
-    if (event.key === 'mechsim_sos') {
-        if (event.newValue === 'RESET') {
-            resetSosButton();
-        }
-    }
-});
-
-// Fallback: cek localStorage secara berkala (untuk berjaga-jaga storage event tidak berjalan)
-setInterval(() => {
-    const sosValue = localStorage.getItem('mechsim_sos');
-    if (sosValue === 'RESET') {
-        resetSosButton();
-        localStorage.removeItem('mechsim_sos'); // Bersihkan reset signal
-    }
-}, 1000);
-
 function resetSosButton() {
+    currentSosRequestId = null;
     const btnSos = document.getElementById('btn-sos');
     btnSos.disabled = false;
     btnSos.textContent = "✋ Minta Bantuan Guru";
@@ -1117,8 +1098,7 @@ function resetSosButton() {
 // ================================
 // FITUR FREEZE LAYAR DARI GURU & VIDEO SETUP
 // ================================
-// Pastikan kode berjalan setelah DOM selesai dimuat
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Setup video playback rate
     const gearVideo = document.getElementById('gear-video');
     if (gearVideo) {
@@ -1135,9 +1115,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    function updateOverlayState() {
-        const isFrozen = localStorage.getItem('mechsim_freeze');
-        console.log('Checking freeze state:', isFrozen); // Log untuk debug
+    async function updateOverlayState() {
+        const isFrozen = await getAppState('freeze');
+        console.log('Checking freeze state from Supabase:', isFrozen);
         if (isFrozen === 'true') {
             freezeOverlay.classList.remove('hidden');
             console.log('Overlay ACTIVE');
@@ -1147,19 +1127,34 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Storage Listener untuk perubahan dari tab lain
-    window.addEventListener('storage', (event) => {
-        console.log('Storage event detected:', event);
-        if (event.key === 'mechsim_freeze') {
-            updateOverlayState();
-        }
-    });
+    // Realtime subscription untuk app_state changes
+    supabaseClient
+        .channel('public:app_state')
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'app_state' },
+            () => {
+                updateOverlayState();
+            }
+        )
+        .subscribe();
 
-    // Fallback interval untuk memastikan sinkronisasi (setiap 500ms)
-    setInterval(updateOverlayState, 500);
+    // Realtime subscription untuk sos_requests changes (untuk reset button)
+    supabaseClient
+        .channel('public:sos_requests')
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'sos_requests' },
+            async (payload) => {
+                if (payload.new && payload.new.id_siswa === currentSiswa?.id && !payload.new.is_active) {
+                    resetSosButton();
+                }
+            }
+        )
+        .subscribe();
 
     // Cek state awal saat halaman dimuat
-    updateOverlayState();
+    await updateOverlayState();
 });
 </script>
     <!-- OVERLAY FREEZE LAYAR -->

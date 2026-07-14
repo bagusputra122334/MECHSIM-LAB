@@ -90,3 +90,66 @@ function stopKeepAliveSupabase() {
   }
 }
 
+// Helper function untuk mendapatkan state dari app_state
+async function getAppState(key) {
+  const { data, error } = await supabaseClient
+    .from("app_state")
+    .select("value")
+    .eq("key", key)
+    .single();
+  if (error && error.code !== "PGRST116") {
+    console.error("Error get app state:", error);
+    return null;
+  }
+  return data ? data.value : null;
+}
+
+// Helper function untuk mengupdate state di app_state
+async function setAppState(key, value) {
+  const { error } = await supabaseClient
+    .from("app_state")
+    .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: "key" });
+  if (error) console.error("Error set app state:", error);
+}
+
+// Helper function untuk membuat permintaan SOS baru
+async function createSosRequest(siswaId, namaGigi) {
+  const { data, error } = await supabaseClient
+    .from("sos_requests")
+    .insert({ id_siswa: siswaId, nama_gigi: namaGigi, is_active: true })
+    .select()
+    .single();
+  if (error) console.error("Error create SOS request:", error);
+  return data;
+}
+
+// Helper function untuk menandai permintaan SOS sebagai tidak aktif (selesai)
+async function resolveSosRequest(sosId) {
+  const { error } = await supabaseClient
+    .from("sos_requests")
+    .update({ is_active: false, updated_at: new Date().toISOString() })
+    .eq("id", sosId);
+  if (error) console.error("Error resolve SOS request:", error);
+}
+
+// Helper function untuk mendapatkan semua permintaan SOS yang aktif
+async function getActiveSosRequests() {
+  const { data, error } = await supabaseClient
+    .from("sos_requests")
+    .select(`
+      id,
+      id_siswa,
+      nama_gigi,
+      is_active,
+      created_at,
+      siswa (
+        nama_lengkap,
+        nomor_absen
+      )
+    `)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+  if (error) console.error("Error get active SOS requests:", error);
+  return data || [];
+}
+
