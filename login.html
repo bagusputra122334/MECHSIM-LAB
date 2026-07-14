@@ -6,6 +6,9 @@
     <title>Masuk - Mechsim Lab</title>
     <link rel="icon" href="img/logo.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabaseClient.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -351,7 +354,7 @@
         });
 
         // Login Siswa
-        btnStudentLogin.addEventListener('click', () => {
+        btnStudentLogin.addEventListener('click', async () => {
             const nama = studentName.value.trim();
             const absen = studentAbsen.value.trim();
 
@@ -361,29 +364,15 @@
             }
             studentError.style.display = 'none';
 
-            // Simpan ke localStorage
-            let siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
-            let existingSiswa = siswaList.find(s => s.nama_lengkap === nama && s.nomor_absen === absen);
-
+            // Gunakan Supabase untuk get atau buat siswa
+            const existingSiswa = await getOrCreateSiswa(nama, absen);
             if (!existingSiswa) {
-                existingSiswa = {
-                    id: Date.now(),
-                    nama_lengkap: nama,
-                    nomor_absen: absen,
-                    kelas: 'XI',
-                    waktu_login: new Date().toISOString(),
-                    terakhir_aktif: new Date().toISOString()
-                };
-                siswaList.push(existingSiswa);
-                localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
-            } else {
-                existingSiswa.terakhir_aktif = new Date().toISOString();
-                const idx = siswaList.findIndex(s => s.id === existingSiswa.id);
-                siswaList[idx] = existingSiswa;
-                localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
+                alert('Gagal login, coba lagi!');
+                return;
             }
 
             localStorage.setItem('currentSiswa', JSON.stringify(existingSiswa));
+            startKeepAliveSupabase(existingSiswa.id);
             window.location.href = 'simulasimain.html';
         });
 
