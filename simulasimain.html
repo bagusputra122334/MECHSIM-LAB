@@ -926,6 +926,11 @@ function doLogin(){
     err.style.display='none';
 
     let siswaList = JSON.parse(localStorage.getItem('mechsim_siswa') || '[]');
+    // Backfill properti is_logout untuk data lama
+    siswaList = siswaList.map(s => ({
+        ...s,
+        is_logout: s.is_logout !== undefined ? s.is_logout : true
+    }));
     let existingSiswa = siswaList.find(s => s.nama_lengkap === nama && s.nomor_absen === absen);
     
     if (!existingSiswa) {

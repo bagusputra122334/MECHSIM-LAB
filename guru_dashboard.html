@@ -304,6 +304,11 @@
                 let siswaList = JSON.parse(data);
                 // Filter out any guru data
                 siswaList = siswaList.filter(s => s.nama_lengkap.toLowerCase() !== 'guru');
+                // Backfill properti is_logout untuk data lama (default true = logged out)
+                siswaList = siswaList.map(s => ({
+                    ...s,
+                    is_logout: s.is_logout !== undefined ? s.is_logout : true
+                }));
                 // Save back the cleaned data
                 localStorage.setItem('mechsim_siswa', JSON.stringify(siswaList));
                 return siswaList;
@@ -321,8 +326,8 @@
             const siswaData = getSiswaData();
             const riwayatData = getRiwayatData();
             
-            // Filter siswa online: TANPA BATAS WAKTU, hanya filter hanya yang belum logout
-            const siswaOnline = siswaData.filter(s => s.is_logout !== true);
+            // Filter siswa online: TANPA BATAS WAKTU, hanya filter hanya yang belum logout (is_logout === false)
+            const siswaOnline = siswaData.filter(s => s.is_logout === false);
             
             // Update stat cards
             document.getElementById('totalSiswa').textContent = siswaData.length;
