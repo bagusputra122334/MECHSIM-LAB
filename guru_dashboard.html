@@ -346,8 +346,13 @@
             globalSiswaData = siswaData;
             globalRiwayatData = riwayatData;
             
-            // Filter siswa online: TANPA BATAS WAKTU, hanya filter hanya yang belum logout (is_logout === false)
-            const siswaOnline = siswaData.filter(s => s.is_logout === false);
+            // Filter siswa online: is_logout === false DAN terakhir_aktif kurang dari 60 detik yang lalu
+            const now = new Date();
+            const siswaOnline = siswaData.filter(s => {
+                const lastActive = new Date(s.terakhir_aktif);
+                const diffSeconds = (now - lastActive) / 1000;
+                return s.is_logout === false && diffSeconds < 60;
+            });
             
             // Update stat cards
             document.getElementById('totalSiswa').textContent = siswaData.length;
@@ -490,6 +495,8 @@
         (async function init() {
             await refreshData();
             setupRealtimeSubscriptions();
+            // Auto-refresh setiap 30 detik
+            setInterval(refreshData, 30000);
         })();
     </script>
 

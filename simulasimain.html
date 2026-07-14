@@ -883,6 +883,22 @@ function initFromLocalStorage() {
     return false;
 }
 
+// Logout otomatis saat tab ditutup atau halaman di-unload
+window.addEventListener('beforeunload', function(event) {
+    if (currentSiswa) {
+        logoutSiswaFromSupabase(currentSiswa.id);
+        stopKeepAliveSupabase();
+    }
+});
+// Juga gunakan visibilitychange untuk mendeteksi saat tab di-hidden
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden && currentSiswa) {
+        // Opsional: jika ingin logout saat tab di-hidden, tapi mungkin terlalu agresif
+        // logoutSiswaFromSupabase(currentSiswa.id);
+        // stopKeepAliveSupabase();
+    }
+});
+
 async function doLogin(){
     const nama=document.getElementById('input-name').value.trim();
     const absen=document.getElementById('input-absen').value.trim();
