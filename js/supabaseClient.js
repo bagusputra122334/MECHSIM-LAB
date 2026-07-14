@@ -1,7 +1,7 @@
 // File konfigurasi Supabase
 // Ganti dengan Project URL dan Anon Key dari proyek Supabase kamu!
 const SUPABASE_URL = "https://oeploetqpygaradsdpaa.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_J3Fh2iZUUwmtnvND9JtSZQ_m1bt5r2b";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lcGxvZXRxcHlnYXJhZHNkcGFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMjU2MzcsImV4cCI6MjA5OTYwMTYzN30.Be6uLur7OZ44GT1X8PYnrjc2eY7WXnqsLVe9beP3Vxs";
 
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
